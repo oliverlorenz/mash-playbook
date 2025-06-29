@@ -197,7 +197,7 @@
   name: homarr
   activation_prefix: homarr_
 - src: git+https://github.com/mother-of-all-self-hosting/ansible-role-hubsite.git
-  version: v1.28.0-3
+  version: v1.29.0-1
   name: hubsite
   activation_prefix: hubsite_
 - src: git+https://github.com/IUCCA/ansible-role-ihatemoney.git
@@ -253,7 +253,7 @@
   name: languagetool
   activation_prefix: languagetool_
 - src: git+https://github.com/mother-of-all-self-hosting/ansible-role-linkding.git
-  version: v1.40.0-1
+  version: v1.41.0-1
   name: linkding
   activation_prefix: linkding_
 - src: git+https://github.com/mother-of-all-self-hosting/ansible-role-listmonk.git
