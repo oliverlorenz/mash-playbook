@@ -505,7 +505,7 @@
   name: tandoor
   activation_prefix: tandoor_
 - src: git+https://github.com/mother-of-all-self-hosting/ansible-role-telegraf.git
-  version: v1.30.2-4
+  version: v1.30.2-5
   name: telegraf
   activation_prefix: telegraf_
 - src: git+https://github.com/devture/com.devture.ansible.role.timesync.git
@@ -521,11 +521,11 @@
   name: tsdproxy
   activation_prefix: tsdproxy_
 - src: git+https://github.com/mother-of-all-self-hosting/ansible-role-uptime_kuma.git
-  version: v1.23.16-4
+  version: v1.23.16-6
   name: uptime_kuma
   activation_prefix: uptime_kuma_
 - src: git+https://github.com/mother-of-all-self-hosting/ansible-role-valkey.git
-  version: v8.1.2-0
+  version: v8.1.2-1
   name: valkey
   activation_prefix: valkey_
 - src: git+https://github.com/mother-of-all-self-hosting/ansible-role-vaultwarden.git
