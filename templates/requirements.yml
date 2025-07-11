@@ -57,7 +57,7 @@
   name: cleanup
   activation_prefix: system_cleanup_
 - src: git+https://github.com/mother-of-all-self-hosting/ansible-role-clickhouse.git
-  version: v25.6.2.5-0
+  version: v25.6.3.116-0
   name: clickhouse
   activation_prefix: clickhouse_
 - src: git+https://github.com/mother-of-all-self-hosting/ansible-role-collabora-online.git
@@ -117,7 +117,7 @@
   name: endlessh
   activation_prefix: endlessh_
 - src: git+https://github.com/mother-of-all-self-hosting/ansible-role-etcd.git
-  version: v3.6.1-1
+  version: v3.6.2-0
   name: etcd
   activation_prefix: etcd_
 - src: git+https://github.com/mother-of-all-self-hosting/ansible-role-etherpad.git
@@ -149,7 +149,7 @@
   name: focalboard
   activation_prefix: focalboard_
 - src: git+https://github.com/mother-of-all-self-hosting/ansible-role-forgejo.git
-  version: v11.0.2-0
+  version: v11.0.3-0
   name: forgejo
   activation_prefix: forgejo_
 - src: git+https://git.sergiodj.net/sergiodj/ansible-role-forgejo-runner.git
@@ -325,7 +325,7 @@
   name: notfellchen
   activation_prefix: notfellchen_
 - src: git+https://github.com/mother-of-all-self-hosting/ansible-role-ntfy.git
-  version: v2.12.0-0
+  version: v2.13.0-0
   name: ntfy
   activation_prefix: ntfy_
 - src: git+https://github.com/mother-of-all-self-hosting/ansible-role-oauth2-proxy.git
