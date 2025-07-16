@@ -57,7 +57,7 @@
   name: cleanup
   activation_prefix: system_cleanup_
 - src: git+https://github.com/mother-of-all-self-hosting/ansible-role-clickhouse.git
-  version: v25.6.3.116-0
+  version: v25.6.4.12-0
   name: clickhouse
   activation_prefix: clickhouse_
 - src: git+https://github.com/mother-of-all-self-hosting/ansible-role-collabora-online.git
@@ -557,7 +557,7 @@
   name: woodpecker_ci_server
   activation_prefix: woodpecker_ci_server_
 - src: git+https://github.com/mother-of-all-self-hosting/ansible-role-wordpress
-  version: v6.8.1-1
+  version: v6.8.2-0
   name: wordpress
   activation_prefix: wordpress_
 - src: git+https://github.com/ZenKyma/ansible-role-writefreely.git
