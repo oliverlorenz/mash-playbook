@@ -13,23 +13,23 @@
   name: anonymousoverflow
   activation_prefix: anonymousoverflow_
 - src: git+https://github.com/mother-of-all-self-hosting/ansible-role-apisix-dashboard.git
-  version: v3.0.1-6
+  version: v3.0.1-7
   name: apisix_dashboard
   activation_prefix: apisix_dashboard_
 - src: git+https://github.com/mother-of-all-self-hosting/ansible-role-apisix-gateway.git
-  version: v3.8.0-7
+  version: v3.8.0-9
   name: apisix_gateway
   activation_prefix: apisix_gateway_
 - src: git+https://github.com/mother-of-all-self-hosting/ansible-role-appsmith.git
-  version: v1.53.1-7
+  version: v1.53.1-9
   name: appsmith
   activation_prefix: appsmith_
 - src: git+https://github.com/mother-of-all-self-hosting/ansible-role-authelia.git
-  version: v4.37.5-6
+  version: v4.37.5-8
   name: authelia
   activation_prefix: authelia_
 - src: git+https://github.com/mother-of-all-self-hosting/ansible-role-authentik.git
-  version: v2025.6.4-0
+  version: v2025.6.4-2
   name: authentik
   activation_prefix: authentik_
 - src: git+https://github.com/spatterIight/ansible-role-autobrr.git
@@ -41,10 +41,10 @@
   name: auxiliary
   activation_prefix: aux_
 - src: git+https://github.com/mother-of-all-self-hosting/ansible-role-backup_borg.git
-  version: v1.4.1-1.9.14-0
+  version: v1.4.1-1.9.14-1
   name: backup_borg
   activation_prefix: backup_borg_
-- src: git+https://github.com/lingawakad/ansible-role-calibre-web.git
+- src: git+https://github.com/mother-of-all-self-hosting/ansible-role-calibre-web.git
   version: v0.6.24-1
   name: calibre-web
   activation_prefix: calibre-web_
@@ -57,7 +57,7 @@
   name: cleanup
   activation_prefix: system_cleanup_
 - src: git+https://github.com/mother-of-all-self-hosting/ansible-role-clickhouse.git
-  version: v25.6.5.41-0
+  version: v25.6.5.41-1
   name: clickhouse
   activation_prefix: clickhouse_
 - src: git+https://github.com/mother-of-all-self-hosting/ansible-role-collabora-online.git
@@ -69,7 +69,7 @@
   name: container_socket_proxy
   activation_prefix: mash_
 - src: git+https://github.com/mother-of-all-self-hosting/ansible-role-convertx.git
-  version: v0.14.1-3
+  version: v0.14.1-4
   name: convertx
   activation_prefix: convertx_
 - src: git+https://github.com/Bergruebe/ansible-role-couchdb.git
@@ -81,7 +81,7 @@
   name: docker
   activation_prefix: mash_playbook_docker_installation_enabled
 - src: git+https://github.com/mother-of-all-self-hosting/ansible-role-docker-registry.git
-  version: v2.8.3-12
+  version: v2.8.3-14
   name: docker_registry
   activation_prefix: docker_registry_enabled
 - src: git+https://github.com/mother-of-all-self-hosting/ansible-role-docker-registry-browser.git
@@ -109,7 +109,7 @@
   name: dokuwiki
   activation_prefix: dokuwiki_
 - src: git+https://github.com/mother-of-all-self-hosting/ansible-role-duplicati.git
-  version: v2.1.0-0
+  version: v2.1.0-1
   name: duplicati
   activation_prefix: duplicati_
 - src: git+https://github.com/mother-of-all-self-hosting/ansible-role-echoip.git
@@ -273,7 +273,7 @@
   name: loki
   activation_prefix: loki_
 - src: git+https://github.com/mother-of-all-self-hosting/ansible-role-mariadb.git
-  version: v11.8.2-0
+  version: v11.8.2-2
   name: mariadb
   activation_prefix: mariadb_
 - src: git+https://github.com/acterglobal/ansible-role-matomo.git
@@ -341,7 +341,7 @@
   name: oauth2_proxy
   activation_prefix: oauth2_proxy_
 - src: git+https://github.com/mother-of-all-self-hosting/ansible-role-outline.git
-  version: v0.84.0-3
+  version: v0.84.0-5
   name: outline
   activation_prefix: outline_
 - src: git+https://github.com/spatterIight/ansible-role-overseerr.git
@@ -440,8 +440,8 @@
   version: v2025.6.2-2
   name: reactflux
   activation_prefix: reactflux_
-- src: git+https://github.com/lingawakad/ansible-role-readeck.git
-  version: v0.19.2-0
+- src: git+https://github.com/mother-of-all-self-hosting/ansible-role-readeck
+  version: v0.19.2-1
   name: readeck
   activation_prefix: readeck_
 - src: git+https://github.com/mother-of-all-self-hosting/ansible-role-redis.git
