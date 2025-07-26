@@ -45,7 +45,7 @@
   name: backup_borg
   activation_prefix: backup_borg_
 - src: git+https://github.com/mother-of-all-self-hosting/ansible-role-calibre-web.git
-  version: v0.6.24-1
+  version: v0.6.24-2
   name: calibre-web
   activation_prefix: calibre-web_
 - src: git+https://github.com/mother-of-all-self-hosting/ansible-role-changedetection.git
@@ -57,7 +57,7 @@
   name: cleanup
   activation_prefix: system_cleanup_
 - src: git+https://github.com/mother-of-all-self-hosting/ansible-role-clickhouse.git
-  version: v25.6.5.41-1
+  version: v25.6.5.41-2
   name: clickhouse
   activation_prefix: clickhouse_
 - src: git+https://github.com/mother-of-all-self-hosting/ansible-role-collabora-online.git
@@ -165,7 +165,7 @@
   name: forgejo_runner
   activation_prefix: forgejo_runner_
 - src: git+https://github.com/mother-of-all-self-hosting/ansible-role-freescout.git
-  version: v1.17.127-0
+  version: v1.17.128-0
   name: freescout
   activation_prefix: freescout_
 - src: git+https://github.com/kinduff/ansible-docker-freshrss.git
