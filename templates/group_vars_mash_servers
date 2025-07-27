@@ -140,10 +140,10 @@ mash_playbook_devture_systemd_service_manager_services_list_auto_itemized:
     {{ ({'name': (backup_borg_identifier + '.timer'), 'priority': 5000, 'groups': ['mash', 'backup', 'borg']} if backup_borg_enabled else omit) }}
   # /role-specific:backup_borg
 
-  # role-specific:calibre-web
+  # role-specific:calibre_web
   - |-
     {{ ({'name': (calibre_web_identifier + '.service'), 'priority': 2000, 'groups': ['mash', 'calibre-web']} if calibre_web_enabled else omit) }}
-  # /role-specific:calibre-web
+  # /role-specific:calibre_web
 
   # role-specific:changedetection
   - |-
@@ -1995,7 +1995,7 @@ backup_borg_postgresql_databases_auto: "{{ postgres_managed_databases | map(attr
 
 
 
-# role-specific:calibre-web
+# role-specific:calibre_web
 ########################################################################
 #                                                                      #
 # calibre-web                                                          #
@@ -2014,6 +2014,8 @@ calibre_web_base_path: "{{ mash_playbook_base_path }}/{{ mash_playbook_service_b
 calibre_web_container_additional_networks_auto: |
   {{
     ([mash_playbook_reverse_proxyable_services_additional_network] if mash_playbook_reverse_proxyable_services_additional_network else [])
+    +
+    ([exim_relay_container_network | default('mash-exim-relay')] if (exim_relay_enabled | default(false) and calibre_web_container_network != exim_relay_container_network) else [])
   }}
 
 calibre_web_container_labels_traefik_enabled: "{{ mash_playbook_traefik_labels_enabled }}"
@@ -2029,7 +2031,7 @@ calibre_web_container_labels_traefik_tls_certResolver: "{{ traefik_certResolver_
 # /calibre-web                                                         #
 #                                                                      #
 ########################################################################
-# /role-specific:calibre-web
+# /role-specific:calibre_web
 
 
 
