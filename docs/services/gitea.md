@@ -1,5 +1,6 @@
 <!--
 SPDX-FileCopyrightText: 2023 Slavi Pantaleev
+SPDX-FileCopyrightText: 2025 Suguru Hirahara
 
 SPDX-License-Identifier: AGPL-3.0-or-later
 -->
@@ -51,17 +52,11 @@ gitea_path_prefix: /gitea
 ########################################################################
 ```
 
-In the example configuration above, we configure the service to be hosted at `https://mash.example.com/gitea`.
-
-You can remove the `gitea_path_prefix` variable definition, to make it default to `/`, so that the service is served at `https://mash.example.com/`.
-
-
 ## Usage
 
-After installation, you should be able to access your new Gitea instance at the configured URL (see above).
+After running the command for installation, the Gitea instance becomes available at the URL specified with `gitea_hostname` and `gitea_path_prefix`. With the configuration above, the service is hosted at `https://mash.example.com/gitea`.
 
-Going there, you'll be taken to the initial setup wizard, which will let you assign some passwords and other configuration.
-
+To get started, open the URL with a web browser, and follow the set up wizard where you can create your admin user and configure the service.
 
 ## Recommended other services
 

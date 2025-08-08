@@ -1,18 +1,34 @@
 <!--
-SPDX-FileCopyrightText: 2023 Slavi Pantaleev
-SPDX-FileCopyrightText: 2024 Sergio Durigan Junior
+SPDX-FileCopyrightText: 2020 - 2024 MDAD project contributors
+SPDX-FileCopyrightText: 2020 - 2024 Slavi Pantaleev
+SPDX-FileCopyrightText: 2020 Aaron Raimist
+SPDX-FileCopyrightText: 2020 Chris van Dijk
+SPDX-FileCopyrightText: 2020 Dominik Zajac
+SPDX-FileCopyrightText: 2020 Mickaël Cornière
+SPDX-FileCopyrightText: 2022 François Darveau
+SPDX-FileCopyrightText: 2022 Julian Foad
+SPDX-FileCopyrightText: 2022 Warren Bailey
+SPDX-FileCopyrightText: 2023 Antonis Christofides
+SPDX-FileCopyrightText: 2023 Felix Stupp
+SPDX-FileCopyrightText: 2023 Julian-Samuel Gebühr
+SPDX-FileCopyrightText: 2023 Pierre 'McFly' Marty
 SPDX-FileCopyrightText: 2024 MASH project contributors
+SPDX-FileCopyrightText: 2024 Sergio Durigan Junior
+SPDX-FileCopyrightText: 2025 Suguru Hirahara
 
 SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 
 # AdGuard Home
 
-[AdGuard Home](https://adguard.com/en/adguard-home/overview.html/) is a network-wide DNS software for blocking ads & tracking.
+The playbook can install and configure [AdGuard Home](https://adguard.com/en/adguard-home/overview.html) for you.
+
+AdGuard Home is a network-wide DNS software for blocking ads & tracking.
+
+See the project's [documentation](https://adguard.com/kb/) to learn what AdGuard Home does and why it might be useful to you.
 
 > [!WARNING]
 > Running a public DNS server is not advisable. You'd better install AdGuard Home in a trusted local network, or adjust its network interfaces and port exposure (via the variables in the [Networking](#networking) configuration section below) so that you don't expose your DNS server publicly to the whole world. If you're exposing your DNS server publicly, consider restricting who can use it by adjusting the **Allowed clients** setting in the **Access settings** section of **Settings** -> **DNS settings**.
-
 
 ## Dependencies
 
@@ -20,8 +36,7 @@ This service requires the following other services:
 
 - a [Traefik](traefik.md) reverse-proxy server
 
-
-## Configuration
+## Adjusting the playbook configuration
 
 To enable this service, add the following configuration to your `vars.yml` file and re-run the [installation](../installing.md) process:
 
@@ -37,7 +52,7 @@ adguard_home_enabled: true
 adguard_home_hostname: mash.example.com
 
 # Hosting under a subpath sort of works, but is not ideal
-# (see the URL section below for details).
+# (see the usage section below for details).
 # Consider using a dedicated hostname and removing the line below.
 adguard_home_path_prefix: /adguard-home
 
@@ -47,19 +62,6 @@ adguard_home_path_prefix: /adguard-home
 #                                                                      #
 ########################################################################
 ```
-
-### URL
-
-In the example configuration above, we configure the service to be hosted at `https://mash.example.com/adguard-home`.
-
-You can remove the `adguard_home_path_prefix` variable definition, to make it default to `/`, so that the service is served at `https://mash.example.com/`.
-
-When **hosting under a subpath**, you may hit [this bug](https://github.com/AdguardTeam/AdGuardHome/issues/5478), which causes these **annoyances**:
-
-- upon initial usage, you will be redirected to `/install.html` and would need to manually adjust this URL to something like `/adguard-home/install.html` (depending on your `adguard_home_path_prefix`). After the installation wizard completes, you'd be redirected to `/index.html` incorrectly as well.
-
-- every time you hit the homepage and you're not logged in, you will be redirected to `/login.html` and would need to manually adjust this URL to something like `/adguard-home/login.html` (depending on your `adguard_home_path_prefix`)
-
 
 ### Networking
 
@@ -80,11 +82,18 @@ adguard_home_container_dns_udp_bind_port: '192.168.1.15:53'
 
 ## Usage
 
-After installation, you can go to the AdGuard Home URL, as defined in `adguard_home_hostname` and `adguard_home_path_prefix`.
+After running the command for installation, the AdGuard instance becomes available at the URL specified with `adguard_home_hostname` and `adguard_home_path_prefix`. With the configuration above, the service is hosted at `https://mash.example.com/adguard-home`.
 
-As mentioned in the [URL](#url) section above, you may hit some annoyances when hosting under a subpath.
+>[!WARNING]
+> When hosting under a subpath, there are quirks caused by [this bug](https://github.com/AdguardTeam/AdGuardHome/issues/5478), such as:
+>
+> - upon initial usage, you will be redirected to `/install.html` and would need to manually adjust this URL to something like `/adguard-home/install.html` (depending on your `adguard_home_path_prefix`). After the installation wizard completes, you'd be redirected to `/index.html` incorrectly as well.
+>
+> - every time you hit the homepage and you're not logged in, you will be redirected to `/login.html` and would need to manually adjust this URL to something like `/adguard-home/login.html` (depending on your `adguard_home_path_prefix`)
 
-The first time you visit the AdGuard Home pages, you'll go through a setup wizard **make sure to set the HTTP port under "Admin Web Interface" to `3000`**. This is the in-container port that our Traefik setup expects and uses for serving the install wizard to begin with. If you go with the default (`80`), the web UI will stop working after the installation wizard completes.
+To get started, open the URL with a web browser, and follow the set up wizard.
+
+On the set up wizard, **make sure to set the HTTP port under "Admin Web Interface" to `3000`**. This is the in-container port that our Traefik setup expects and uses for serving the install wizard to begin with. If you go with the default (`80`), the web UI will stop working after the installation wizard completes.
 
 Things you should consider doing later:
 

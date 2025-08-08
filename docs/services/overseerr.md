@@ -1,3 +1,10 @@
+<!--
+SPDX-FileCopyrightText: 2025 MASH project contributors
+SPDX-FileCopyrightText: 2025 Suguru Hirahara
+
+SPDX-License-Identifier: AGPL-3.0-or-later
+-->
+
 # Overseerr
 
 [Overseerr](https://www.overseerr.org/) is a request management and media discovery tool for the Plex ecosystem.
@@ -30,15 +37,14 @@ overseerr_hostname: overseerr.example.com
 ########################################################################
 ```
 
-### URL
-
-In the example configuration above, we configure the service to be hosted at `https://overseerr.example.com`.
-
-A `overseerr_path_prefix` variable can be adjusted to host under a subpath (e.g. `overseerr_path_prefix: /overseerr`), but this hasn't been tested yet.
-
 ## Usage
 
-After [installation](../installing.md), you should access your new Overseerr instance at the URL you've chosen. Follow the prompts to finish setup. The below guide may be useful:
+After running the command for installation, the Overseerr instance becomes available at the URL specified with `overseerr_hostname`. With the configuration above, the service is hosted at `https://overseerr.example.com`.
+
+>[!NOTE]
+> The `overseerr_path_prefix` variable can be adjusted to host under a subpath (e.g. `overseerr_path_prefix: /overseerr`), but this hasn't been tested yet.
+
+To get started, open the URL with a web browser, and follow the prompts to finish setup. The below guide may be useful:
 
 1. Sign in to Overseerr via Plex. You should get a browser pop-up window.
 
