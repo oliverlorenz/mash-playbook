@@ -285,6 +285,10 @@
     - role: galaxy/farmos
     # /role-specific:farmos
 
+    # role-specific:fider
+    - role: galaxy/fider
+    # /role-specific:fider
+
     # role-specific:filebrowser
     - role: galaxy/filebrowser
     # /role-specific:filebrowser
@@ -832,6 +836,10 @@
     # role-specific:sonarr
     - role: galaxy/sonarr
     # /role-specific:sonarr
+
+    # role-specific:soundcloak
+    - role: galaxy/soundcloak
+    # /role-specific:soundcloak
 
     # role-specific:statusnook
     - role: galaxy/statusnook

@@ -77,6 +77,7 @@ Below is an exhaustive list of the free and open-source software for self-hostin
 | [Excalidraw collaboration server](https://github.com/excalidraw/excalidraw-room) | Collaboration server for Excalidraw instance | [Link](services/excalidraw-room.md) |
 | [exim-relay](https://github.com/devture/exim-relay) | A lightweight [Exim](https://www.exim.org/) SMTP mail relay server | [Link](services/exim-relay.md) |
 | [farmOS](https://farmos.org/) | Farm management, planning, and record keeping | [Link](services/farmos.md) |
+| [Fider](https://github.com/getfider/fider) | Feedback portal for feature requests and suggestions | [Link](services/fider.md) |
 | [File Browser](https://filebrowser.org/) | File managing interface within a specified directory, which can be used to upload, delete, preview and edit your files | [Link](services/filebrowser.md) |
 | [FileBrowser Quantum](https://filebrowserquantum.com/) | Web-based file manager | [Link](services/filebrowser-quantum.md) |
 | [Firezone](https://www.firezone.dev/) | A VPN server (based on [WireGuard](https://www.wireguard.com/)) with a Web UI | [Link](services/firezone.md) |
@@ -210,6 +211,7 @@ Below is an exhaustive list of the free and open-source software for self-hostin
 | [Soft Serve](https://github.com/charmbracelet/soft-serve) | A tasty [Git](https://git-scm.com/) server for the command line | [Link](services/soft-serve.md) |
 | [SolidInvoice](https://github.com/SolidInvoice/SolidInvoice) | Web-based software for invoicing | [Link](services/solidinvoice.md) |
 | [Sonarr](https://sonarr.tv/) | A smart PVR for newsgroup and BitTorrent users | [Link](services/sonarr.md) |
+| [soundcloak](https://git.maid.zone/stuff/soundcloak) | Browse SoundCloud without exposing your IP address, browsing habits, and other browser fingerprinting data to the website | [Link](services/soundcloak.md) |
 | [Standalone Snowflake proxy](https://community.torproject.org/relay/setup/snowflake/standalone/) | Help users connect to the [Tor](https://torproject.org/) network in places where Tor is blocked | [Link](services/snowflake.md) |
 | [Statusnook](https://statusnook.com/) | Status page deployment service | [Link](services/statusnook.md) |
 | [Stirling PDF](https://github.com/Stirling-Tools/Stirling-PDF) | A PDF converter | [Link](services/stirling-pdf.md) |
