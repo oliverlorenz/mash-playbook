@@ -361,6 +361,10 @@
     - role: galaxy/gotosocial
     # /role-specific:gotosocial
 
+    # role-specific:gowa
+    - role: custom/gowa
+    # /role-specific:gowa
+
     # role-specific:grafana
     - role: galaxy/grafana
     # /role-specific:grafana
@@ -668,6 +672,10 @@
     # role-specific:paperless
     - role: galaxy/paperless
     # /role-specific:paperless
+
+    # role-specific:paperless_ai
+    - role: custom/paperless_ai
+    # /role-specific:paperless_ai
 
     # role-specific:papra
     - role: galaxy/papra

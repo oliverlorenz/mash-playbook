@@ -1,0 +1,60 @@
+{#
+SPDX-FileCopyrightText: 2023 Slavi Pantaleev
+SPDX-FileCopyrightText: 2025 Suguru Hirahara
+SPDX-FileCopyrightText: 2025 Oliver Lorenz
+
+SPDX-License-Identifier: AGPL-3.0-or-later
+#}
+
+{% if pterodactyl_panel_container_labels_traefik_enabled %}
+traefik.enable=true
+
+{% if pterodactyl_panel_container_labels_traefik_docker_network %}
+traefik.docker.network={{ pterodactyl_panel_container_labels_traefik_docker_network }}
+{% endif %}
+
+{% set middlewares = [] %}
+
+{% if pterodactyl_panel_container_labels_traefik_path_prefix != '/' %}
+traefik.http.middlewares.{{ pterodactyl_panel_identifier }}-slashless-redirect.redirectregex.regex=^({{ pterodactyl_panel_container_labels_traefik_path_prefix | quote }})$
+traefik.http.middlewares.{{ pterodactyl_panel_identifier }}-slashless-redirect.redirectregex.replacement=${1}/
+{% set middlewares = middlewares + [pterodactyl_panel_identifier + '-slashless-redirect'] %}
+{% endif %}
+
+{% if pterodactyl_panel_container_labels_traefik_path_prefix != '/' %}
+traefik.http.middlewares.{{ pterodactyl_panel_identifier }}-strip-prefix.stripprefix.prefixes={{ pterodactyl_panel_container_labels_traefik_path_prefix }}
+{% set middlewares = middlewares + [pterodactyl_panel_identifier + '-strip-prefix'] %}
+{% endif %}
+
+{% if pterodactyl_panel_container_labels_traefik_additional_request_headers.keys() | length > 0 %}
+{% for name, value in pterodactyl_panel_container_labels_traefik_additional_request_headers.items() %}
+traefik.http.middlewares.{{ pterodactyl_panel_identifier }}-add-request-headers.headers.customrequestheaders.{{ name }}={{ value }}
+{% endfor %}
+{% set middlewares = middlewares + [pterodactyl_panel_identifier + '-add-request-headers'] %}
+{% endif %}
+
+{% if pterodactyl_panel_container_labels_traefik_additional_response_headers.keys() | length > 0 %}
+{% for name, value in pterodactyl_panel_container_labels_traefik_additional_response_headers.items() %}
+traefik.http.middlewares.{{ pterodactyl_panel_identifier }}-add-response-headers.headers.customresponseheaders.{{ name }}={{ value }}
+{% endfor %}
+{% set middlewares = middlewares + [pterodactyl_panel_identifier + '-add-response-headers'] %}
+{% endif %}
+
+traefik.http.routers.{{ pterodactyl_panel_identifier }}.rule={{ pterodactyl_panel_container_labels_traefik_rule }}
+{% if pterodactyl_panel_container_labels_traefik_priority | int > 0 %}
+traefik.http.routers.{{ pterodactyl_panel_identifier }}.priority={{ pterodactyl_panel_container_labels_traefik_priority }}
+{% endif %}
+traefik.http.routers.{{ pterodactyl_panel_identifier }}.service={{ pterodactyl_panel_identifier }}
+{% if middlewares | length > 0 %}
+traefik.http.routers.{{ pterodactyl_panel_identifier }}.middlewares={{ middlewares | join(',') }}
+{% endif %}
+traefik.http.routers.{{ pterodactyl_panel_identifier }}.entrypoints={{ pterodactyl_panel_container_labels_traefik_entrypoints }}
+traefik.http.routers.{{ pterodactyl_panel_identifier }}.tls={{ pterodactyl_panel_container_labels_traefik_tls | to_json }}
+{% if pterodactyl_panel_container_labels_traefik_tls %}
+traefik.http.routers.{{ pterodactyl_panel_identifier }}.tls.certResolver={{ pterodactyl_panel_container_labels_traefik_tls_certResolver }}
+{% endif %}
+
+traefik.http.services.{{ pterodactyl_panel_identifier }}.loadbalancer.server.port={{ pterodactyl_panel_container_http_port }}
+{% endif %}
+
+{{ pterodactyl_panel_container_labels_additional_labels }}
