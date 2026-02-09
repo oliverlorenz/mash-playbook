@@ -1,0 +1,40 @@
+---
+- name: Check existence of Paperless Nextcloud Sync systemd service
+  ansible.builtin.stat:
+    path: "{{ devture_systemd_docker_base_systemd_path }}/{{ paperless_ai_identifier }}.service"
+  register: paperless_ai_service_stat
+
+- name: Uninstall Paperless Nextcloud Sync systemd services and files
+  when: paperless_ai_service_stat.stat.exists | bool
+  block:
+    - name: Ensure Paperless Nextcloud Sync systemd service is stopped
+      ansible.builtin.service:
+        name: "{{ paperless_ai_identifier }}"
+        state: stopped
+        enabled: false
+        daemon_reload: true
+
+    - name: Ensure Paperless Nextcloud Sync systemd service does not exist
+      ansible.builtin.file:
+        path: "{{ devture_systemd_docker_base_systemd_path }}/{{ paperless_ai_identifier }}.service"
+        state: absent
+
+    - name: Ensure Paperless Nextcloud Sync container network does not exist via community.docker.docker_network
+      when: devture_systemd_docker_base_container_network_creation_method == 'ansible-module'
+      community.docker.docker_network:
+        name: "{{ paperless_ai_container_network }}"
+        state: absent
+
+    - name: Ensure Paperless Nextcloud Sync container network does not exist via ansible.builtin.command
+      when: devture_systemd_docker_base_container_network_creation_method == 'command'
+      ansible.builtin.command:
+        cmd: >-
+          {{ devture_systemd_docker_base_host_command_docker }} network rm
+          {{ paperless_ai_container_network }}
+      register: network_deletion_result
+      changed_when: paperless_ai_container_network in network_deletion_result.stdout
+
+    - name: Ensure Paperless Nextcloud Sync path does not exist
+      ansible.builtin.file:
+        path: "{{ paperless_ai_base_path }}"
+        state: absent

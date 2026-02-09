@@ -669,6 +669,10 @@
     - role: galaxy/paperless
     # /role-specific:paperless
 
+    # role-specific:paperless_ai
+    - role: custom/paperless_ai
+    # /role-specific:paperless_ai
+
     # role-specific:papra
     - role: galaxy/papra
     # /role-specific:papra
