@@ -233,6 +233,10 @@
     - role: galaxy/ddclient
     # /role-specific:ddclient
 
+    # role-specific:dns_records
+    - role: custom/dns_records
+    # /role-specific:dns_records
+
     # role-specific:docker_registry
     - role: galaxy/docker_registry
     # /role-specific:docker_registry

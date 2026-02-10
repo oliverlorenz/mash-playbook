@@ -1,0 +1,11 @@
+---
+- name: Create DNS records with nsupdate
+  community.general.nsupdate:
+    key_name: "nsupdate"
+    key_secret: "{{ dns_records_nsupdate_key_secret}}"
+    server: "{{ dns_records_nsupdate_server }}"
+    zone: "{{ dns_records_nsupdate_zone }}"
+    record: "{{ item.prefix }}"
+    type: "{{ item.type }}"
+    state: "{{ item.state | default('present') }}"
+    ttl: "{{ item.ttl | default(dns_records_default_ttl) }}"

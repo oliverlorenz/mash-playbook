@@ -1,0 +1,24 @@
+---
+- name: Perform DNS Records installation tasks
+  when: dns_records_enabled | bool
+  tags:
+    - setup-all
+    - setup-dns-records
+    - install-all
+    - install-dns-records
+  block:
+    - name: Validate DNS Records configuration
+      ansible.builtin.include_tasks: "{{ role_path }}/tasks/validate_config.yml"
+    - name: Validate DNS Records configuration for {{ dns_records_provider }}
+      ansible.builtin.include_tasks: "{{ role_path }}/tasks/{{ dns_records_provider }}/validate_config.yml"
+    - name: Install DNS Records for {{ dns_records_provider }}
+      ansible.builtin.include_tasks: "{{ role_path }}/tasks/{{ dns_records_provider }}/install.yml"
+
+- name: Perform DNS Records uninstallation tasks
+  when: not dns_records_enabled | bool
+  tags:
+    - setup-all
+    - setup-dns-records
+  block:
+    - name: Uninstall DNS Records
+      ansible.builtin.include_tasks: "{{ role_path }}/tasks/uninstall.yml"
