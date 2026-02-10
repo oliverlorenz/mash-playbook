@@ -1,0 +1,12 @@
+---
+dns_records_enabled: true
+dns_records_default_ttl: 3600
+
+dns_records_provider: ""
+
+dns_records_nsupdate_zone: ""
+dns_records_nsupdate_key_secret: ""
+dns_records_nsupdate_server: ""
+
+dns_records_hetzner_zone: ""
+dns_records_hetzner_api_token: ""
