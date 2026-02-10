@@ -1,0 +1,49 @@
+{#
+SPDX-FileCopyrightText: 2023 Slavi Pantaleev
+SPDX-FileCopyrightText: 2025 Suguru Hirahara
+SPDX-FileCopyrightText: 2025 Oliver Lorenz
+
+SPDX-License-Identifier: AGPL-3.0-or-later
+#}
+
+{% if gowa_container_labels_traefik_enabled %}
+traefik.enable=true
+
+{% if gowa_container_labels_traefik_docker_network %}
+traefik.docker.network={{ gowa_container_labels_traefik_docker_network }}
+{% endif %}
+
+{% set middlewares = [] %}
+
+{% if gowa_container_labels_traefik_additional_request_headers.keys() | length > 0 %}
+{% for name, value in gowa_container_labels_traefik_additional_request_headers.items() %}
+traefik.http.middlewares.{{ gowa_identifier }}-add-request-headers.headers.customrequestheaders.{{ name }}={{ value }}
+{% endfor %}
+{% set middlewares = middlewares + [gowa_identifier + '-add-request-headers'] %}
+{% endif %}
+
+{% if gowa_container_labels_traefik_additional_response_headers.keys() | length > 0 %}
+{% for name, value in gowa_container_labels_traefik_additional_response_headers.items() %}
+traefik.http.middlewares.{{ gowa_identifier }}-add-response-headers.headers.customresponseheaders.{{ name }}={{ value }}
+{% endfor %}
+{% set middlewares = middlewares + [gowa_identifier + '-add-response-headers'] %}
+{% endif %}
+
+traefik.http.routers.{{ gowa_identifier }}.rule={{ gowa_container_labels_traefik_rule }}
+{% if gowa_container_labels_traefik_priority | int > 0 %}
+traefik.http.routers.{{ gowa_identifier }}.priority={{ gowa_container_labels_traefik_priority }}
+{% endif %}
+traefik.http.routers.{{ gowa_identifier }}.service={{ gowa_identifier }}
+{% if middlewares | length > 0 %}
+traefik.http.routers.{{ gowa_identifier }}.middlewares={{ middlewares | join(',') }}
+{% endif %}
+traefik.http.routers.{{ gowa_identifier }}.entrypoints={{ gowa_container_labels_traefik_entrypoints }}
+traefik.http.routers.{{ gowa_identifier }}.tls={{ gowa_container_labels_traefik_tls | to_json }}
+{% if gowa_container_labels_traefik_tls %}
+traefik.http.routers.{{ gowa_identifier }}.tls.certResolver={{ gowa_container_labels_traefik_tls_certResolver }}
+{% endif %}
+
+traefik.http.services.{{ gowa_identifier }}.loadbalancer.server.port={{ gowa_container_http_port }}
+{% endif %}
+
+{{ gowa_container_labels_additional_labels }}

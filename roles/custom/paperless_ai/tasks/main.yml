@@ -1,0 +1,22 @@
+---
+- name: Perform Nextcloud Paperless Sync installation tasks
+  when: paperless_ai_enabled | bool
+  tags:
+    - setup-all
+    - setup-paperless-ai
+    - install-all
+    - install-paperless-ai
+  block:
+    - name: Validate Nextcloud Paperless Sync configuration
+      ansible.builtin.include_tasks: "{{ role_path }}/tasks/validate_config.yml"
+    - name: Install Nextcloud Paperless Sync
+      ansible.builtin.include_tasks: "{{ role_path }}/tasks/install.yml"
+
+- name: Perform Nextcloud Paperless Sync uninstallation tasks
+  when: not paperless_ai_enabled | bool
+  tags:
+    - setup-all
+    - setup-paperless-ai
+  block:
+    - name: Uninstall Nextcloud Paperless Sync
+      ansible.builtin.include_tasks: "{{ role_path }}/tasks/uninstall.yml"

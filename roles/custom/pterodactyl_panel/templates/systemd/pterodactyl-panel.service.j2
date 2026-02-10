@@ -1,0 +1,61 @@
+{#
+SPDX-FileCopyrightText: 2023 Slavi Pantaleev
+SPDX-FileCopyrightText: 2024 Nikita Chernyi
+SPDX-FileCopyrightText: 2025 Suguru Hirahara
+SPDX-FileCopyrightText: 2025 Oliver Lorenz
+
+SPDX-License-Identifier: AGPL-3.0-or-later
+#}
+
+[Unit]
+Description=Pterodactyl Panel ({{ pterodactyl_panel_identifier }})
+{% for service in pterodactyl_panel_systemd_required_services_list %}
+Requires={{ service }}
+After={{ service }}
+{% endfor %}
+{% for service in pterodactyl_panel_systemd_wanted_services_list %}
+Wants={{ service }}
+{% endfor %}
+DefaultDependencies=no
+
+[Service]
+Type=simple
+Environment="HOME={{ devture_systemd_docker_base_systemd_unit_home_path }}"
+ExecStartPre=-{{ devture_systemd_docker_base_host_command_sh }} -c '{{ devture_systemd_docker_base_host_command_docker }} stop -t {{ devture_systemd_docker_base_container_stop_grace_time_seconds }} {{ pterodactyl_panel_identifier }} 2>/dev/null || true'
+ExecStartPre=-{{ devture_systemd_docker_base_host_command_sh }} -c '{{ devture_systemd_docker_base_host_command_docker }} rm {{ pterodactyl_panel_identifier }} 2>/dev/null || true'
+
+ExecStartPre={{ devture_systemd_docker_base_host_command_docker }} create \
+      --rm \
+      --name={{ pterodactyl_panel_identifier }} \
+      --log-driver=none \
+      --user={{ pterodactyl_panel_uid }}:{{ pterodactyl_panel_gid }} \
+      --cap-drop=ALL \
+      --network={{ pterodactyl_panel_container_network }} \
+      {% if pterodactyl_panel_container_http_host_bind_port %}
+      -p {{ pterodactyl_panel_container_http_host_bind_port }}:{{ pterodactyl_panel_container_http_port }} \
+      {% endif %}
+      --env-file={{ pterodactyl_panel_base_path }}/env \
+      --label-file={{ pterodactyl_panel_base_path }}/labels \
+      {% for volume in pterodactyl_panel_container_additional_volumes %}
+      --mount type={{ volume.type | default('bind' if '/' in volume.src else 'volume') }},src={{ volume.src }},dst={{ volume.dst }}{{ (',' + volume.options) if volume.options else '' }} \
+      {% endfor %}
+      {% for arg in pterodactyl_panel_container_extra_arguments %}
+      {{ arg }} \
+      {% endfor %}
+      {{ pterodactyl_panel_container_image_self_build_name if pterodactyl_panel_container_image_self_build else pterodactyl_panel_container_image }}
+
+{% for network in pterodactyl_panel_container_additional_networks %}
+ExecStartPre={{ devture_systemd_docker_base_host_command_docker }} network connect {{ network }} {{ pterodactyl_panel_identifier }}
+{% endfor %}
+
+ExecStart={{ devture_systemd_docker_base_host_command_docker }} start --attach {{ pterodactyl_panel_identifier }}
+
+ExecStop=-{{ devture_systemd_docker_base_host_command_sh }} -c '{{ devture_systemd_docker_base_host_command_docker }} stop -t {{ devture_systemd_docker_base_container_stop_grace_time_seconds }} {{ pterodactyl_panel_identifier }} 2>/dev/null || true'
+ExecStop=-{{ devture_systemd_docker_base_host_command_sh }} -c '{{ devture_systemd_docker_base_host_command_docker }} rm {{ pterodactyl_panel_identifier }} 2>/dev/null || true'
+
+Restart=always
+RestartSec=30
+SyslogIdentifier={{ pterodactyl_panel_identifier }}
+
+[Install]
+WantedBy=multi-user.target

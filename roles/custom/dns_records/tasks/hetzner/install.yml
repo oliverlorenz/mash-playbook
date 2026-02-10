@@ -1,0 +1,12 @@
+---
+- name: Create DNS records at Hetzner
+  hetzner.hcloud.zone_rrset:
+    zone: "{{ dns_records_hetzner_zone }}"
+    name: "{{ item.prefix }}"
+    type: "{{ item.type }}"
+    ttl: "{{ item.ttl | default(dns_records_default_ttl) }}"
+    records:
+      - value: "{{ item.value }}"
+    state: "{{ item.state | default('present') }}"
+    api_token: "{{ dns_records_hetzner_api_token }}"
+  loop: "{{ q('varnames', '.+_dns_records') | map('extract', vars) | flatten }}"
