@@ -1,0 +1,10 @@
+---
+- name: Fail if required DNS Records settings not defined
+  ansible.builtin.fail:
+    msg: >-
+      You need to define a required configuration setting (`{{ item }}`).
+  when: "lookup('vars', item, default='') | string | length == 0"
+  with_items:
+    - dns_records_nsupdate_zone
+    - dns_records_nsupdate_key_secret
+    - dns_records_nsupdate_server

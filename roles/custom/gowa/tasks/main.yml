@@ -1,0 +1,28 @@
+# SPDX-FileCopyrightText: 2023 Slavi Pantaleev
+# SPDX-FileCopyrightText: 2025 Suguru Hirahara
+# SPDX-FileCopyrightText: 2025 Oliver Lorenz
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+---
+- name: Perform GOWA installation tasks
+  when: gowa_enabled | bool
+  tags:
+    - setup-all
+    - setup-gowa
+    - install-all
+    - install-gowa
+  block:
+    - name: Validate GOWA configuration
+      ansible.builtin.include_tasks: "{{ role_path }}/tasks/validate_config.yml"
+    - name: Install GOWA
+      ansible.builtin.include_tasks: "{{ role_path }}/tasks/install.yml"
+
+- name: Perform GOWA uninstallation tasks
+  when: not gowa_enabled | bool
+  tags:
+    - setup-all
+    - setup-gowa
+  block:
+    - name: Uninstall GOWA
+      ansible.builtin.include_tasks: "{{ role_path }}/tasks/uninstall.yml"

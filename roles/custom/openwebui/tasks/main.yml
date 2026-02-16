@@ -1,0 +1,22 @@
+---
+- name: Perform OpenWebUI installation tasks
+  when: openwebui_enabled | bool
+  tags:
+    - setup-all
+    - setup-openwebui
+    - install-all
+    - install-openwebui
+  block:
+    - name: Validate OpenWebUI configuration
+      ansible.builtin.include_tasks: "{{ role_path }}/tasks/validate_config.yml"
+    - name: Install OpenWebUI
+      ansible.builtin.include_tasks: "{{ role_path }}/tasks/install.yml"
+
+- name: Perform OpenWebUI uninstallation tasks
+  when: not openwebui_enabled | bool
+  tags:
+    - setup-all
+    - setup-openwebui
+  block:
+    - name: Uninstall OpenWebUI
+      ansible.builtin.include_tasks: "{{ role_path }}/tasks/uninstall.yml"

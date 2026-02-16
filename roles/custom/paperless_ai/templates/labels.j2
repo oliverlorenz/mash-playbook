@@ -1,0 +1,54 @@
+{% if paperless_ai_container_labels_traefik_enabled %}
+traefik.enable=true
+
+{% if paperless_ai_container_labels_traefik_docker_network %}
+traefik.docker.network={{ paperless_ai_container_labels_traefik_docker_network }}
+{% endif %}
+
+{% set middlewares = [] %}
+
+{% if paperless_ai_container_labels_traefik_path_prefix != '/' %}
+traefik.http.middlewares.{{ paperless_ai_identifier }}-slashless-redirect.redirectregex.regex=^({{ paperless_ai_container_labels_traefik_path_prefix | quote }})$
+traefik.http.middlewares.{{ paperless_ai_identifier }}-slashless-redirect.redirectregex.replacement=${1}/
+{% set middlewares = middlewares + [paperless_ai_identifier + '-slashless-redirect'] %}
+{% endif %}
+
+{% if paperless_ai_container_labels_traefik_path_prefix != '/' %}
+traefik.http.middlewares.{{ paperless_ai_identifier }}-strip-prefix.stripprefix.prefixes={{ paperless_ai_container_labels_traefik_path_prefix }}
+{% set middlewares = middlewares + [paperless_ai_identifier + '-strip-prefix'] %}
+{% endif %}
+
+{% if paperless_ai_container_labels_traefik_additional_request_headers.keys() | length > 0 %}
+{% for name, value in paperless_ai_container_labels_traefik_additional_request_headers.items() %}
+traefik.http.middlewares.{{ paperless_ai_identifier }}-add-request-headers.headers.customrequestheaders.{{ name }}={{ value }}
+{% endfor %}
+{% set middlewares = middlewares + [paperless_ai_identifier + '-add-request-headers'] %}
+{% endif %}
+
+{% if paperless_ai_container_labels_traefik_additional_response_headers.keys() | length > 0 %}
+{% for name, value in paperless_ai_container_labels_traefik_additional_response_headers.items() %}
+traefik.http.middlewares.{{ paperless_ai_identifier }}-add-response-headers.headers.customresponseheaders.{{ name }}={{ value }}
+{% endfor %}
+{% set middlewares = middlewares + [paperless_ai_identifier + '-add-response-headers'] %}
+{% endif %}
+
+traefik.http.routers.{{ paperless_ai_identifier }}.rule={{ paperless_ai_container_labels_traefik_rule }}
+{% if paperless_ai_container_labels_traefik_priority | int > 0 %}
+traefik.http.routers.{{ paperless_ai_identifier }}.priority={{ paperless_ai_container_labels_traefik_priority }}
+{% endif %}
+traefik.http.routers.{{ paperless_ai_identifier }}.service={{ paperless_ai_identifier }}
+{% if middlewares | length > 0 %}
+traefik.http.routers.{{ paperless_ai_identifier }}.middlewares={{ middlewares | join(',') }}
+{% endif %}
+traefik.http.routers.{{ paperless_ai_identifier }}.entrypoints={{ paperless_ai_container_labels_traefik_entrypoints }}
+traefik.http.routers.{{ paperless_ai_identifier }}.tls={{ paperless_ai_container_labels_traefik_tls | to_json }}
+{% if paperless_ai_container_labels_traefik_tls %}
+traefik.http.routers.{{ paperless_ai_identifier }}.tls.certResolver={{ paperless_ai_container_labels_traefik_tls_certResolver }}
+{% endif %}
+
+traefik.http.services.{{ paperless_ai_identifier }}.loadbalancer.server.port={{ paperless_ai_container_http_port }}
+{% endif %}
+
+{% for arg in paperless_ai_container_labels_additional_labels %}
+{{ arg }}
+{% endfor %}
