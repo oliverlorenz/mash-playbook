@@ -645,6 +645,10 @@
     - role: galaxy/openregex
     # /role-specific:openregex
 
+    # role-specific:openwebui
+    - role: custom/openwebui
+    # /role-specific:openwebui
+
     # role-specific:origamivault
     - role: galaxy/origamivault
     # /role-specific:origamivault

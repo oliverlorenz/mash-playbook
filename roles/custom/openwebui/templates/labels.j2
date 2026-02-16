@@ -1,0 +1,54 @@
+{% if openwebui_container_labels_traefik_enabled %}
+traefik.enable=true
+
+{% if openwebui_container_labels_traefik_docker_network %}
+traefik.docker.network={{ openwebui_container_labels_traefik_docker_network }}
+{% endif %}
+
+{% set middlewares = [] %}
+
+{% if openwebui_container_labels_traefik_path_prefix != '/' %}
+traefik.http.middlewares.{{ openwebui_identifier }}-slashless-redirect.redirectregex.regex=^({{ openwebui_container_labels_traefik_path_prefix | quote }})$
+traefik.http.middlewares.{{ openwebui_identifier }}-slashless-redirect.redirectregex.replacement=${1}/
+{% set middlewares = middlewares + [openwebui_identifier + '-slashless-redirect'] %}
+{% endif %}
+
+{% if openwebui_container_labels_traefik_path_prefix != '/' %}
+traefik.http.middlewares.{{ openwebui_identifier }}-strip-prefix.stripprefix.prefixes={{ openwebui_container_labels_traefik_path_prefix }}
+{% set middlewares = middlewares + [openwebui_identifier + '-strip-prefix'] %}
+{% endif %}
+
+{% if openwebui_container_labels_traefik_additional_request_headers.keys() | length > 0 %}
+{% for name, value in openwebui_container_labels_traefik_additional_request_headers.items() %}
+traefik.http.middlewares.{{ openwebui_identifier }}-add-request-headers.headers.customrequestheaders.{{ name }}={{ value }}
+{% endfor %}
+{% set middlewares = middlewares + [openwebui_identifier + '-add-request-headers'] %}
+{% endif %}
+
+{% if openwebui_container_labels_traefik_additional_response_headers.keys() | length > 0 %}
+{% for name, value in openwebui_container_labels_traefik_additional_response_headers.items() %}
+traefik.http.middlewares.{{ openwebui_identifier }}-add-response-headers.headers.customresponseheaders.{{ name }}={{ value }}
+{% endfor %}
+{% set middlewares = middlewares + [openwebui_identifier + '-add-response-headers'] %}
+{% endif %}
+
+traefik.http.routers.{{ openwebui_identifier }}.rule={{ openwebui_container_labels_traefik_rule }}
+{% if openwebui_container_labels_traefik_priority | int > 0 %}
+traefik.http.routers.{{ openwebui_identifier }}.priority={{ openwebui_container_labels_traefik_priority }}
+{% endif %}
+traefik.http.routers.{{ openwebui_identifier }}.service={{ openwebui_identifier }}
+{% if middlewares | length > 0 %}
+traefik.http.routers.{{ openwebui_identifier }}.middlewares={{ middlewares | join(',') }}
+{% endif %}
+traefik.http.routers.{{ openwebui_identifier }}.entrypoints={{ openwebui_container_labels_traefik_entrypoints }}
+traefik.http.routers.{{ openwebui_identifier }}.tls={{ openwebui_container_labels_traefik_tls | to_json }}
+{% if openwebui_container_labels_traefik_tls %}
+traefik.http.routers.{{ openwebui_identifier }}.tls.certResolver={{ openwebui_container_labels_traefik_tls_certResolver }}
+{% endif %}
+
+traefik.http.services.{{ openwebui_identifier }}.loadbalancer.server.port={{ openwebui_container_http_port }}
+{% endif %}
+
+{% for arg in openwebui_container_labels_additional_labels %}
+{{ arg }}
+{% endfor %}

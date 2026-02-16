@@ -1,0 +1,65 @@
+---
+- name: Fail if required OpenWebUI settings not defined
+  ansible.builtin.fail:
+    msg: >-
+      You need to define a required configuration setting (`{{ item }}`).
+  when: "lookup('vars', item, default='') | string | length == 0"
+  with_items:
+    - openwebui_secret_key
+    - openwebui_admin_email
+    - openwebui_admin_password
+
+- name: Fail if required OpenWebUI OpenAI settings not defined
+  ansible.builtin.fail:
+    msg: >-
+      You need to define a required configuration setting (`{{ item }}`).
+  when: "openwebui_openai_api_enabled and lookup('vars', item, default='') | string | length == 0"
+  with_items:
+    - openwebui_openai_api_key
+
+
+- name: Fail if required OpenWebUI web search settings not defined
+  ansible.builtin.fail:
+    msg: >-
+      You need to define a required configuration setting (`{{ item }}`).
+  when: "openwebui_web_search_enabled and lookup('vars', item, default='') | string | length == 0"
+  with_items:
+    - openwebui_web_search_engine
+
+- name: Fail if required OpenWebUI image generation settings not defined
+  ansible.builtin.fail:
+    msg: >-
+      You need to define a required configuration setting (`{{ item }}`).
+  when: "openwebui_image_generation_enabled and lookup('vars', item, default='') | string | length == 0"
+  with_items:
+    - openwebui_image_generation_engine
+    - openwebui_image_generation_model
+    - openwebui_image_generation_image_size
+
+- name: Run if Traefik is enabled
+  when: openwebui_container_labels_traefik_enabled | bool
+  block:
+    - name: Fail if Traefik settings required for OpenWebUI are not defined
+      ansible.builtin.fail:
+        msg: >-
+          You need to define a required configuration setting (`{{ item }}`).
+      when: "lookup('vars', item, default='') | string | length == 0"
+      with_items:
+        - openwebui_container_labels_traefik_hostname
+        - openwebui_container_labels_traefik_path_prefix
+
+    - name: Fail if openwebui_container_labels_traefik_path_prefix is different than /
+      ansible.builtin.fail:
+        msg: >-
+          openwebui_container_labels_traefik_path_prefix (`{{ openwebui_container_labels_traefik_path_prefix }}`) must be `/`.
+          OpenWebUI does not support hosting under a subpath yet.
+      when: "openwebui_container_labels_traefik_path_prefix != '/'"
+
+    # We ensure it doesn't end with a slash, because we handle both (slash and no-slash).
+    # Knowing that `openwebui_container_labels_traefik_path_prefix` does not end with a slash
+    # ensures we know how to set these routes up without having to do "does it end with a slash" checks elsewhere.
+    - name: Fail if openwebui_container_labels_traefik_path_prefix ends with a slash
+      ansible.builtin.fail:
+        msg: >-
+          openwebui_container_labels_traefik_path_prefix (`{{ openwebui_container_labels_traefik_path_prefix }}`) must either be `/` or not end with a slash (e.g. `/openwebui`).
+      when: "openwebui_container_labels_traefik_path_prefix != '/' and openwebui_container_labels_traefik_path_prefix[-1] == '/'"
