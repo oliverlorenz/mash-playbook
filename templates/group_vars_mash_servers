@@ -1131,6 +1131,16 @@ mash_playbook_devture_systemd_service_manager_services_list_auto_itemized:
     {{ ({'name': (soundcloak_identifier + '.service'), 'priority': 2000, 'restart_necessary': true, 'groups': ['mash', 'soundcloak']} if soundcloak_enabled else omit) }}
   # /role-specific:soundcloak
 
+  # role-specific:spoolman
+  - |-
+    {{ ({'name': (spoolman_identifier + '.service'), 'priority': 2000, 'restart_necessary': true, 'groups': ['mash', 'spoolman']} if spoolman_enabled else omit) }}
+  # /role-specific:spoolman
+
+  # role-specific:bambulab_spoolman
+  - |-
+    {{ ({'name': (bambulab_spoolman_identifier + '.service'), 'priority': 2000, 'restart_necessary': true, 'groups': ['mash', 'bambulab_spoolman']} if bambulab_spoolman_enabled else omit) }}
+  # /role-specific:bambulab_spoolman
+
   # role-specific:statusnook
   - |-
     {{ ({'name': (statusnook_identifier + '.service'), 'priority': 2000, 'restart_necessary': true, 'groups': ['mash', 'statusnook']} if statusnook_enabled else omit) }}
@@ -2917,7 +2927,7 @@ appsmith_container_labels_traefik_entrypoints: "{{ traefik_entrypoint_primary }}
 appsmith_container_labels_traefik_tls_certResolver: "{{ traefik_certResolver_primary }}"
 # /role-specific:traefik
 
-########################################################################
+########################################################################bento
 #                                                                      #
 # /appsmith                                                            #
 #                                                                      #
@@ -13369,6 +13379,81 @@ soundcloak_container_labels_traefik_tls_certResolver: "{{ traefik_certResolver_p
 #                                                                      #
 ########################################################################
 # /role-specific:soundcloak
+
+
+
+# role-specific:spoolman
+########################################################################
+#                                                                      #
+# spoolman                                                           #
+#                                                                      #
+########################################################################
+
+spoolman_enabled: false
+
+spoolman_identifier: "{{ mash_playbook_service_identifier_prefix }}spoolman"
+spoolman_base_path: "{{ mash_playbook_base_path }}/{{ mash_playbook_service_base_directory_name_prefix }}spoolman"
+
+spoolman_uid: "{{ mash_playbook_uid }}"
+spoolman_gid: "{{ mash_playbook_gid }}"
+
+spoolman_container_additional_networks_auto: |
+  {{
+    ([mash_playbook_reverse_proxyable_services_additional_network] if mash_playbook_reverse_proxyable_services_additional_network else [])
+    +
+    ([spoolman_container_network] if spoolman_enabled | default(false) else [])
+  }}
+
+spoolman_container_labels_traefik_enabled: "{{ mash_playbook_traefik_labels_enabled }}"
+spoolman_container_labels_traefik_docker_network: "{{ mash_playbook_reverse_proxyable_services_additional_network }}"
+
+# role-specific:traefik
+spoolman_container_labels_traefik_entrypoints: "{{ traefik_entrypoint_primary }}"
+spoolman_container_labels_traefik_tls_certResolver: "{{ traefik_certResolver_primary }}"
+# /role-specific:traefik
+
+########################################################################
+#                                                                      #
+# /spoolman                                                            #
+#                                                                      #
+########################################################################
+# /role-specific:spoolman
+
+
+# role-specific:bambulab_spoolman
+########################################################################
+#                                                                      #
+# bambulab_spoolman                                                           #
+#                                                                      #
+########################################################################
+
+bambulab_spoolman_enabled: false
+
+bambulab_spoolman_identifier: "{{ mash_playbook_service_identifier_prefix }}bambulab-spoolman"
+bambulab_spoolman_base_path: "{{ mash_playbook_base_path }}/{{ mash_playbook_service_base_directory_name_prefix }}bambulab-spoolman"
+
+bambulab_spoolman_uid: "{{ mash_playbook_uid }}"
+bambulab_spoolman_gid: "{{ mash_playbook_gid }}"
+
+bambulab_spoolman_container_additional_networks_auto: |
+  {{
+    ([mash_playbook_reverse_proxyable_services_additional_network] if mash_playbook_reverse_proxyable_services_additional_network else [])
+  }}
+
+bambulab_spoolman_container_labels_traefik_enabled: "{{ mash_playbook_traefik_labels_enabled }}"
+bambulab_spoolman_container_labels_traefik_docker_network: "{{ mash_playbook_reverse_proxyable_services_additional_network }}"
+
+# role-specific:traefik
+bambulab_spoolman_container_labels_traefik_entrypoints: "{{ traefik_entrypoint_primary }}"
+bambulab_spoolman_container_labels_traefik_tls_certResolver: "{{ traefik_certResolver_primary }}"
+# /role-specific:traefik
+
+########################################################################
+#                                                                      #
+# /bambulab_spoolman                                                            #
+#                                                                      #
+########################################################################
+# /role-specific:bambulab_spoolman
 
 
 

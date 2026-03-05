@@ -865,6 +865,14 @@
     - role: galaxy/soundcloak
     # /role-specific:soundcloak
 
+    # role-specific:spoolman
+    - role: custom/spoolman
+    # /role-specific:spoolman
+
+    # role-specific:spoolman
+    - role: custom/bambulab_spoolman
+    # /role-specific:spoolman
+
     # role-specific:statusnook
     - role: galaxy/statusnook
     # /role-specific:statusnook

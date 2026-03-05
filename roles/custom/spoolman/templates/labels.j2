@@ -1,0 +1,54 @@
+{% if spoolman_container_labels_traefik_enabled %}
+traefik.enable=true
+
+{% if spoolman_container_labels_traefik_docker_network %}
+traefik.docker.network={{ spoolman_container_labels_traefik_docker_network }}
+{% endif %}
+
+{% set middlewares = [] %}
+
+{% if spoolman_container_labels_traefik_path_prefix != '/' %}
+traefik.http.middlewares.{{ spoolman_identifier }}-slashless-redirect.redirectregex.regex=^({{ spoolman_container_labels_traefik_path_prefix | quote }})$
+traefik.http.middlewares.{{ spoolman_identifier }}-slashless-redirect.redirectregex.replacement=${1}/
+{% set middlewares = middlewares + [spoolman_identifier + '-slashless-redirect'] %}
+{% endif %}
+
+{% if spoolman_container_labels_traefik_path_prefix != '/' %}
+traefik.http.middlewares.{{ spoolman_identifier }}-strip-prefix.stripprefix.prefixes={{ spoolman_container_labels_traefik_path_prefix }}
+{% set middlewares = middlewares + [spoolman_identifier + '-strip-prefix'] %}
+{% endif %}
+
+{% if spoolman_container_labels_traefik_additional_request_headers.keys() | length > 0 %}
+{% for name, value in spoolman_container_labels_traefik_additional_request_headers.items() %}
+traefik.http.middlewares.{{ spoolman_identifier }}-add-request-headers.headers.customrequestheaders.{{ name }}={{ value }}
+{% endfor %}
+{% set middlewares = middlewares + [spoolman_identifier + '-add-request-headers'] %}
+{% endif %}
+
+{% if spoolman_container_labels_traefik_additional_response_headers.keys() | length > 0 %}
+{% for name, value in spoolman_container_labels_traefik_additional_response_headers.items() %}
+traefik.http.middlewares.{{ spoolman_identifier }}-add-response-headers.headers.customresponseheaders.{{ name }}={{ value }}
+{% endfor %}
+{% set middlewares = middlewares + [spoolman_identifier + '-add-response-headers'] %}
+{% endif %}
+
+traefik.http.routers.{{ spoolman_identifier }}.rule={{ spoolman_container_labels_traefik_rule }}
+{% if spoolman_container_labels_traefik_priority | int > 0 %}
+traefik.http.routers.{{ spoolman_identifier }}.priority={{ spoolman_container_labels_traefik_priority }}
+{% endif %}
+traefik.http.routers.{{ spoolman_identifier }}.service={{ spoolman_identifier }}
+{% if middlewares | length > 0 %}
+traefik.http.routers.{{ spoolman_identifier }}.middlewares={{ middlewares | join(',') }}
+{% endif %}
+traefik.http.routers.{{ spoolman_identifier }}.entrypoints={{ spoolman_container_labels_traefik_entrypoints }}
+traefik.http.routers.{{ spoolman_identifier }}.tls={{ spoolman_container_labels_traefik_tls | to_json }}
+{% if spoolman_container_labels_traefik_tls %}
+traefik.http.routers.{{ spoolman_identifier }}.tls.certResolver={{ spoolman_container_labels_traefik_tls_certResolver }}
+{% endif %}
+
+traefik.http.services.{{ spoolman_identifier }}.loadbalancer.server.port={{ spoolman_container_http_port }}
+{% endif %}
+
+{% for arg in spoolman_container_labels_additional_labels %}
+{{ arg }}
+{% endfor %}

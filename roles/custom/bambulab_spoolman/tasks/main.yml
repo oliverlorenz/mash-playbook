@@ -1,0 +1,28 @@
+# SPDX-FileCopyrightText: 2023 Slavi Pantaleev
+# SPDX-FileCopyrightText: 2025 Suguru Hirahara
+# SPDX-FileCopyrightText: 2025 Oliver Lorenz
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+---
+- name: Perform Spoolman installation tasks
+  when: bambulab_spoolman_enabled | bool
+  tags:
+    - setup-all
+    - setup-bambulab_spoolman
+    - install-all
+    - install-bambulab_spoolman
+  block:
+    - name: Validate Spoolman configuration
+      ansible.builtin.include_tasks: "{{ role_path }}/tasks/validate_config.yml"
+    - name: Install Spoolman
+      ansible.builtin.include_tasks: "{{ role_path }}/tasks/install.yml"
+
+- name: Perform Spoolman uninstallation tasks
+  when: not bambulab_spoolman_enabled | bool
+  tags:
+    - setup-all
+    - setup-bambulab_spoolman
+  block:
+    - name: Uninstall Spoolman
+      ansible.builtin.include_tasks: "{{ role_path }}/tasks/uninstall.yml"
