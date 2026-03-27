@@ -34,6 +34,7 @@ For details about configuring the [Ansible role for Homarr](https://github.com/m
 This service requires the following other services:
 
 - [Traefik](traefik.md) reverse-proxy server
+- (optional) [ntfy](ntfy.md)
 - (optional) [Postgres](postgres.md) / MySQL database — Homarr will default to [SQLite](https://www.sqlite.org/) if Postgres is not enabled
 
 >[!NOTE]
@@ -109,3 +110,7 @@ See [this page](https://homarr.dev/docs/category/integrations) on the official d
 ## Troubleshooting
 
 See [this section](https://github.com/mother-of-all-self-hosting/ansible-role-homarr/blob/main/docs/configuring-homarr.md#troubleshooting) on the role's documentation for details.
+
+## Related services
+
+- "* Arr" applications — [Autobrr](autobrr.md) / [FlareSolverr](flaresolverr.md) / [Jellyseerr](jellyseerr.md) / [Overseerr](overseerr.md) / [Radarr](radarr.md) / [Sonarr](sonarr.md)
