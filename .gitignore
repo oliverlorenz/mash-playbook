@@ -1,4 +1,4 @@
-/inventory
+# /inventory
 
 # ignore files created by running pre-commit locally
 .ansible
@@ -24,3 +24,7 @@
 
 /group_vars/*
 !/group_vars/.gitkeep
+
+# custom ignores
+.ansible
+.env
