@@ -1,19 +1,23 @@
 <!--
 SPDX-FileCopyrightText: 2025 MASH project contributors
-SPDX-FileCopyrightText: 2025 Suguru Hirahara
+SPDX-FileCopyrightText: 2025, 2026 Suguru Hirahara
 
 SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 
 # Radarr
 
-[Radarr](https://radarr.video/) is a movie organizer/manager for Usenet and BitTorrent users.
+The playbook can install and configure [Radarr](https://radarr.video/) for you.
+
+Radarr is a movie organizer/manager for Usenet and BitTorrent users.
+
+See the project's [documentation](https://wiki.servarr.com/radarr) to learn what Radarr does and why it might be useful to you.
 
 ## Dependencies
 
 This service requires the following other services:
 
-- a [Traefik](traefik.md) reverse-proxy server
+- [Traefik](traefik.md) reverse-proxy server
 
 ## Configuration
 
@@ -62,10 +66,11 @@ For additional configuration options, refer to [ansible-role-radarr](https://git
 
 ## Related services
 
-- "* Arr" applications — [Autobrr](autobrr.md) / [FlareSolverr](flaresolverr.md) / [Homarr](homarr.md) / [Jellyseerr](jellyseerr.md) / [Overseerr](overseerr.md) / [Sonarr](sonarr.md)
+- "* Arr" applications — [Autobrr](autobrr.md) / [Homarr](homarr.md) / [Sonarr](sonarr.md)
 - [Jackett](jackett.md)
   - For Jackett integration instructions, see the [setup guide](jackett.md#intergration-with-sonarrradarr)
 - [Jellyfin](jellyfin.md)
+- [Seerr](seerr.md)
 - [Plex](plex.md)
 - [qBittorrent](qbittorrent.md)
   - For qBittorrent integration instructions, see the [setup guide](qbittorrent.md#intergration-with-sonarrradarr)

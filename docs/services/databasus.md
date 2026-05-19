@@ -20,14 +20,18 @@ SPDX-License-Identifier: AGPL-3.0-or-later
 
 # Databasus
 
+>[!CAUTION]
+> The original author [declared](https://github.com/databasus/databasus/issues/199) that Databasus did not support running the service as non-root user because it is allegedly "very rare case needed for less than 1%< of users."
+
 The playbook can install and configure [Databasus](https://databasus.com/) for you.
 
 Databasus is free software for backing up database of PostgreSQL, MySQL, MariaDB, and MongoDB.
 
 See the project's [documentation](https://databasus.com/installation) to learn what Databasus does and why it might be useful to you.
 
-For details about configuring the [Ansible role for Databasus](https://app.radicle.xyz/nodes/seed.radicle.garden/rad%3AzeQ4hXq2LkbADcndSsjesgq9kDPf), you can check them via:
-- 🌐 [the role's documentation](https://app.radicle.xyz/nodes/seed.radicle.garden/rad%3AzeQ4hXq2LkbADcndSsjesgq9kDPf/tree/docs/configuring-databasus.md) online
+For details about configuring the [Ansible role for Databasus](https://radicle.network/nodes/seed.radicle.garden/rad%3AzeQ4hXq2LkbADcndSsjesgq9kDPf), you can check them via:
+
+- 🌐 [the role's documentation](https://radicle.network/nodes/seed.radicle.garden/rad%3AzeQ4hXq2LkbADcndSsjesgq9kDPf/tree/docs/configuring-databasus.md) online
 - 📁 `roles/galaxy/databasus/docs/configuring-databasus.md` locally, if you have [fetched the Ansible roles](../installing.md)
 
 ## Dependencies
@@ -37,7 +41,7 @@ This service requires the following other services:
 - [Traefik](traefik.md) reverse-proxy server
 - (optional) [exim-relay](exim-relay.md) mailer
 
-## Adjusting the playbook configuration
+## Configuration
 
 To enable this service, add the following configuration to your `vars.yml` file and re-run the [installation](../installing.md) process:
 
@@ -89,7 +93,7 @@ After setting the configuration, you can have the Databasus instance send a test
 
 ## Troubleshooting
 
-See [this section](https://app.radicle.xyz/nodes/seed.radicle.garden/rad%3AzeQ4hXq2LkbADcndSsjesgq9kDPf/tree/docs/configuring-databasus.md#troubleshooting) on the role's documentation for details.
+See [this section](https://radicle.network/nodes/seed.radicle.garden/rad%3AzeQ4hXq2LkbADcndSsjesgq9kDPf/tree/docs/configuring-databasus.md#troubleshooting) on the role's documentation for details.
 
 ## Related services
 

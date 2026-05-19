@@ -26,6 +26,7 @@ Homarr is a highly customizable dashboard for management of your favorite applic
 See the project's [documentation](https://homarr.dev/docs/getting-started) to learn what Homarr does and why it might be useful to you.
 
 For details about configuring the [Ansible role for Homarr](https://github.com/mother-of-all-self-hosting/ansible-role-homarr), you can check them via:
+
 - 🌐 [the role's documentation](https://github.com/mother-of-all-self-hosting/ansible-role-homarr/blob/main/docs/configuring-homarr.md) online
 - 📁 `roles/galaxy/homarr/docs/configuring-homarr.md` locally, if you have [fetched the Ansible roles](../installing.md)
 
@@ -40,7 +41,7 @@ This service requires the following other services:
 >[!NOTE]
 > Currently (as of v1.35.0) MariaDB is not supported but planned. See [this issue at GitHub](https://github.com/homarr-labs/homarr/issues/2305) for the latest information.
 
-## Adjusting the playbook configuration
+## Configuration
 
 To enable this service, add the following configuration to your `vars.yml` file and re-run the [installation](../installing.md) process:
 
@@ -64,9 +65,9 @@ homarr_hostname: homarr.example.com
 
 **Note**: hosting Homarr under a subpath (by configuring the `homarr_path_prefix` variable) does not seem to be possible due to Homarr's technical limitations.
 
-### Set 32-byte hex digits for secret key
+### Set random 32-byte hex digits for secret key
 
-You also need to specify **32-byte hex digits** to encrypt integration secrets on the database. To do so, add the following configuration to your `vars.yml` file. The value can be generated with `openssl rand -hex 32` or in another way.
+You also need to set random **32-byte hex digits** to encrypt integration secrets on the database. To do so, add the following configuration to your `vars.yml` file. The value can be generated with `openssl rand -hex 32` or in another way.
 
 ```yaml
 homarr_environment_variables_secret_encryption_key: YOUR_SECRET_KEY_HERE
@@ -82,7 +83,7 @@ By default Homarr is configured to use Postgres, but you can choose other databa
 To use SQLite, add the following configuration to your `vars.yml` file:
 
 ```yaml
-homarr_database_type: better-sqlite3
+homarr_database_type: sqlite
 ```
 
 See [this section](https://github.com/mother-of-all-self-hosting/ansible-role-homarr/blob/main/docs/configuring-homarr.md#specify-database-optional) on the role's documentation for details.
@@ -102,7 +103,7 @@ Homarr also integrates with various software, to which you can connect your appl
 - **Torrent client**: [qBittorent](qbittorrent.md)
 - **Media server**: [Plex](plex.md)
 - **Media collection managers**: [Sonarr](sonarr.md) and [Radarr](radarr.md)
-- **Media request manager**: [Overseerr](overseerr.md)
+- **Media request manager**: [Seerr](seerr.md)
 - **DNS ad-blocker**: [AdGuard Home](adguard-home.md)
 
 See [this page](https://homarr.dev/docs/category/integrations) on the official documentation for the latest information about integrations.
@@ -113,4 +114,5 @@ See [this section](https://github.com/mother-of-all-self-hosting/ansible-role-ho
 
 ## Related services
 
-- "* Arr" applications — [Autobrr](autobrr.md) / [FlareSolverr](flaresolverr.md) / [Jellyseerr](jellyseerr.md) / [Overseerr](overseerr.md) / [Radarr](radarr.md) / [Sonarr](sonarr.md)
+- "* Arr" applications — [Autobrr](autobrr.md) / [Radarr](radarr.md) / [Seerr](seerr.md) / [Sonarr](sonarr.md)
+- [Heimdall](heimdall.md) — Dashboard for web applications

@@ -170,6 +170,10 @@
     - role: galaxy/bentopdf
     # /role-specific:bentopdf
 
+    # role-specific:bichon
+    - role: galaxy/bichon
+    # /role-specific:bichon
+
     # role-specific:bind
     - role: galaxy/bind
     # /role-specific:bind
@@ -177,6 +181,10 @@
     # role-specific:bitmagnet
     - role: galaxy/bitmagnet
     # /role-specific:bitmagnet
+
+    # role-specific:bookstack
+    - role: galaxy/bookstack
+    # /role-specific:bookstack
 
     # role-specific:borg_ui
     - role: galaxy/borg_ui
@@ -306,6 +314,10 @@
     - role: galaxy/etherpad
     # /role-specific:etherpad
 
+    # role-specific:eurooffice
+    - role: galaxy/eurooffice
+    # /role-specific:eurooffice
+
     # role-specific:excalidraw
     - role: galaxy/excalidraw
     # /role-specific:excalidraw
@@ -378,6 +390,10 @@
     - role: galaxy/gitea
     # /role-specific:gitea
 
+    # role-specific:gotenberg
+    - role: galaxy/gotenberg
+    # /role-specific:gotenberg
+
     # role-specific:gothub
     - role: galaxy/gothub
     # /role-specific:gothub
@@ -409,6 +425,14 @@
     # role-specific:healthchecks
     - role: galaxy/healthchecks
     # /role-specific:healthchecks
+
+    # role-specific:heimdall
+    - role: galaxy/heimdall
+    # /role-specific:heimdall
+
+    # role-specific:heyform
+    - role: galaxy/heyform
+    # /role-specific:heyform
 
     # role-specific:homarr
     - role: galaxy/homarr
@@ -454,10 +478,6 @@
     - role: galaxy/jellyfin
     # /role-specific:jellyfin
 
-    # role-specific:jellyseerr
-    - role: galaxy/jellyseerr
-    # /role-specific:jellyseerr
-
     # role-specific:jitsi
     - role: galaxy/jitsi
     # /role-specific:jitsi
@@ -501,6 +521,10 @@
     # role-specific:languagetool
     - role: galaxy/languagetool
     # /role-specific:languagetool
+
+    # role-specific:librebooking
+    - role: galaxy/librebooking
+    # /role-specific:librebooking
 
     # role-specific:limesurvey
     - role: galaxy/limesurvey
@@ -550,6 +574,10 @@
     - role: galaxy/matterbridge
     # /role-specific:matterbridge
 
+    # role-specific:mazanoke
+    - role: galaxy/mazanoke
+    # /role-specific:mazanoke
+
     # role-specific:mediawiki
     - role: galaxy/mediawiki
     # /role-specific:mediawiki
@@ -561,6 +589,10 @@
     # role-specific:memcached
     - role: galaxy/memcached
     # /role-specific:memcached
+
+    # role-specific:memos
+    - role: galaxy/memos
+    # /role-specific:memos
 
     # role-specific:minecraft
     - role: galaxy/minecraft
@@ -650,6 +682,10 @@
     - role: galaxy/oauth2_proxy
     # /role-specific:oauth2_proxy
 
+    # role-specific:omnitools
+    - role: galaxy/omnitools
+    # /role-specific:omnitools
+
     # role-specific:onion_service_tor
     - role: galaxy/onion_service_tor
     # /role-specific:onion_service_tor
@@ -689,10 +725,6 @@
     # role-specific:outline
     - role: galaxy/outline
     # /role-specific:outline
-
-    # role-specific:overseerr
-    - role: galaxy/overseerr
-    # /role-specific:overseerr
 
     # role-specific:owncast
     - role: galaxy/owncast
@@ -842,6 +874,10 @@
     - role: galaxy/redmine
     # /role-specific:redmine
 
+    # role-specific:reitti
+    - role: galaxy/reitti
+    # /role-specific:reitti
+
     # role-specific:roundcube
     - role: galaxy/roundcube
     # /role-specific:roundcube
@@ -861,6 +897,10 @@
     # role-specific:searxng
     - role: galaxy/searxng
     # /role-specific:searxng
+
+    # role-specific:seerr
+    - role: galaxy/seerr
+    # /role-specific:seerr
 
     # role-specific:semaphore
     - role: galaxy/semaphore
@@ -949,6 +989,10 @@
     # role-specific:traefik_certs_dumper
     - role: galaxy/traefik_certs_dumper
     # /role-specific:traefik_certs_dumper
+
+    # role-specific:transfersh
+    - role: galaxy/transfersh
+    # /role-specific:transfersh
 
     # role-specific:tsdproxy
     - role: galaxy/tsdproxy
