@@ -1,0 +1,53 @@
+{#
+SPDX-FileCopyrightText: 2026 Oliver Lorenz
+
+SPDX-License-Identifier: AGPL-3.0-or-later
+#}
+
+{% if dayplanner_container_labels_traefik_enabled %}
+traefik.enable=true
+
+{% if dayplanner_container_labels_traefik_docker_network %}
+traefik.docker.network={{ dayplanner_container_labels_traefik_docker_network }}
+{% endif %}
+
+{% set middlewares = [] %}
+
+{% if dayplanner_container_labels_traefik_path_prefix != '/' %}
+traefik.http.middlewares.{{ dayplanner_identifier }}-slashless-redirect.redirectregex.regex=^({{ dayplanner_container_labels_traefik_path_prefix | quote }})$
+traefik.http.middlewares.{{ dayplanner_identifier }}-slashless-redirect.redirectregex.replacement=${1}/
+{% set middlewares = middlewares + [dayplanner_identifier + '-slashless-redirect'] %}
+{% endif %}
+
+{% if dayplanner_container_labels_traefik_path_prefix != '/' %}
+traefik.http.middlewares.{{ dayplanner_identifier }}-strip-prefix.stripprefix.prefixes={{ dayplanner_container_labels_traefik_path_prefix }}
+{% set middlewares = middlewares + [dayplanner_identifier + '-strip-prefix'] %}
+{% endif %}
+
+{% if dayplanner_container_labels_traefik_additional_response_headers.keys() | length > 0 %}
+{% for name, value in dayplanner_container_labels_traefik_additional_response_headers.items() %}
+traefik.http.middlewares.{{ dayplanner_identifier }}-add-response-headers.headers.customresponseheaders.{{ name }}={{ value }}
+{% endfor %}
+{% set middlewares = middlewares + [dayplanner_identifier + '-add-response-headers'] %}
+{% endif %}
+
+traefik.http.routers.{{ dayplanner_identifier }}.rule={{ dayplanner_container_labels_traefik_rule }}
+{% if dayplanner_container_labels_traefik_priority | int > 0 %}
+traefik.http.routers.{{ dayplanner_identifier }}.priority={{ dayplanner_container_labels_traefik_priority }}
+{% endif %}
+traefik.http.routers.{{ dayplanner_identifier }}.service={{ dayplanner_identifier }}
+{% if middlewares | length > 0 %}
+traefik.http.routers.{{ dayplanner_identifier }}.middlewares={{ middlewares | join(',') }}
+{% endif %}
+traefik.http.routers.{{ dayplanner_identifier }}.entrypoints={{ dayplanner_container_labels_traefik_entrypoints }}
+traefik.http.routers.{{ dayplanner_identifier }}.tls={{ dayplanner_container_labels_traefik_tls | to_json }}
+{% if dayplanner_container_labels_traefik_tls %}
+traefik.http.routers.{{ dayplanner_identifier }}.tls.certResolver={{ dayplanner_container_labels_traefik_tls_certResolver }}
+{% endif %}
+
+traefik.http.services.{{ dayplanner_identifier }}.loadbalancer.server.port={{ dayplanner_container_http_port }}
+{% endif %}
+
+{% for arg in dayplanner_container_labels_additional_labels %}
+{{ arg }}
+{% endfor %}

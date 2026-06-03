@@ -1,0 +1,26 @@
+# SPDX-FileCopyrightText: 2026 Oliver Lorenz
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+---
+- name: Perform Dayplanner installation tasks
+  when: dayplanner_enabled | bool
+  tags:
+    - setup-all
+    - setup-dayplanner
+    - install-all
+    - install-dayplanner
+  block:
+    - name: Validate Dayplanner configuration
+      ansible.builtin.include_tasks: "{{ role_path }}/tasks/validate_config.yml"
+    - name: Install Dayplanner
+      ansible.builtin.include_tasks: "{{ role_path }}/tasks/install.yml"
+
+- name: Perform Dayplanner uninstallation tasks
+  when: not dayplanner_enabled | bool
+  tags:
+    - setup-all
+    - setup-dayplanner
+  block:
+    - name: Uninstall Dayplanner
+      ansible.builtin.include_tasks: "{{ role_path }}/tasks/uninstall.yml"
