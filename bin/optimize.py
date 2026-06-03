@@ -10,6 +10,7 @@ import argparse
 import regex
 import sys
 import yaml
+import os
 
 parser = argparse.ArgumentParser(
     description="Optimizes the playbook based on enabled components found in vars.yml files"
@@ -199,6 +200,25 @@ used_variable_names = load_combined_variable_names_from_files(vars_paths)
 
 all_role_definitions = load_yaml_file(args.src_requirements_yml_path)
 
+def add_custom_roles_to_definitions(all_role_definitions):
+    custom_roles_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'roles', 'custom')
+    if os.path.isdir(custom_roles_dir):
+        for entry in os.listdir(custom_roles_dir):
+            entry_path = os.path.join(custom_roles_dir, entry)
+            if os.path.isdir(entry_path) and not entry.startswith('.'):
+                # Map directory name to role name and activation prefix
+                role_name = entry
+                activation_prefix = f"{role_name.replace('-', '_')}_"
+                # Only add if not already present in all_role_definitions
+                if not any(r.get('name') == role_name for r in all_role_definitions):
+                    all_role_definitions.append({
+                        'name': role_name,
+                        'activation_prefix': activation_prefix
+                    })
+    return all_role_definitions
+
+all_role_definitions = add_custom_roles_to_definitions(all_role_definitions)
+
 enabled_role_definitions = []
 for role_definition in all_role_definitions:
     if "name" not in role_definition:
@@ -210,7 +230,8 @@ for role_definition in all_role_definitions:
     if is_role_definition_in_use(role_definition, used_variable_names):
         enabled_role_definitions.append(role_definition)
 
-write_yaml_to_file(enabled_role_definitions, args.dst_requirements_yml_path)
+installable_role_definitions = [r for r in enabled_role_definitions if "src" in r]
+write_yaml_to_file(installable_role_definitions, args.dst_requirements_yml_path)
 
 known_role_names = tuple(
     map(lambda definition: definition["name"], all_role_definitions)

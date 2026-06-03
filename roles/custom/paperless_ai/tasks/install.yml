@@ -1,0 +1,106 @@
+# SPDX-FileCopyrightText: 2023 - 2025 Slavi Pantaleev
+# SPDX-FileCopyrightText: 2025 Suguru Hirahara
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+---
+- name: Ensure Paperless AI paths exist
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    mode: "0750"
+    owner: "{{ paperless_ai_uid }}"
+    group: "{{ paperless_ai_gid }}"
+  with_items:
+    - "{{ paperless_ai_base_path }}"
+    - "{{ paperless_ai_data_path }}"
+    - "{{ paperless_ai_nltk_data_path }}"
+    - "{{ paperless_ai_cache_path }}"
+    - "{{ paperless_ai_pm2_path }}"
+    - "{{ paperless_ai_logs_path }}"
+    - "{{ paperless_ai_openai_path }}"
+    - "{{ paperless_ai_public_images_path }}"
+
+- name: Ensure Paperless AI support files installed
+  ansible.builtin.template:
+    src: "{{ role_path }}/templates/{{ item }}.j2"
+    dest: "{{ paperless_ai_base_path }}/{{ item }}"
+    mode: "0640"
+    owner: "{{ paperless_ai_uid }}"
+    group: "{{ paperless_ai_gid }}"
+  with_items:
+    - env
+    - labels
+
+- name: Run if self-building of Paperless AI container image is not enabled
+  when: "not paperless_ai_container_image_self_build | bool"
+  block:
+    - name: Ensure Paperless AI container image is pulled via community.docker.docker_image
+      when: devture_systemd_docker_base_container_image_pull_method == 'ansible-module'
+      community.docker.docker_image:
+        name: "{{ paperless_ai_container_image }}"
+        source: "{{ 'pull' if ansible_version.major > 2 or ansible_version.minor > 7 else omit }}"
+        force_source: "{{ paperless_ai_container_image_force_pull if ansible_version.major > 2 or ansible_version.minor >= 8 else omit }}"
+        force: "{{ omit if ansible_version.major > 2 or ansible_version.minor >= 8 else paperless_ai_container_image_force_pull }}"
+      register: result
+      retries: "{{ devture_playbook_help_container_retries_count }}"
+      delay: "{{ devture_playbook_help_container_retries_delay }}"
+      until: result is not failed
+
+    - name: Ensure Paperless AI container image is pulled via ansible.builtin.command
+      when: devture_systemd_docker_base_container_image_pull_method == 'command'
+      ansible.builtin.command:
+        cmd: "{{ devture_systemd_docker_base_host_command_docker }} pull {{ paperless_ai_container_image }}"
+      register: result
+      retries: "{{ devture_playbook_help_container_retries_count }}"
+      delay: "{{ devture_playbook_help_container_retries_delay }}"
+      until: result is not failed
+      changed_when: "'Downloaded newer image' in result.stdout"
+
+- name: Run if self-building of Paperless AI container image is enabled
+  when: "paperless_ai_container_image_self_build | bool"
+  block:
+    - name: Ensure Paperless AI repository is present on self-build
+      ansible.builtin.git:
+        repo: "{{ paperless_ai_container_image_self_build_repo }}"
+        version: "{{ paperless_ai_container_image_self_build_repo_version }}"
+        dest: "{{ paperless_ai_container_image_self_build_src_files_path }}"
+        force: "yes"
+      register: paperless_ai_git_pull_results
+
+    - name: Ensure Paperless AI container image is built
+      ansible.builtin.shell:
+        chdir: "{{ paperless_ai_container_image_self_build_src_files_path }}/docker"
+        cmd: |
+          {{ devture_systemd_docker_base_host_command_docker }} build \
+          -t "{{ paperless_ai_container_image_self_build_name }}" \
+          -f Dockerfile \
+          .
+      register: result
+      changed_when: "'Successfully built' in result.stdout or ('writing image' in result.stderr and 'CACHED' not in result.stderr)"
+
+- name: Ensure Paperless AI container network is created via community.docker.docker_network
+  when: devture_systemd_docker_base_container_network_creation_method == 'ansible-module'
+  community.docker.docker_network:
+    enable_ipv6: "{{ devture_systemd_docker_base_ipv6_enabled }}"
+    name: "{{ paperless_ai_container_network }}"
+    driver: bridge
+    driver_options: "{{ devture_systemd_docker_base_container_networks_driver_options }}"
+
+- name: Ensure Paperless AI container network is created via ansible.builtin.command
+  when: devture_systemd_docker_base_container_network_creation_method == 'command'
+  ansible.builtin.command:
+    cmd: >-
+      {{ devture_systemd_docker_base_host_command_docker }} network create
+      {% if devture_systemd_docker_base_ipv6_enabled %}--ipv6{% endif %}
+      {{ devture_systemd_docker_base_container_networks_driver_options_string }}
+      {{ paperless_ai_container_network }}
+  register: network_creation_result
+  changed_when: network_creation_result.rc == 0
+  failed_when: network_creation_result.rc != 0 and 'already exists' not in network_creation_result.stderr
+
+- name: Ensure Paperless AI systemd service is present
+  ansible.builtin.template:
+    src: "{{ role_path }}/templates/systemd/paperless-ai.service.j2"
+    dest: "{{ devture_systemd_docker_base_systemd_path }}/{{ paperless_ai_identifier }}.service"
+    mode: "0644"

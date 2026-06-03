@@ -1,0 +1,196 @@
+# SPDX-FileCopyrightText: 2023 - 2024 Nikita Chernyi
+# SPDX-FileCopyrightText: 2023 - 2025 Slavi Pantaleev
+# SPDX-FileCopyrightText: 2024 Julian-Samuel Gebühr
+# SPDX-FileCopyrightText: 2024 Sergio Durigan Junior
+# SPDX-FileCopyrightText: 2025 MASH project contributors
+# SPDX-FileCopyrightText: 2025 Suguru Hirahara
+# SPDX-FileCopyrightText: 2025 Oliver Lorenz
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+---
+# Project source code URL: https://github.com/aldinokemal/go-whatsapp-web-multidevicehttps://github.com/oliverlorenz/ansible-role-gowa
+
+gowa_enabled: true
+
+gowa_identifier: gowa
+gowa_base_path: "{{ mash_playbook_base_path }}/{{ gowa_identifier }}"
+
+# renovate: datasource=docker depName=ghcr.io/aldinokemal/go-whatsapp-web-multidevice
+gowa_version: 7.7.0
+
+gowa_scheme: https
+
+# The hostname at which GOWA is served.
+gowa_hostname: ""
+
+# The path at which GOWA is exposed.
+# This value must either be `/` or not end with a slash (e.g. `/gowa`).
+#
+# Hosting GOWA under a subpath does not seem to be possible due to GOWA's
+# technical limitations.
+gowa_path_prefix:
+gowa_storages_path: "{{ gowa_base_path }}/storages"
+gowa_statics_path: "{{ gowa_base_path }}/statics"
+
+gowa_container_image: "{{ gowa_container_image_registry_prefix }}aldinokemal/go-whatsapp-web-multidevice:{{ gowa_container_image_tag }}"
+gowa_container_image_tag: "v{{ gowa_version }}"
+gowa_container_image_registry_prefix: "{{ gowa_container_image_registry_prefix_upstream }}"
+gowa_container_image_registry_prefix_upstream: "{{ gowa_container_image_registry_prefix_upstream_default }}"
+gowa_container_image_registry_prefix_upstream_default: ghcr.io/
+gowa_container_image_force_pull: "{{ gowa_container_image.endswith(':latest') }}"
+
+gowa_container_image_self_build: false
+gowa_container_image_self_build_name: "oliverlorenz/ansible-role-gowa:{{ gowa_container_image_self_build_repo_version }}"
+gowa_container_image_self_build_repo: "https://github.com/oliverlorenz/ansible-role-gowa.git"
+gowa_container_image_self_build_repo_version: "{{ 'v' + gowa_version if gowa_version != 'latest' else 'main' }}"
+gowa_container_image_self_build_src_files_path: "{{ gowa_base_path }}/docker-src"
+
+# Controls whether the container exposes its HTTP port (tcp/3000 in the container).
+#
+# Takes an "<ip>:<port>" or "<port>" value (e.g. "127.0.0.1:3000"), or empty string to not expose.
+gowa_container_http_host_bind_port: ""
+
+# The base container network. It will be auto-created by this role if it doesn't exist already.
+gowa_container_network: "{{ gowa_identifier }}"
+
+# The port number in the container
+gowa_container_http_port: 3000
+
+# GOWA specific settings
+
+gowa_container_environment_port: "{{ gowa_container_http_port }}"
+gowa_container_environment_debug:
+gowa_container_environment_app_os: Bridge
+gowa_container_environment_basic_auth_user: admin
+gowa_container_environment_basic_auth_password: admin
+gowa_container_environment_base_path: "{{ gowa_path_prefix}}"
+gowa_container_environment_db_uri:
+gowa_container_environment_auto_mark_read:
+gowa_container_environment_webhook:
+gowa_container_environment_webhook_secret:
+gowa_container_environment_account_validation: true
+gowa_container_environment_chat_storage:
+gowa_environment_variables_additional_variables: ""
+
+# A list of additional container networks that the container would be connected to.
+# The role does not create these networks, so make sure they already exist.
+# Use this to expose this container to another reverse proxy, which runs in a different container network.
+gowa_container_additional_networks: "{{ gowa_container_additional_networks_auto + gowa_container_additional_networks_custom }}"
+gowa_container_additional_networks_auto: []
+gowa_container_additional_networks_custom: []
+
+# A list of additional "volumes" to mount in the container.
+# This list gets populated dynamically at runtime. You can provide a different default value,
+# if you wish to mount your own files into the container.
+# Contains definition objects like this: `{"type": "bind", "src": "/outside", "dst": "/inside", "options": "readonly"}.
+# See the `--mount` documentation for the `docker run` command.
+gowa_container_additional_volumes: "{{ gowa_container_additional_volumes_auto + gowa_container_additional_volumes_custom }}"
+gowa_container_additional_volumes_auto: []
+gowa_container_additional_volumes_custom: []
+
+# gowa_container_labels_traefik_enabled controls whether labels to assist a Traefik reverse-proxy will be attached to the container.
+# See `../templates/labels.j2` for details.
+#
+# To inject your own other container labels, see `gowa_container_labels_additional_labels`.
+gowa_container_labels_traefik_enabled: true
+gowa_container_labels_traefik_docker_network: "{{ gowa_container_network }}"
+gowa_container_labels_traefik_hostname: "{{ gowa_hostname }}"
+# The path prefix must either be `/` or not end with a slash (e.g. `/gowa`).
+gowa_container_labels_traefik_path_prefix: "{{ gowa_path_prefix }}"
+gowa_container_labels_traefik_rule: "Host(`{{ gowa_container_labels_traefik_hostname }}`)"
+gowa_container_labels_traefik_priority: 0
+gowa_container_labels_traefik_entrypoints: web-secure
+gowa_container_labels_traefik_tls: "{{ gowa_container_labels_traefik_entrypoints != 'web' }}"
+gowa_container_labels_traefik_tls_certResolver: default  # noqa var-naming
+
+# Controls which additional headers to attach to all HTTP requests.
+# To add your own custom request headers, use `gowa_container_labels_traefik_additional_request_headers_custom`
+gowa_container_labels_traefik_additional_request_headers: "{{ gowa_container_labels_traefik_additional_request_headers_auto | combine(gowa_container_labels_traefik_additional_request_headers_custom) }}"
+gowa_container_labels_traefik_additional_request_headers_auto: {}
+gowa_container_labels_traefik_additional_request_headers_custom: {}
+
+# Controls which additional headers to attach to all HTTP responses.
+# To add your own custom response headers, use `gowa_container_labels_traefik_additional_response_headers_custom`
+gowa_container_labels_traefik_additional_response_headers: "{{ gowa_container_labels_traefik_additional_response_headers_auto | combine(gowa_container_labels_traefik_additional_response_headers_custom) }}"
+gowa_container_labels_traefik_additional_response_headers_auto: |
+  {{
+    {}
+    | combine ({'X-XSS-Protection': gowa_http_header_xss_protection} if gowa_http_header_xss_protection else {})
+    | combine ({'X-Content-Type-Options': gowa_http_header_content_type_options} if gowa_http_header_content_type_options else {})
+    | combine ({'Content-Security-Policy': gowa_http_header_content_security_policy} if gowa_http_header_content_security_policy else {})
+    | combine ({'Permissions-Policy': gowa_http_header_permissions_policy} if gowa_http_header_permissions_policy else {})
+    | combine ({'Strict-Transport-Security': gowa_http_header_strict_transport_security} if gowa_http_header_strict_transport_security and gowa_container_labels_traefik_tls else {})
+  }}
+gowa_container_labels_traefik_additional_response_headers_custom: {}
+
+# gowa_container_labels_additional_labels contains a multiline string with additional labels to add to the container label file.
+# See `../templates/labels.j2` for details.
+#
+# Example:
+# gowa_container_labels_additional_labels: |
+#   my.label=1
+#   another.label="here"
+gowa_container_labels_additional_labels: ""
+
+# A list of extra arguments to pass to the container (`docker run` command)
+gowa_container_extra_arguments: []
+
+# Specifies the value of the `X-XSS-Protection` header
+# Stops pages from loading when they detect reflected cross-site scripting (XSS) attacks.
+#
+# Learn more about it is here:
+# - https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-XSS-Protection
+# - https://portswigger.net/web-security/cross-site-scripting/reflected
+gowa_http_header_xss_protection: "1; mode=block"
+
+# Specifies the value of the `X-Content-Type-Options` header.
+# See: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Content-Type-Options
+gowa_http_header_content_type_options: nosniff
+
+# Specifies the value of the `Content-Security-Policy` header.
+# See: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy
+gowa_http_header_content_security_policy: frame-ancestors 'self'
+
+# Specifies the value of the `Permissions-Policy` header.
+# See: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Permissions-Policy
+gowa_http_header_permissions_policy: "{{ 'interest-cohort=()' if gowa_floc_optout_enabled else '' }}"
+
+# Specifies the value of the `Strict-Transport-Security` header.
+# See: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Strict-Transport-Security
+gowa_http_header_strict_transport_security: "max-age=31536000; includeSubDomains{{ '; preload' if gowa_hsts_preload_enabled else '' }}"
+
+# Controls whether to send a "Permissions-Policy interest-cohort=();" header along with all responses
+#
+# Learn more about what it is here:
+# - https://www.eff.org/deeplinks/2021/03/googles-floc-terrible-idea
+# - https://paramdeo.com/blog/opting-your-website-out-of-googles-floc-network
+# - https://amifloced.org/
+#
+# Of course, a better solution is to just stop using browsers (like Chrome), which participate in such tracking practices.
+# See: `gowa_http_header_permissions_policy`
+gowa_floc_optout_enabled: true
+
+# Controls if HSTS preloading is enabled
+#
+# In its strongest and recommended form, the [HSTS policy](https://www.chromium.org/hsts) includes all subdomains, and
+# indicates a willingness to be "preloaded" into browsers:
+# `Strict-Transport-Security: max-age=31536000; includeSubDomains; preload`
+# For more information visit:
+# - https://en.wikipedia.org/wiki/HTTP_Strict_Transport_Security
+# - https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Strict-Transport-Security
+# - https://hstspreload.org/#opt-in
+# See: `gowa_http_header_strict_transport_security`
+gowa_hsts_preload_enabled: false
+
+# List of systemd services that the GOWA systemd service depends on
+gowa_systemd_required_services_list: "{{ gowa_systemd_required_services_list_default + gowa_systemd_required_services_list_auto + gowa_systemd_required_services_list_custom }}"
+gowa_systemd_required_services_list_default: "{{ [devture_systemd_docker_base_docker_service_name] if devture_systemd_docker_base_docker_service_name else [] }}"
+gowa_systemd_required_services_list_auto: []
+gowa_systemd_required_services_list_custom: []
+
+# List of systemd services that the GOWA systemd service wants
+gowa_systemd_wanted_services_list: "{{ gowa_systemd_wanted_services_list_default + gowa_systemd_wanted_services_list_auto + gowa_systemd_wanted_services_list_custom }}"
+gowa_systemd_wanted_services_list_default: []
+gowa_systemd_wanted_services_list_auto: []
+gowa_systemd_wanted_services_list_custom: []

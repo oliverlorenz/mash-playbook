@@ -521,6 +521,16 @@ mash_playbook_devture_systemd_service_manager_services_list_auto_itemized:
     {{ ({'name': (gotosocial_identifier + '.service'), 'priority': 2000, 'restart_necessary': (gotosocial_restart_necessary | bool), 'groups': ['mash', 'gotosocial']} if gotosocial_enabled else omit) }}
   # /role-specific:gotosocial
 
+  # role-specific:oliverlorenz-api
+  - |-
+    {{ ({'name': (oliverlorenz_api_identifier + '.service'), 'priority': 2000, 'groups': ['mash', 'oliverlorenz-api']} if oliverlorenz_api_enabled else omit) }}
+  # /role-specific:oliverlorenz-api
+
+  # role-specific:gowa
+  - |-
+    {{ ({'name': (gowa_identifier + '.service'), 'priority': 2000, 'groups': ['mash', 'gowa']} if gowa_enabled else omit) }}
+  # /role-specific:gowa
+
   # role-specific:grafana
   - |-
     {{ ({'name': (grafana_identifier + '.service'), 'priority': 2000, 'restart_necessary': (grafana_restart_necessary | bool), 'groups': ['mash', 'grafana']} if grafana_enabled else omit) }}
@@ -925,6 +935,11 @@ mash_playbook_devture_systemd_service_manager_services_list_auto_itemized:
     {{ ({'name': (openregex_identifier + '.service'), 'priority': 2000, 'restart_necessary': (openregex_restart_necessary | bool), 'groups': ['mash', 'openregex']} if openregex_enabled else omit) }}
   # /role-specific:openregex
 
+    # role-specific:openwebui
+  - |-
+    {{ ({'name': (openwebui_identifier + '.service'), 'priority': 2000, 'groups': ['mash', 'openwebui']} if openwebui_enabled else omit) }}
+  # /role-specific:openwebui
+
   # role-specific:origamivault
   - |-
     {{ ({'name': (origamivault_identifier + '.service'), 'priority': 2000, 'restart_necessary': (origamivault_restart_necessary | bool), 'groups': ['mash', 'origamivault']} if origamivault_enabled else omit) }}
@@ -959,6 +974,11 @@ mash_playbook_devture_systemd_service_manager_services_list_auto_itemized:
   - |-
     {{ ({'name': (paperless_identifier + '.service'), 'priority': 2000, 'restart_necessary': (paperless_restart_necessary | bool), 'groups': ['mash', 'paperless']} if paperless_enabled else omit) }}
   # /role-specific:paperless
+
+  # role-specific:paperless_ai
+  - |-
+    {{ ({'name': (paperless_ai_identifier + '.service'), 'priority': 3000, 'groups': ['mash', 'paperless-ai']} if paperless_ai_enabled else omit) }}
+  # /role-specific:paperless_ai
 
   # role-specific:papra
   - |-
@@ -4883,7 +4903,21 @@ ddclient_gid: "{{ mash_playbook_gid }}"
 ########################################################################
 # /role-specific:ddclient
 
+# role-specific:dns_records
+########################################################################
+#                                                                      #
+# dns_records                                                          #
+#                                                                      #
+########################################################################
 
+dns_records_enabled: false
+
+########################################################################
+#                                                                      #
+# dns_records                                                          #
+#                                                                      #
+########################################################################
+# /role-specific:dns_records
 
 # role-specific:docker_registry
 ########################################################################
@@ -6898,7 +6932,51 @@ gotosocial_container_labels_traefik_tls_certResolver: "{{ traefik_certResolver_p
 ########################################################################
 # /role-specific:gotosocial
 
+# role-specific:oliverlorenz-api
+########################################################################
+#                                                                      #
+# oliverlorenz api                                                     #
+#                                                                      #
+########################################################################
 
+oliverlorenz_api_enabled: false
+
+oliverlorenz_api_uid: "{{ mash_playbook_uid }}"
+oliverlorenz_api_gid: "{{ mash_playbook_gid }}"
+
+oliverlorenz_api_container_additional_networks_auto: |
+  {{
+    ([mash_playbook_reverse_proxyable_services_additional_network] if mash_playbook_reverse_proxyable_services_additional_network else [])
+  }}
+oliverlorenz_api_container_labels_traefik_docker_network: "{{ mash_playbook_reverse_proxyable_services_additional_network }}"
+oliverlorenz_api_container_labels_traefik_entrypoints: "{{ traefik_entrypoint_primary }}"
+oliverlorenz_api_container_labels_traefik_tls_certResolver: "{{ traefik_certResolver_primary }}"
+
+########################################################################
+#                                                                      #
+# /oliverlorenz api                                                    #
+#                                                                      #
+########################################################################
+# /role-specific:oliverlorenz-api
+
+# role-specific:gowa
+########################################################################
+#                                                                      #
+# gowa                                                                 #
+#                                                                      #
+########################################################################
+
+gowa_enabled: false
+
+gowa_uid: "{{ mash_playbook_uid }}"
+gowa_gid: "{{ mash_playbook_gid }}"
+
+########################################################################
+#                                                                      #
+# /gowa                                                                #
+#                                                                      #
+########################################################################
+# /role-specific:gowa
 
 # role-specific:grafana
 ########################################################################
@@ -12349,6 +12427,44 @@ openregex_container_labels_traefik_tls_certResolver: "{{ traefik_certResolver_pr
 ########################################################################
 # /role-specific:openregex
 
+# role-specific:openwebui
+########################################################################
+#                                                                      #
+# openwebui                                                            #
+#                                                                      #
+########################################################################
+
+openwebui_enabled: false
+
+openwebui_identifier: "{{ mash_playbook_service_identifier_prefix }}openwebui"
+
+openwebui_base_path: "{{ mash_playbook_base_path }}/{{ mash_playbook_service_base_directory_name_prefix }}openwebui"
+
+openwebui_uid: "{{ mash_playbook_uid }}"
+openwebui_gid: "{{ mash_playbook_gid }}"
+
+openwebui_container_additional_networks_auto: |
+  {{
+    ([mash_playbook_reverse_proxyable_services_additional_network] if mash_playbook_reverse_proxyable_services_additional_network else [])
+  }}
+
+openwebui_container_labels_traefik_enabled: "{{ mash_playbook_traefik_labels_enabled }}"
+openwebui_container_labels_traefik_docker_network: "{{ mash_playbook_reverse_proxyable_services_additional_network }}"
+
+
+openwebui_secret_key: "{{ (mash_playbook_generic_secret_key + ':openwebui') | hash('sha512') | to_uuid }}"
+
+# role-specific:traefik
+openwebui_container_labels_traefik_entrypoints: "{{ traefik_entrypoint_primary }}"
+openwebui_container_labels_traefik_tls_certResolver: "{{ traefik_certResolver_primary }}"
+# /role-specific:traefik
+
+########################################################################
+#                                                                      #
+# /openwebui                                                           #
+#                                                                      #
+########################################################################
+# /role-specific:openwebui
 
 
 # role-specific:origamivault
@@ -12730,6 +12846,54 @@ paperless_container_labels_traefik_tls_certResolver: "{{ traefik_certResolver_pr
 ########################################################################
 # /role-specific:paperless
 
+
+# role-specific:paperless_ai
+########################################################################
+#                                                                      #
+# paperless_ai                                                               #
+#                                                                      #
+########################################################################
+
+paperless_ai_enabled: false
+
+paperless_ai_identifier: "{{ mash_playbook_service_identifier_prefix }}paperless-ai"
+
+paperless_ai_base_path: "{{ mash_playbook_base_path }}/{{ mash_playbook_service_base_directory_name_prefix }}paperless_ai"
+
+paperless_ai_uid: "{{ mash_playbook_uid }}"
+paperless_ai_gid: "{{ mash_playbook_gid }}"
+
+paperless_ai_paperless_url: "{{ paperless_scheme }}://{{ paperless_hostname }}{{ paperless_path_prefix }}"
+
+paperless_ai_systemd_required_services_list_auto: |
+  {{
+    ([paperless_identifier ~ '.service'] if paperless_enabled | default(false) else [])
+  }}
+
+paperless_ai_systemd_wanted_services_list_auto: |
+  {{
+    ([])
+  }}
+
+paperless_ai_container_additional_networks_auto: |
+  {{
+    ([mash_playbook_reverse_proxyable_services_additional_network] if mash_playbook_reverse_proxyable_services_additional_network else [])
+  }}
+
+paperless_ai_container_labels_traefik_enabled: "{{ mash_playbook_traefik_labels_enabled }}"
+paperless_ai_container_labels_traefik_docker_network: "{{ mash_playbook_reverse_proxyable_services_additional_network }}"
+
+# role-specific:traefik
+paperless_ai_container_labels_traefik_entrypoints: "{{ traefik_entrypoint_primary }}"
+paperless_ai_container_labels_traefik_tls_certResolver: "{{ traefik_certResolver_primary }}"
+# /role-specific:traefik
+
+########################################################################
+#                                                                      #
+# /paperless_ai                                                              #
+#                                                                      #
+########################################################################
+# /role-specific:paperless_ai
 
 
 # role-specific:papra

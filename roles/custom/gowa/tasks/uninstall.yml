@@ -1,0 +1,46 @@
+# SPDX-FileCopyrightText: 2023 Slavi Pantaleev
+# SPDX-FileCopyrightText: 2025 Suguru Hirahara
+# SPDX-FileCopyrightText: 2025 Oliver Lorenz
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+---
+- name: Check existence of GOWA systemd service
+  ansible.builtin.stat:
+    path: "{{ devture_systemd_docker_base_systemd_path }}/{{ gowa_identifier }}.service"
+  register: gowa_service_stat
+
+- name: Uninstall GOWA systemd services and files
+  when: gowa_service_stat.stat.exists | bool
+  block:
+    - name: Ensure GOWA systemd service is stopped
+      ansible.builtin.service:
+        name: "{{ gowa_identifier }}"
+        state: stopped
+        enabled: false
+        daemon_reload: true
+
+    - name: Ensure GOWA systemd service does not exist
+      ansible.builtin.file:
+        path: "{{ devture_systemd_docker_base_systemd_path }}/{{ gowa_identifier }}.service"
+        state: absent
+
+    - name: Ensure GOWA container network does not exist via community.docker.docker_network
+      when: devture_systemd_docker_base_container_network_creation_method == 'ansible-module'
+      community.docker.docker_network:
+        name: "{{ gowa_container_network }}"
+        state: absent
+
+    - name: Ensure GOWA container network does not exist via ansible.builtin.command
+      when: devture_systemd_docker_base_container_network_creation_method == 'command'
+      ansible.builtin.command:
+        cmd: >-
+          {{ devture_systemd_docker_base_host_command_docker }} network rm
+          {{ gowa_container_network }}
+      register: network_deletion_result
+      changed_when: gowa_container_network in network_deletion_result.stdout
+
+    - name: Ensure GOWA path does not exist
+      ansible.builtin.file:
+        path: "{{ gowa_base_path }}"
+        state: absent

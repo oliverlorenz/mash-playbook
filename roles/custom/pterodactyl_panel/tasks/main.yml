@@ -1,0 +1,28 @@
+# SPDX-FileCopyrightText: 2023 Slavi Pantaleev
+# SPDX-FileCopyrightText: 2025 Suguru Hirahara
+# SPDX-FileCopyrightText: 2025 Oliver Lorenz
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+---
+- name: Perform Pterodactyl Panel installation tasks
+  when: pterodactyl_panel_enabled | bool
+  tags:
+    - setup-all
+    - setup-pterodactyl-panel
+    - install-all
+    - install-pterodactyl-panel
+  block:
+    - name: Validate Pterodactyl Panel configuration
+      ansible.builtin.include_tasks: "{{ role_path }}/tasks/validate_config.yml"
+    - name: Install Pterodactyl Panel
+      ansible.builtin.include_tasks: "{{ role_path }}/tasks/install.yml"
+
+- name: Perform Pterodactyl Panel uninstallation tasks
+  when: not pterodactyl_panel_enabled | bool
+  tags:
+    - setup-all
+    - setup-pterodactyl-panel
+  block:
+    - name: Uninstall Pterodactyl Panel
+      ansible.builtin.include_tasks: "{{ role_path }}/tasks/uninstall.yml"

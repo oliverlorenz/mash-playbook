@@ -262,6 +262,10 @@
     - role: galaxy/ddclient
     # /role-specific:ddclient
 
+    # role-specific:dns_records
+    - role: custom/dns_records
+    # /role-specific:dns_records
+
     # role-specific:docker_registry
     - role: galaxy/docker_registry
     # /role-specific:docker_registry
@@ -409,6 +413,14 @@
     # role-specific:gotosocial
     - role: galaxy/gotosocial
     # /role-specific:gotosocial
+
+    # role-specific:oliverlorenz-api
+    - role: custom/oliverlorenz-api
+    # /role-specific:oliverlorenz-api
+
+    # role-specific:gowa
+    - role: custom/gowa
+    # /role-specific:gowa
 
     # role-specific:grafana
     - role: galaxy/grafana
@@ -706,6 +718,10 @@
     - role: galaxy/openregex
     # /role-specific:openregex
 
+    # role-specific:openwebui
+    - role: custom/openwebui
+    # /role-specific:openwebui
+
     # role-specific:origamivault
     - role: galaxy/origamivault
     # /role-specific:origamivault
@@ -733,6 +749,10 @@
     # role-specific:paperless
     - role: galaxy/paperless
     # /role-specific:paperless
+
+    # role-specific:paperless_ai
+    - role: custom/paperless_ai
+    # /role-specific:paperless_ai
 
     # role-specific:papra
     - role: galaxy/papra

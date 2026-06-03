@@ -1,0 +1,46 @@
+# SPDX-FileCopyrightText: 2023 Slavi Pantaleev
+# SPDX-FileCopyrightText: 2025 Suguru Hirahara
+# SPDX-FileCopyrightText: 2025 Oliver Lorenz
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+---
+- name: Check existence of Pterodactyl Panel systemd service
+  ansible.builtin.stat:
+    path: "{{ devture_systemd_docker_base_systemd_path }}/{{ pterodactyl_panel_identifier }}.service"
+  register: pterodactyl_panel_service_stat
+
+- name: Uninstall Pterodactyl Panel systemd services and files
+  when: pterodactyl_panel_service_stat.stat.exists | bool
+  block:
+    - name: Ensure Pterodactyl Panel systemd service is stopped
+      ansible.builtin.service:
+        name: "{{ pterodactyl_panel_identifier }}"
+        state: stopped
+        enabled: false
+        daemon_reload: true
+
+    - name: Ensure Pterodactyl Panel systemd service does not exist
+      ansible.builtin.file:
+        path: "{{ devture_systemd_docker_base_systemd_path }}/{{ pterodactyl_panel_identifier }}.service"
+        state: absent
+
+    - name: Ensure Pterodactyl Panel container network does not exist via community.docker.docker_network
+      when: devture_systemd_docker_base_container_network_creation_method == 'ansible-module'
+      community.docker.docker_network:
+        name: "{{ pterodactyl_panel_container_network }}"
+        state: absent
+
+    - name: Ensure Pterodactyl Panel container network does not exist via ansible.builtin.command
+      when: devture_systemd_docker_base_container_network_creation_method == 'command'
+      ansible.builtin.command:
+        cmd: >-
+          {{ devture_systemd_docker_base_host_command_docker }} network rm
+          {{ pterodactyl_panel_container_network }}
+      register: network_deletion_result
+      changed_when: pterodactyl_panel_container_network in network_deletion_result.stdout
+
+    - name: Ensure Pterodactyl Panel path does not exist
+      ansible.builtin.file:
+        path: "{{ pterodactyl_panel_base_path }}"
+        state: absent
