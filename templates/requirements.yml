@@ -5,7 +5,7 @@
   name: actual
   activation_prefix: actual_
 - src: git+https://github.com/mother-of-all-self-hosting/ansible-role-adguard-home.git
-  version: v0.107.76-0
+  version: v0.107.77-0
   name: adguard_home
   activation_prefix: adguard_home_
 - src: git+https://seed.radicle.garden/z3px8gLDo2opjQZW7qFiLoNuk4eSu.git
@@ -81,7 +81,7 @@
   name: bentopdf
   activation_prefix: bentopdf_
 - src: git+https://seed.radicle.garden/z2nQcYvPh51zfvVu8hkftDYPmELYP.git
-  version: v1.4.2-0
+  version: v1.4.3-0
   name: bichon
   activation_prefix: bichon_
 - src: git+https://github.com/mother-of-all-self-hosting/ansible-role-bind.git
@@ -209,7 +209,7 @@
   name: docmost
   activation_prefix: docmost_
 - src: git+https://seed.radicle.garden/z2HG5jWufCQfA8cYAFkJ9GmZyRcCs.git
-  version: v3.0.1-0
+  version: v3.0.2-0
   name: docuseal
   activation_prefix: docuseal_
 - src: git+https://github.com/mother-of-all-self-hosting/ansible-role-dokuwiki.git
@@ -280,8 +280,8 @@
   version: v1.3.3-0
   name: filebrowser_quantum
   activation_prefix: filebrowser_quantum_
-- src: git+https://github.com/sudo-Tiz/ansible-role-flaresolverr.git
-  version: v3.4.1-0
+- src: git+https://github.com/mother-of-all-self-hosting/ansible-role-flaresolverr.git
+  version: v3.5.0-0
   name: flaresolverr
   activation_prefix: flaresolverr_
 - src: git+https://seed.radicle.garden/z49LkutSMcaLA2DBazn1h4V6Pn6GK.git
@@ -365,11 +365,11 @@
   name: heimdall
   activation_prefix: heimdall_
 - src: git+https://seed.radicle.garden/zsKztkwnLv9wVMRYbcpoFesx6L5j.git
-  version: v3.0.0-2
+  version: v3.0.0-3
   name: heyform
   activation_prefix: heyform_
 - src: git+https://github.com/mother-of-all-self-hosting/ansible-role-homarr.git
-  version: v1.62.0-0
+  version: v1.63.0-0
   name: homarr
   activation_prefix: homarr_
 - src: git+https://github.com/mother-of-all-self-hosting/ansible-role-hubsite.git
@@ -497,7 +497,7 @@
   name: mailpit
   activation_prefix: mailpit_
 - src: git+https://github.com/mother-of-all-self-hosting/ansible-role-mariadb.git
-  version: v12.1.2-4
+  version: v12.3.2-1
   name: mariadb
   activation_prefix: mariadb_
 - src: git+https://github.com/mother-of-all-self-hosting/ansible-role-matomo.git
@@ -573,7 +573,7 @@
   name: mumble
   activation_prefix: mumble_
 - src: git+https://github.com/mother-of-all-self-hosting/ansible-role-n8n.git
-  version: v2.23.1-0
+  version: v2.23.2-0
   name: n8n
   activation_prefix: n8n_
 - src: git+https://github.com/mother-of-all-self-hosting/ansible-role-navidrome.git
@@ -649,7 +649,7 @@
   name: ots
   activation_prefix: ots_
 - src: git+https://seed.radicle.garden/zvzJe15VMBkGd2CMBctvpVZgmQG5.git
-  version: v2.20.5-0
+  version: v2.20.6-0
   name: otterwiki
   activation_prefix: otterwiki_
 - src: git+https://github.com/mother-of-all-self-hosting/ansible-role-outline.git
@@ -693,7 +693,7 @@
   name: pinepods
   activation_prefix: pinepods_
 - src: git+https://github.com/mother-of-all-self-hosting/ansible-role-plausible.git
-  version: v3.2.1-0
+  version: v3.2.1-1
   name: plausible
   activation_prefix: plausible_
 - src: git+https://github.com/devture/com.devture.ansible.role.playbook_help.git
@@ -716,6 +716,10 @@
   version: v2.7.0-0
   name: pocket_id
   activation_prefix: pocket_id_
+- src: git+https://iris.radicle.network/z49EpGUPcp76sUQ4udcz7pBRPuq7u.git
+  version: v0.16.1-0
+  name: polaris
+  activation_prefix: polaris_
 - src: git+https://seed.radicle.garden/z4MgJseWRZ9FL3Mh6ASufmi1RJoVh.git
   version: v2025.10.0-7
   name: poodledonts
@@ -841,7 +845,7 @@
   name: searxng
   activation_prefix: searxng_
 - src: git+https://github.com/spatterIight/ansible-role-seerr.git
-  version: v3.2.0-2
+  version: v3.3.0-0
   name: seerr
   activation_prefix: seerr_
 - src: git+https://github.com/mother-of-all-self-hosting/ansible-role-semaphore.git
@@ -853,7 +857,7 @@
   name: send
   activation_prefix: send_
 - src: git+https://github.com/mother-of-all-self-hosting/ansible-role-sftpgo.git
-  version: v2.7.1-7
+  version: v2.7.3-0
   name: sftpgo
   activation_prefix: sftpgo_
 - src: git+https://seed.radicle.garden/z3PxyXm3EXE4xCNKcaKVKmtdjVNog.git
@@ -884,6 +888,10 @@
   version: v0.0.0-3
   name: soundcloak
   activation_prefix: soundcloak_
+- src: git+https://iris.radicle.network/z2eyt9uovdZtjh8TL5qiyv2PqAYvP.git
+  version: v0.44.0-0
+  name: sqlpage
+  activation_prefix: sqlpage_
 - src: git+https://github.com/mother-of-all-self-hosting/ansible-role-ssh.git
   version: v1.0.1-0
   name: ssh
@@ -905,7 +913,7 @@
   name: syncstorage_rs_docker
   activation_prefix: syncstorage_rs_docker_
 - src: git+https://github.com/mother-of-all-self-hosting/ansible-role-syncthing.git
-  version: v2.1.0-0
+  version: v2.1.1-0
   name: syncthing
   activation_prefix: syncthing_
 - src: git+https://github.com/devture/com.devture.ansible.role.systemd_docker_base.git
@@ -981,7 +989,7 @@
   name: vaultwarden
   activation_prefix: vaultwarden_
 - src: git+https://github.com/mother-of-all-self-hosting/ansible-role-versatiles.git
-  version: v4.1.3-0
+  version: v4.1.4-0
   name: versatiles
   activation_prefix: versatiles_
 - src: git+https://github.com/mother-of-all-self-hosting/ansible-role-vikunja.git
@@ -989,7 +997,7 @@
   name: vikunja
   activation_prefix: vikunja_
 - src: git+https://github.com/spatterIight/ansible-role-wazuh.git
-  version: v4.14.5-10
+  version: v4.14.5-11
   name: wazuh
   activation_prefix: wazuh_
 - src: git+https://seed.radicle.garden/z3NoFEkNtQQjSGjLvweqwCFPbC59R.git

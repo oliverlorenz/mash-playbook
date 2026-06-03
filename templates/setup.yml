@@ -798,6 +798,10 @@
     - role: galaxy/poodledonts
     # /role-specific:poodledonts
 
+    # role-specific:polaris
+    - role: galaxy/polaris
+    # /role-specific:polaris
+
     # role-specific:postgis
     - role: galaxy/postgis
     # /role-specific:postgis
@@ -957,6 +961,10 @@
     # role-specific:soundcloak
     - role: galaxy/soundcloak
     # /role-specific:soundcloak
+
+    # role-specific:sqlpage
+    - role: galaxy/sqlpage
+    # /role-specific:sqlpage
 
     # role-specific:statusnook
     - role: galaxy/statusnook
