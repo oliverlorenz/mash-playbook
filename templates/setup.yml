@@ -258,6 +258,10 @@
     - role: galaxy/databasus
     # /role-specific:databasus
 
+    # role-specific:dayplanner
+    - role: custom/dayplanner
+    # /role-specific:dayplanner
+
     # role-specific:ddclient
     - role: galaxy/ddclient
     # /role-specific:ddclient
