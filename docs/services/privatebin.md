@@ -21,7 +21,7 @@ SPDX-License-Identifier: AGPL-3.0-or-later
 
 The playbook can install and configure [PrivateBin](https://privatebin.info) for you.
 
-PrivateBin is a minimalist, open source online pastebin where the server has zero knowledge of pasted data.
+PrivateBin is a minimalist, open-source online pastebin where the server has zero knowledge of pasted data.
 
 See the project's [documentation](https://github.com/PrivateBin/PrivateBin/tree/master/doc) to learn what PrivateBin does and why it might be useful to you.
 
@@ -139,4 +139,4 @@ See [this section](https://radicle.network/nodes/iris.radicle.network/rad%3Az47v
 
 ## Related services
 
-- [Opengist](opengist.md) — Self-hosted pastebin powered by Git
+- [Opengist](opengist.md) — Pastebin powered by Git

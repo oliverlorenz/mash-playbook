@@ -18,18 +18,18 @@ SPDX-FileCopyrightText: 2024-2026 Suguru Hirahara
 SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 
-# Heimdall
+# Mermaid Live Editor
 
-The playbook can install and configure [Heimdall](https://heimdall.site/) for you.
+The playbook can install and configure [Mermaid Live Editor](https://github.com/mermaid-js/mermaid-live-editor) for you.
 
-Heimdall is a dashboard for web applications.
+Mermaid Live Editor is an online flow chart and diagrams editor.
 
-See the project's [documentation](https://github.com/linuxserver/docker-heimdall/blob/master/README.md) to learn what Heimdall does and why it might be useful to you.
+See the project's [documentation](https://github.com/mermaid-js/mermaid-live-editor/blob/develop/README.md) to learn what Mermaid Live Editor does and why it might be useful to you.
 
-For details about configuring the [Ansible role for Heimdall](https://radicle.network/nodes/iris.radicle.network/rad%3Az8D2GRZrm8JXZeHHe9j1HMvvj8An), you can check them via:
+For details about configuring the [Ansible role for Mermaid Live Editor](https://radicle.network/nodes/iris.radicle.network/rad%3Az2RAnfyxCYZSoUiDufyzTM7P3RvEd), you can check them via:
 
-- 🌐 [the role's documentation](https://radicle.network/nodes/iris.radicle.network/rad%3Az8D2GRZrm8JXZeHHe9j1HMvvj8An/tree/docs/configuring-heimdall.md) online
-- 📁 `roles/galaxy/heimdall/docs/configuring-heimdall.md` locally, if you have [fetched the Ansible roles](../installing.md)
+- 🌐 [the role's documentation](https://radicle.network/nodes/iris.radicle.network/rad%3Az2RAnfyxCYZSoUiDufyzTM7P3RvEd/tree/docs/configuring-mermaid.md) online
+- 📁 `roles/galaxy/mermaid/docs/configuring-mermaid.md` locally, if you have [fetched the Ansible roles](../installing.md)
 
 ## Dependencies
 
@@ -44,29 +44,29 @@ To enable this service, add the following configuration to your `vars.yml` file 
 ```yaml
 ########################################################################
 #                                                                      #
-# heimdall                                                             #
+# mermaid                                                              #
 #                                                                      #
 ########################################################################
 
-heimdall_enabled: true
+mermaid_enabled: true
 
-heimdall_hostname: heimdall.example.com
+mermaid_hostname: mermaid.example.com
 
 ########################################################################
 #                                                                      #
-# /heimdall                                                            #
+# /mermaid                                                             #
 #                                                                      #
 ########################################################################
 ```
 
 ## Usage
 
-After running the command for installation, the Heimdall instance becomes available at the URL specified with `heimdall_hostname`. With the configuration above, the service is hosted at `https://heimdall.example.com`.
+After running the command for installation, the Mermaid Live Editor instance becomes available at the URL specified with `mermaid_hostname`. With the configuration above, the service is hosted at `https://mermaid.example.com`.
 
 ## Troubleshooting
 
-See [this section](https://radicle.network/nodes/iris.radicle.network/rad%3Az8D2GRZrm8JXZeHHe9j1HMvvj8An/tree/docs/configuring-heimdall.md#troubleshooting) on the role's documentation for details.
+See [this section](https://radicle.network/nodes/iris.radicle.network/rad%3Az2RAnfyxCYZSoUiDufyzTM7P3RvEd/tree/docs/configuring-mermaid.md#troubleshooting) on the role's documentation for details.
 
 ## Related services
 
-- [Homarr](homarr.md) — Dashboard for management of your favorite applications and services with a drag-and-drop grid system
+- [Excalidraw](excalidraw.md) — Virtual whiteboard for sketching hand-drawn like diagrams

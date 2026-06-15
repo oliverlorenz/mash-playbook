@@ -22,7 +22,7 @@ SPDX-License-Identifier: AGPL-3.0-or-later
 
 The playbook can install and configure [Gotify](https://gotify.net) for you.
 
-Gotify is a simple server for sending and receiving messages.
+Gotify is a simple server for sending and receiving messages in real-time per WebSocket.
 
 See the project's [documentation](https://gotify.net/docs/) to learn what Gotify does and why it might be useful to you.
 
@@ -83,4 +83,4 @@ See [this section](https://radicle.network/nodes/iris.radicle.network/rad%3Az3dQ
 ## Related services
 
 - [Apprise API](apprise.md) — Lightweight REST framework that wraps the [Apprise](https://github.com/caronc/apprise) Notification Library
-- [ntfy](ntfy.md) — Simple HTTP-based pub-sub notification service to send you push notifications from any computer
+- [ntfy](ntfy.md) — HTTP-based pub-sub notification service to send you push notifications from any computer

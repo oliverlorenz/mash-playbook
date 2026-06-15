@@ -166,6 +166,10 @@
     - role: galaxy/barassistant
     # /role-specific:barassistant
 
+    # role-specific:bazarr
+    - role: galaxy/bazarr
+    # /role-specific:bazarr
+
     # role-specific:bentopdf
     - role: galaxy/bentopdf
     # /role-specific:bentopdf
@@ -297,6 +301,10 @@
     # role-specific:dokuwiki
     - role: galaxy/dokuwiki
     # /role-specific:dokuwiki
+
+    # role-specific:donetick
+    - role: galaxy/donetick
+    # /role-specific:donetick
 
     # role-specific:duplicati
     - role: galaxy/duplicati
@@ -609,6 +617,10 @@
     # role-specific:memos
     - role: galaxy/memos
     # /role-specific:memos
+
+    # role-specific:mermaid
+    - role: galaxy/mermaid
+    # /role-specific:mermaid
 
     # role-specific:minecraft
     - role: galaxy/minecraft

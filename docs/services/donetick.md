@@ -18,23 +18,24 @@ SPDX-FileCopyrightText: 2024-2026 Suguru Hirahara
 SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 
-# An Otter Wiki
+# Donetick
 
-The playbook can install and configure [An Otter Wiki](https://otterwiki.com/) for you.
+The playbook can install and configure [Donetick](https://donetick.com/) for you.
 
-An Otter Wiki is a minimalistic wiki powered by Python, Markdown and Git.
+Donetick is an application for managing tasks and chores.
 
-See the project's [documentation](https://otterwiki.com/-/help) to learn what An Otter Wiki does and why it might be useful to you.
+See the project's [documentation](https://docs.donetick.com/) to learn what Donetick does and why it might be useful to you.
 
-For details about configuring the [Ansible role for An Otter Wiki](https://radicle.network/nodes/iris.radicle.network/rad%3AzvzJe15VMBkGd2CMBctvpVZgmQG5), you can check them via:
+For details about configuring the [Ansible role for Donetick](https://radicle.network/nodes/iris.radicle.network/rad%3Az2EKWswSBFJgUQmxEBzi7sb8QyS2r), you can check them via:
 
-- 🌐 [the role's documentation](https://radicle.network/nodes/iris.radicle.network/rad%3AzvzJe15VMBkGd2CMBctvpVZgmQG5/tree/docs/configuring-otterwiki.md) online
-- 📁 `roles/galaxy/otterwiki/docs/configuring-otterwiki.md` locally, if you have [fetched the Ansible roles](../installing.md)
+- 🌐 [the role's documentation](https://radicle.network/nodes/iris.radicle.network/rad%3Az2EKWswSBFJgUQmxEBzi7sb8QyS2r/tree/docs/configuring-donetick.md) online
+- 📁 `roles/galaxy/donetick/docs/configuring-donetick.md` locally, if you have [fetched the Ansible roles](../installing.md)
 
 ## Dependencies
 
 This service requires the following other services:
 
+- [Postgres](postgres.md) / [SQLite](https://www.sqlite.org/) database
 - [Traefik](traefik.md) reverse-proxy server
 - (optional) [exim-relay](exim-relay.md) mailer
 
@@ -45,34 +46,38 @@ To enable this service, add the following configuration to your `vars.yml` file 
 ```yaml
 ########################################################################
 #                                                                      #
-# otterwiki                                                            #
+# donetick                                                             #
 #                                                                      #
 ########################################################################
 
-otterwiki_enabled: true
+donetick_enabled: true
 
-otterwiki_hostname: otterwiki.example.com
+donetick_hostname: donetick.example.com
 
 ########################################################################
 #                                                                      #
-# /otterwiki                                                           #
+# /donetick                                                            #
 #                                                                      #
 ########################################################################
 ```
 
-**Note**: hosting An Otter Wiki under a subpath (by configuring the `otterwiki_path_prefix` variable) does not seem to be possible due to An Otter Wiki's technical limitations.
+**Note**: hosting Donetick under a subpath (by configuring the `donetick_path_prefix` variable) does not seem to be possible due to Donetick's technical limitations.
+
+### Select database to use
+
+It is necessary to select a database used by the service from Postgres and SQLite. See [this section](https://radicle.network/nodes/iris.radicle.network/rad%3Az2EKWswSBFJgUQmxEBzi7sb8QyS2r/tree/docs/configuring-donetick.md#specify-database) on the role's documentation for details.
 
 ### Enabling signing up
 
 By default account registration for the service is disabled. To enable it, add the following configuration to your `vars.yml` file:
 
 ```yaml
-otterwiki_environment_variables_disable_registration: false
+donetick_config_is_user_creation_disabled: false
 ```
 
 ### Configuring the mailer (optional)
 
-On An Otter Wiki you can set up a mailer for functions such as password recovery. If you enable the [exim-relay](exim-relay.md) service in your inventory configuration, the playbook will automatically configure it as a mailer for the service.
+On Donetick you can set up a mailer for functions such as password recovery. If you enable the [exim-relay](exim-relay.md) service in your inventory configuration, the playbook will automatically configure it as a mailer for the service.
 
 To actually have the service use (and get messages sent through the exim-relay service), you will need to adjust settings on the service's UI after the service is installed.
 
@@ -81,17 +86,16 @@ To actually have the service use (and get messages sent through the exim-relay s
 
 ## Usage
 
-After installation, the An Otter Wiki instance becomes available at the URL specified with `otterwiki_hostname`. With the configuration above, the service is hosted at `https://otterwiki.example.com`.
+After installation, the Donetick instance becomes available at the URL specified with `donetick_hostname`. With the configuration above, the service is hosted at `https://donetick.example.com`.
 
-To get started, open the URL with a web browser to create an account. **Note that the first registered user becomes an administrator automatically.**
+To get started, open the URL with a web browser to create an account.
 
-Since account registration is disabled by default, you need to enable it first by setting `otterwiki_environment_variables_disable_registration` to `false` temporarily in order to create your own account.
+Since account registration is disabled by default, you need to enable it first by setting `donetick_config_is_user_creation_disabled` to `false` temporarily in order to create your own account.
 
 ## Troubleshooting
 
-See [this section](https://radicle.network/nodes/iris.radicle.network/rad%3AzvzJe15VMBkGd2CMBctvpVZgmQG5/tree/docs/configuring-otterwiki.md#troubleshooting) on the role's documentation for details.
+See [this section](https://radicle.network/nodes/iris.radicle.network/rad%3Az2EKWswSBFJgUQmxEBzi7sb8QyS2r/tree/docs/configuring-donetick.md#troubleshooting) on the role's documentation for details.
 
 ## Related services
 
-- [DokuWiki](dokuwiki.md) — File-based wiki engine without database requirement
-- [MediaWiki](mediawiki.md) — Popular wiki software
+- [Vikunja](vikunja.md) — To-do app
