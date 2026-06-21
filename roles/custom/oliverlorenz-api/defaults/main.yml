@@ -23,8 +23,7 @@ oliverlorenz_api_environment_chatlog_nc_base_url: ""
 oliverlorenz_api_environment_chatlog_nc_username: ""
 oliverlorenz_api_environment_chatlog_nc_app_password: ""
 oliverlorenz_api_environment_chatlog_nc_dir: ""
-oliverlorenz_api_environment_chatlog_local_mirror_dir: "/chatlogs-mirror"
-oliverlorenz_api_environment_chatlog_sync_interval_ms: ""
+oliverlorenz_api_environment_chatlog_local_mirror_dir: "/data/chatlogs-mirror"
 
 oliverlorenz_api_chatlog_data_path: "{{ oliverlorenz_api_base_path }}/chatlogs-mirror"
 
