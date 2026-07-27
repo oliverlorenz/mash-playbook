@@ -25,9 +25,9 @@ PinePods is a podcast management system with multi-user support.
 
 See the project's [documentation](https://www.pinepods.online/docs/intro) to learn what PinePods does and why it might be useful to you.
 
-For details about configuring the [Ansible role for PinePods](https://radicle.network/nodes/seed.radicle.garden/rad%3AzKNyeEtymCZc7yio6JnHxY2AteZu), you can check them via:
+For details about configuring the [Ansible role for PinePods](https://radicle.network/nodes/iris.radicle.network/rad%3AzKNyeEtymCZc7yio6JnHxY2AteZu), you can check them via:
 
-- 🌐 [the role's documentation](https://radicle.network/nodes/seed.radicle.garden/rad%3AzKNyeEtymCZc7yio6JnHxY2AteZu/tree/docs/configuring-pinepods.md) online
+- 🌐 [the role's documentation](https://radicle.network/nodes/iris.radicle.network/rad%3AzKNyeEtymCZc7yio6JnHxY2AteZu/tree/docs/configuring-pinepods.md) online
 - 📁 `roles/galaxy/pinepods/docs/configuring-pinepods.md` locally, if you have [fetched the Ansible roles](../installing.md)
 
 ## Dependencies
@@ -67,7 +67,7 @@ pinepods_hostname: pinepods.example.com
 
 ### Select database to use
 
-It is necessary to select a database used by PinePods from MariaDB and Postgres. See [this section](https://radicle.network/nodes/seed.radicle.garden/rad%3AzKNyeEtymCZc7yio6JnHxY2AteZu/tree/docs/configuring-pinepods.md#specify-database) on the role's documentation for details.
+It is necessary to select a database used by PinePods from MariaDB and Postgres. See [this section](https://radicle.network/nodes/iris.radicle.network/rad%3AzKNyeEtymCZc7yio6JnHxY2AteZu/tree/docs/configuring-pinepods.md#specify-database) on the role's documentation for details.
 
 ### Configuring Valkey (optional)
 
@@ -245,7 +245,7 @@ Note that running the `just` commands for installation (`just install-all` or `j
 
 ## Usage
 
-After installation, the PinePods instance becomes available at the URL specified with `pinepods_hostname`. With the configuration above, the service is hosted at `https://pinepods.example.com`.
+After running the command for installation, the PinePods instance becomes available at the URL specified with `pinepods_hostname`. With the configuration above, the service is hosted at `https://pinepods.example.com`.
 
 To get started, open the URL with a web browser to create an account. **Note that the first registered user becomes an administrator automatically.**
 
@@ -290,8 +290,8 @@ After setting the configuration, you can have the PinePods instance send a test 
 
 ## Troubleshooting
 
-See [this section](https://radicle.network/nodes/seed.radicle.garden/rad%3AzKNyeEtymCZc7yio6JnHxY2AteZu/tree/docs/configuring-pinepods.md#troubleshooting) on the role's documentation for details.
+See [this section](https://radicle.network/nodes/iris.radicle.network/rad%3AzKNyeEtymCZc7yio6JnHxY2AteZu/tree/docs/configuring-pinepods.md#troubleshooting) on the role's documentation for details.
 
 ## Related services
 
-- [audiobookshelf](audiobookshelf.md) — Self-hosted audiobook and podcast server
+- [audiobookshelf](audiobookshelf.md) — Audiobook and podcast server

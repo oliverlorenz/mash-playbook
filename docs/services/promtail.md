@@ -20,8 +20,8 @@ See the project's [documentation](https://grafana.com/docs/loki/latest/send-data
 
 This service requires the following other services:
 
-- [Grafana Loki](grafana-loki.md) — a log-storage server where you'd be sending the logs
-- (optional) [Traefik](traefik.md) — a reverse-proxy server, if you're exposing Promtail's metrics or API
+- [Grafana Loki](grafana-loki.md) — Log aggregation system that helps collect, store, and analyze logs in a scalable and efficient manner
+- (optional) [Traefik](traefik.md) — Reverse-proxy server for exposing Promtail's metrics or API
 
 ## Configuration
 
@@ -178,13 +178,13 @@ There are 2 reasons to expose Promtail to the public web:
 
 To expose Promtail to the web, you need to assign a hostname in `promtail_hostname` and optionally a path-prefix.
 
-You can then decide whether you'd like to expose Promtail's whole API via `promtail_container_labels_api_enabled` or just its metrics endpoint via `promtail_container_labels_metrics_enabled`.
+You can then decide whether you'd like to expose Promtail's whole API via `promtail_container_labels_traefik_api_enabled` or just its metrics endpoint via `promtail_container_labels_traefik_metrics_enabled`.
 
 Consult the `defaults/main.yml` file for variables related to these.
 
-When exposing metrics, and especially the whole API, it's important to protected them. The Promtail Ansible role has variables that let you easily set up [HTTP Basic Authentication](https://developer.mozilla.org/en-US/docs/Web/HTTP/Authentication) via `promtail_container_labels_api_traefik_middleware_basic_auth_*` and `promtail_container_labels_metrics_traefik_middleware_basic_auth_*` variables.
+When exposing metrics, and especially the whole API, it's important to protected them. The Promtail Ansible role has variables that let you easily set up [HTTP Basic Authentication](https://developer.mozilla.org/en-US/docs/Web/HTTP/Authentication) via `promtail_container_labels_traefik_api_traefik_middleware_basic_auth_*` and `promtail_container_labels_traefik_metrics_traefik_middleware_basic_auth_*` variables.
 
 ## Related services
 
-- [Grafana Loki](grafana-loki.md) — a storage server for your logs compatible with Promtail
-- [Grafana](grafana.md) — a web-based tool for visualizing your Promtail logs (stored in [Grafana Loki](grafana-loki.md) or elsewhere)
+- [Grafana](grafana.md) — Web-based tool for visualizing your Prometheus metrics (time-series)
+- [Grafana Loki](grafana-loki.md) — Log aggregation system that helps collect, store, and analyze logs in a scalable and efficient manner

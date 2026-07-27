@@ -27,9 +27,9 @@ Borg Web UI is an unofficial web interface for [BorgBackup](https://borgbackup.r
 
 See the project's [documentation](https://karanhudia.github.io/borg-ui/) to learn what Borg Web UI does and why it might be useful to you.
 
-For details about configuring the [Ansible role for Borg Web UI](https://radicle.network/nodes/seed.radicle.garden/rad%3AzxNS7XeayGimb4WFfvqmasiZZC3v), you can check them via:
+For details about configuring the [Ansible role for Borg Web UI](https://radicle.network/nodes/iris.radicle.network/rad%3AzxNS7XeayGimb4WFfvqmasiZZC3v), you can check them via:
 
-- 🌐 [the role's documentation](https://radicle.network/nodes/seed.radicle.garden/rad%3AzxNS7XeayGimb4WFfvqmasiZZC3v/tree/docs/configuring-borg-ui.md) online
+- 🌐 [the role's documentation](https://radicle.network/nodes/iris.radicle.network/rad%3AzxNS7XeayGimb4WFfvqmasiZZC3v/tree/docs/configuring-borg-ui.md) online
 - 📁 `roles/galaxy/borg_ui/docs/configuring-borg-ui.md` locally, if you have [fetched the Ansible roles](../installing.md)
 
 ## Dependencies
@@ -285,11 +285,11 @@ Note that running the `just` commands for installation (`just install-all` or `j
 
 ## Usage
 
-After installation, the Borg Web UI instance becomes available at the URL specified with `borg_ui_hostname`. With the configuration above, the service is hosted at `https://borg-ui.example.com`.
+After running the command for installation, the Borg Web UI instance becomes available at the URL specified with `borg_ui_hostname`. With the configuration above, the service is hosted at `https://borg-ui.example.com`.
 
 To get started, open the URL with a web browser to log in to the instance.
 
-Refer to [this section](https://radicle.network/nodes/seed.radicle.garden/rad%3AzxNS7XeayGimb4WFfvqmasiZZC3v/tree/docs/configuring-borg-ui.md#usage) on the role's documentation for more information.
+Refer to [this section](https://radicle.network/nodes/iris.radicle.network/rad%3AzxNS7XeayGimb4WFfvqmasiZZC3v/tree/docs/configuring-borg-ui.md#usage) on the role's documentation for more information.
 
 To load a source directory to be backed up inside the container, you can add one to `borg_ui_container_additional_volumes_custom` as below:
 
@@ -312,9 +312,10 @@ As the Borg Web UI instance does not support configuring the notification servic
 
 ## Troubleshooting
 
-See [this section](https://radicle.network/nodes/seed.radicle.garden/rad%3AzxNS7XeayGimb4WFfvqmasiZZC3v/tree/docs/configuring-borg-ui.md#troubleshooting) on the role's documentation for details.
+See [this section](https://radicle.network/nodes/iris.radicle.network/rad%3AzxNS7XeayGimb4WFfvqmasiZZC3v/tree/docs/configuring-borg-ui.md#troubleshooting) on the role's documentation for details.
 
 ## Related services
 
 - [BorgBackup with borgmatic](backup-borg.md) — Deduplicating backup program with optional compression and encryption
 - [Duplicati](duplicati.md) — Backup software that securely stores encrypted, incremental, compressed backups on local storage, cloud storage services and remote file servers
+- [Rest Server](restserver.md) — HTTP server that implements restic's REST backend API to backup data remotely

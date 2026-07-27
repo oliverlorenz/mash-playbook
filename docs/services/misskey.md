@@ -22,7 +22,7 @@ SPDX-License-Identifier: AGPL-3.0-or-later
 
 The playbook can install and configure [Misskey](https://misskey-hub.net/en/) for you.
 
-Misskey is a free decentralized microblogging platform based on the ActivityPub protocol, which can connect to other Fediverse platforms such as Mastodon and PeerTube.
+Misskey is an ActivityPub federated microblogging platform. With Misskey, you can keep in touch with your friends, post, read, and share images and articles.
 
 See the project's [documentation](https://misskey-hub.net/en/docs/) to learn what Misskey does and why it might be useful to you.
 
@@ -265,7 +265,7 @@ Note that running the `just` commands for installation (`just install-all` or `j
 
 ## Usage
 
-After installation, the Misskey instance becomes available at the URL specified with `misskey_hostname`. With the configuration above, the service is hosted at `https://misskey.example.com`.
+After running the command for installation, the Misskey instance becomes available at the URL specified with `misskey_hostname`. With the configuration above, the service is hosted at `https://misskey.example.com`.
 
 To get started, open the URL with a web browser, and follow the set up wizard.
 
@@ -275,6 +275,6 @@ See [this section](https://github.com/mother-of-all-self-hosting/ansible-role-mi
 
 ## Related services
 
-- [Funkwhale](funkwhale.md) — Community-driven project that lets you listen and share music and audio in the Fediverse
-- [GoToSocial](gotosocial.md) — Self-hosted ActivityPub social network server
-- [PeerTube](peertube.md) — Tool for sharing online videos
+- [Funkwhale](funkwhale.md) — ActivityPub federated streaming server for listening and sharing music
+- [GoToSocial](gotosocial.md) — ActivityPub federated microblogging platform
+- [PeerTube](peertube.md) — ActivityPub federated video platform

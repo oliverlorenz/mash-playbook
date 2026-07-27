@@ -264,10 +264,14 @@ Note that running the `just` commands for installation (`just install-all` or `j
 
 ## Usage
 
-After installation, the Send instance becomes available at the URL specified with `send_hostname`. With the configuration above, the service is hosted at `https://send.example.com`.
+After running the command for installation, the Send instance becomes available at the URL specified with `send_hostname`. With the configuration above, the service is hosted at `https://send.example.com`.
 
 See [this section](https://github.com/mother-of-all-self-hosting/ansible-role-send/blob/main/docs/configuring-send.md#usage) on the role's documentation for details about its [CLI client](https://github.com/timvisee/ffsend). The instruction to takedown illegal materials is also available [here](https://github.com/mother-of-all-self-hosting/ansible-role-send/blob/main/docs/configuring-send.md#takedown-illegal-materials).
 
 ## Troubleshooting
 
 See [this section](https://github.com/mother-of-all-self-hosting/ansible-role-send/blob/main/docs/configuring-send.md#troubleshooting) on the role's documentation for details.
+
+## Related services
+
+- [Gokapi](gokapi.md) — Share files that expire after a set number of downloads or days

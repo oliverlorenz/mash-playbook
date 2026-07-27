@@ -9,7 +9,7 @@ SPDX-License-Identifier: AGPL-3.0-or-later
 
 The playbook can install and configure [Apache NiFi](https://nifi.apache.org/) for you.
 
-Apache NiFi is an open source, easy to use, powerful, and reliable system to process and distribute data.
+Apache NiFi is an open-source, easy to use, powerful, and reliable system to process and distribute data.
 
 See the project's [documentation](https://nifi.apache.org/components/) to learn what Apache NiFi does and why it might be useful to you.
 
@@ -95,6 +95,6 @@ Take a look at:
 
 ## Usage
 
-After running the command for installation, Apache NiFi becomes available at the specified hostname like `https://nifi.example.com`.
+After running the command for installation, the Apache NiFi instance becomes available at the specified hostname like `https://nifi.example.com`.
 
 To get started, open the URL with a web browser to log in to the instance with the administrator account.

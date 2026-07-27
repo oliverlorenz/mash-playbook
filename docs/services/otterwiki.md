@@ -26,9 +26,9 @@ An Otter Wiki is a minimalistic wiki powered by Python, Markdown and Git.
 
 See the project's [documentation](https://otterwiki.com/-/help) to learn what An Otter Wiki does and why it might be useful to you.
 
-For details about configuring the [Ansible role for An Otter Wiki](https://radicle.network/nodes/seed.radicle.garden/rad%3AzvzJe15VMBkGd2CMBctvpVZgmQG5), you can check them via:
+For details about configuring the [Ansible role for An Otter Wiki](https://radicle.network/nodes/iris.radicle.network/rad%3AzvzJe15VMBkGd2CMBctvpVZgmQG5), you can check them via:
 
-- 🌐 [the role's documentation](https://radicle.network/nodes/seed.radicle.garden/rad%3AzvzJe15VMBkGd2CMBctvpVZgmQG5/tree/docs/configuring-otterwiki.md) online
+- 🌐 [the role's documentation](https://radicle.network/nodes/iris.radicle.network/rad%3AzvzJe15VMBkGd2CMBctvpVZgmQG5/tree/docs/configuring-otterwiki.md) online
 - 📁 `roles/galaxy/otterwiki/docs/configuring-otterwiki.md` locally, if you have [fetched the Ansible roles](../installing.md)
 
 ## Dependencies
@@ -81,7 +81,7 @@ To actually have the service use (and get messages sent through the exim-relay s
 
 ## Usage
 
-After installation, the An Otter Wiki instance becomes available at the URL specified with `otterwiki_hostname`. With the configuration above, the service is hosted at `https://otterwiki.example.com`.
+After running the command for installation, the An Otter Wiki instance becomes available at the URL specified with `otterwiki_hostname`. With the configuration above, the service is hosted at `https://otterwiki.example.com`.
 
 To get started, open the URL with a web browser to create an account. **Note that the first registered user becomes an administrator automatically.**
 
@@ -89,9 +89,9 @@ Since account registration is disabled by default, you need to enable it first b
 
 ## Troubleshooting
 
-See [this section](https://radicle.network/nodes/seed.radicle.garden/rad%3AzvzJe15VMBkGd2CMBctvpVZgmQG5/tree/docs/configuring-otterwiki.md#troubleshooting) on the role's documentation for details.
+See [this section](https://radicle.network/nodes/iris.radicle.network/rad%3AzvzJe15VMBkGd2CMBctvpVZgmQG5/tree/docs/configuring-otterwiki.md#troubleshooting) on the role's documentation for details.
 
 ## Related services
 
-- [DokuWiki](dokuwiki.md) — Lightweight, file-based wiki engine
-- [MediaWiki](mediawiki.md) — Popular free and open-source wiki software
+- [DokuWiki](dokuwiki.md) — File-based wiki engine without database requirement
+- [MediaWiki](mediawiki.md) — Popular wiki software

@@ -26,9 +26,9 @@ HeyForm is a form builder that lets you create, customize, and automate forms.
 
 See the project's [documentation](https://docs.heyform.net/) to learn what HeyForm does and why it might be useful to you.
 
-For details about configuring the [Ansible role for HeyForm](https://radicle.network/nodes/seed.radicle.garden/rad%3AzsKztkwnLv9wVMRYbcpoFesx6L5j), you can check them via:
+For details about configuring the [Ansible role for HeyForm](https://radicle.network/nodes/iris.radicle.network/rad%3AzsKztkwnLv9wVMRYbcpoFesx6L5j), you can check them via:
 
-- 🌐 [the role's documentation](https://radicle.network/nodes/seed.radicle.garden/rad%3AzsKztkwnLv9wVMRYbcpoFesx6L5j/tree/docs/configuring-heyform.md) online
+- 🌐 [the role's documentation](https://radicle.network/nodes/iris.radicle.network/rad%3AzsKztkwnLv9wVMRYbcpoFesx6L5j/tree/docs/configuring-heyform.md) online
 - 📁 `roles/galaxy/heyform/docs/configuring-heyform.md` locally, if you have [fetched the Ansible roles](../installing.md)
 
 ## Dependencies
@@ -255,13 +255,13 @@ Note that running the `just` commands for installation (`just install-all` or `j
 
 ## Usage
 
-After installation, the HeyForm instance becomes available at the URL specified with `heyform_hostname`. With the configuration above, the service is hosted at `https://heyform.example.com`.
+After running the command for installation, the HeyForm instance becomes available at the URL specified with `heyform_hostname`. With the configuration above, the service is hosted at `https://heyform.example.com`.
 
 To get started, open the URL with a web browser to create an account.
 
 ## Troubleshooting
 
-See [this section](https://radicle.network/nodes/seed.radicle.garden/rad%3AzsKztkwnLv9wVMRYbcpoFesx6L5j/tree/docs/configuring-heyform.md#troubleshooting) on the role's documentation for details.
+See [this section](https://radicle.network/nodes/iris.radicle.network/rad%3AzsKztkwnLv9wVMRYbcpoFesx6L5j/tree/docs/configuring-heyform.md#troubleshooting) on the role's documentation for details.
 
 ## Related services
 

@@ -26,9 +26,9 @@ Papra is a document management and archiving platform.
 
 See the project's [documentation](https://docs.papra.app/) to learn what Papra does and why it might be useful to you.
 
-For details about configuring the [Ansible role for Papra](https://radicle.network/nodes/seed.radicle.garden/rad%3Az2LGSfc7ziSKvErzZAQdTyTQ4sJcs), you can check them via:
+For details about configuring the [Ansible role for Papra](https://radicle.network/nodes/iris.radicle.network/rad%3Az2LGSfc7ziSKvErzZAQdTyTQ4sJcs), you can check them via:
 
-- 🌐 [the role's documentation](https://radicle.network/nodes/seed.radicle.garden/rad%3Az2LGSfc7ziSKvErzZAQdTyTQ4sJcs/tree/docs/configuring-papra.md) online
+- 🌐 [the role's documentation](https://radicle.network/nodes/iris.radicle.network/rad%3Az2LGSfc7ziSKvErzZAQdTyTQ4sJcs/tree/docs/configuring-papra.md) online
 - 📁 `roles/galaxy/papra/docs/configuring-papra.md` locally, if you have [fetched the Ansible roles](../installing.md)
 
 ## Dependencies
@@ -91,7 +91,7 @@ To actually have the service use (and get messages sent through the exim-relay s
 
 ## Usage
 
-After installation, the Papra instance becomes available at the URL specified with `papra_hostname`. With the configuration above, the service is hosted at `https://papra.example.com`.
+After running the command for installation, the Papra instance becomes available at the URL specified with `papra_hostname`. With the configuration above, the service is hosted at `https://papra.example.com`.
 
 To get started, open the URL with a web browser to create an account.
 
@@ -99,7 +99,7 @@ Since account registration is disabled by default, you need to enable it first b
 
 ## Troubleshooting
 
-See [this section](https://radicle.network/nodes/seed.radicle.garden/rad%3Az2LGSfc7ziSKvErzZAQdTyTQ4sJcs/tree/docs/configuring-papra.md#troubleshooting) on the role's documentation for details.
+See [this section](https://radicle.network/nodes/iris.radicle.network/rad%3Az2LGSfc7ziSKvErzZAQdTyTQ4sJcs/tree/docs/configuring-papra.md#troubleshooting) on the role's documentation for details.
 
 ## Related services
 

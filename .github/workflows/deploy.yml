@@ -1,0 +1,100 @@
+# SPDX-FileCopyrightText: 2026 Oliver Lorenz
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+---
+name: Deploy
+
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: Deploy mode
+        required: true
+        type: choice
+        options:
+          - setup-service
+          - setup-all
+        default: setup-service
+      service:
+        description: Service name (only required for setup-service)
+        required: false
+        type: string
+      host:
+        description: Target host
+        required: true
+        type: string
+        default: mash.oliverlorenz.com
+      ref:
+        description: mash-playbook ref (branch, tag, or commit) to deploy. Leave empty to deploy the ref this workflow is run from.
+        required: false
+        type: string
+
+permissions:
+  contents: write
+
+jobs:
+  deploy:
+    name: Deploy (${{ inputs.mode }})
+    uses: ./.github/workflows/deploy-run.yml
+    with:
+      mode: ${{ inputs.mode }}
+      service: ${{ inputs.service }}
+      host: ${{ inputs.host }}
+      ref: ${{ inputs.ref }}
+    secrets: inherit
+
+  record-success:
+    name: Record last known-good ref
+    needs: deploy
+    if: needs.deploy.result == 'success'
+    uses: ./.github/workflows/record-deployed-ref.yml
+    with:
+      host: ${{ inputs.host }}
+      sha: ${{ needs.deploy.outputs.deployed_sha }}
+    secrets: inherit
+
+  await-rollback-approval:
+    name: Await rollback approval
+    needs: deploy
+    if: failure()
+    environment: rollback-approval
+    runs-on: ubuntu-latest
+    outputs:
+      sha: ${{ steps.resolve.outputs.sha }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Resolve last known-good ref
+        id: resolve
+        run: |
+          if git rev-parse -q --verify "refs/tags/deployed/${{ inputs.host }}" >/dev/null; then
+            echo "sha=$(git rev-parse "refs/tags/deployed/${{ inputs.host }}")" >> "$GITHUB_OUTPUT"
+          else
+            echo "::error::No previously successful deploy recorded for host '${{ inputs.host }}' -- nothing to roll back to."
+            exit 1
+          fi
+
+  rollback:
+    name: Auto-rollback (${{ inputs.host }})
+    needs: await-rollback-approval
+    if: always() && needs.await-rollback-approval.result == 'success'
+    uses: ./.github/workflows/deploy-run.yml
+    with:
+      mode: ${{ inputs.mode }}
+      service: ${{ inputs.service }}
+      host: ${{ inputs.host }}
+      ref: ${{ needs.await-rollback-approval.outputs.sha }}
+    secrets: inherit
+
+  record-rollback-success:
+    name: Record last known-good ref (post-rollback)
+    needs: rollback
+    if: always() && needs.rollback.result == 'success'
+    uses: ./.github/workflows/record-deployed-ref.yml
+    with:
+      host: ${{ inputs.host }}
+      sha: ${{ needs.rollback.outputs.deployed_sha }}
+    secrets: inherit

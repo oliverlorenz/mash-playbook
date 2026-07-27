@@ -208,7 +208,7 @@ def add_custom_roles_to_definitions(all_role_definitions):
             if os.path.isdir(entry_path) and not entry.startswith('.'):
                 # Map directory name to role name and activation prefix
                 role_name = entry
-                activation_prefix = f"{role_name}_"
+                activation_prefix = f"{role_name.replace('-', '_')}_"
                 # Only add if not already present in all_role_definitions
                 if not any(r.get('name') == role_name for r in all_role_definitions):
                     all_role_definitions.append({
@@ -230,7 +230,8 @@ for role_definition in all_role_definitions:
     if is_role_definition_in_use(role_definition, used_variable_names):
         enabled_role_definitions.append(role_definition)
 
-write_yaml_to_file(enabled_role_definitions, args.dst_requirements_yml_path)
+installable_role_definitions = [r for r in enabled_role_definitions if "src" in r]
+write_yaml_to_file(installable_role_definitions, args.dst_requirements_yml_path)
 
 known_role_names = tuple(
     map(lambda definition: definition["name"], all_role_definitions)

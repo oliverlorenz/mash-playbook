@@ -31,10 +31,10 @@ See the project's [documentation](https://prometheus.io/docs/alerting/latest/ale
 
 This service requires the following other services:
 
-- [Prometheus](prometheus.md) — database for storing metrics
+- [Prometheus](prometheus.md) — Metrics collection and alerting monitoring solution
 - (optional) [exim-relay](exim-relay.md) mailer
-- (optional) [Grafana](grafana.md) — web UI that can query the Prometheus datasource (connection) and display the logs
-- (optional) [Traefik](traefik.md) — reverse-proxy server for exposing Prometheus Alertmanager
+- (optional) [Grafana](grafana.md) — Web-based tool for visualizing your Prometheus metrics (time-series)
+- (optional) [Traefik](traefik.md) — Reverse-proxy server for exposing Prometheus Alertmanager
 
 ## Configuration
 
@@ -80,8 +80,8 @@ It will expose the metrics at `https://mash.example.com/metrics/mash-rometheus-a
 To enable the HTTP Basic authentication, add the following configuration to your `vars.yml` file (adapt to your needs):
 
 ```yaml
-prometheus_blackbox_exporter_container_labels_metrics_middleware_basic_auth_enabled: true
+prometheus_alertmanager_container_labels_metrics_middleware_basic_auth_enabled: true
 
 # See https://doc.traefik.io/traefik/middlewares/http/basicauth/#users for details.
-prometheus_blackbox_exporter_container_labels_metrics_middleware_basic_auth_users: ""
+prometheus_alertmanager_container_labels_metrics_middleware_basic_auth_users: ""
 ```

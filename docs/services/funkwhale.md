@@ -23,7 +23,7 @@ SPDX-License-Identifier: AGPL-3.0-or-later
 
 The playbook can install and configure [Funkwhale](https://funkwhale.audio/) for you.
 
-Funkwhale is a community-driven project that lets you listen and share music and audio within a decentralized, open network.
+Funkwhale is an ActivityPub federated streaming server for listening and sharing music.
 
 See the project's [documentation](https://docs.funkwhale.audio) to learn what Funkwhale does and why it might be useful to you.
 
@@ -249,13 +249,13 @@ Note that running the `just` commands for installation (`just install-all` or `j
 
 ## Usage
 
-After installation, the Funkwhale instance becomes available at the URL specified with `funkwhale_hostname`. With the configuration above, the service is hosted at `https://funkwhale.example.com`.
+After running the command for installation, the Funkwhale instance becomes available at the URL specified with `funkwhale_hostname`. With the configuration above, the service is hosted at `https://funkwhale.example.com`.
 
 To get started, create **an administrator user** first and open the URL with a web browser to log in to the instance. You can run the playbook with the `create-admin-funkwhale` or `ensure-funkwhale-users-created` tag to create users. See [this section](https://github.com/mother-of-all-self-hosting/ansible-role-funkwhale/blob/main/docs/configuring-funkwhale.md#creating-users) on the role's documentation for details.
 
 ## Related services
 
 - [Feishin](feishin.md) — Music player for Navidrome, Jellyfin, Funkwhale, etc.
-- [GoToSocial](gotosocial.md) — Self-hosted ActivityPub social network server
-- [Misskey](misskey.md) — Free decentralized microblogging platform based on the ActivityPub protocol
-- [PeerTube](peertube.md) — Tool for sharing online videos
+- [GoToSocial](gotosocial.md) — ActivityPub federated microblogging platform
+- [Misskey](misskey.md) — ActivityPub federated microblogging platform
+- [PeerTube](peertube.md) — ActivityPub federated video platform

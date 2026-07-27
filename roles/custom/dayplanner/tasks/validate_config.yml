@@ -1,0 +1,22 @@
+# SPDX-FileCopyrightText: 2026 Oliver Lorenz
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+---
+- name: Run if Traefik is enabled
+  when: dayplanner_container_labels_traefik_enabled | bool
+  block:
+    - name: Fail if Traefik settings required for Dayplanner are not defined
+      ansible.builtin.fail:
+        msg: >-
+          You need to define a required configuration setting (`{{ item }}`).
+      when: "lookup('vars', item, default='') | string | length == 0"
+      with_items:
+        - dayplanner_container_labels_traefik_hostname
+        - dayplanner_container_labels_traefik_path_prefix
+
+    - name: Fail if dayplanner_container_labels_traefik_path_prefix ends with a slash
+      ansible.builtin.fail:
+        msg: >-
+          dayplanner_container_labels_traefik_path_prefix (`{{ dayplanner_container_labels_traefik_path_prefix }}`) must either be `/` or not end with a slash (e.g. `/dayplanner`).
+      when: "dayplanner_container_labels_traefik_path_prefix != '/' and dayplanner_container_labels_traefik_path_prefix[-1] == '/'"

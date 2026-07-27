@@ -23,7 +23,7 @@ SPDX-License-Identifier: AGPL-3.0-or-later
 
 The playbook can install and configure [Mobilizon](https://joinmobilizon.org/en/) for you.
 
-Mobilizon is a ActivityPub/Fediverse server to create and share events.
+Mobilizon is an ActivityPub federated server for creating and sharing events.
 
 See the project's [documentation](https://docs.mobilizon.org/) to learn what Mobilizon does and why it might be useful to you.
 
@@ -39,6 +39,9 @@ This service requires the following other services:
 - [Postgres database with PostGIS extensions installed](postgis.md)
 - [Traefik](traefik.md) reverse-proxy server
 - (optional) [exim-relay](exim-relay.md) mailer
+
+>[!NOTE]
+> Mobilizon seems to be incompatible with Postgres v18 as database migration fails due to an error like this one: `** (Postgrex.Error) ERROR 42P16 (invalid_table_definition) primary key column "id" is not marked NOT NULL`. Until the issue is fixed, pinning the major version to a lower one with the `postgis_allowed_versions_custom` variable should be helpful.
 
 ## Configuration
 

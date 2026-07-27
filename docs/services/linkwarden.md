@@ -25,9 +25,9 @@ Linkwarden is a self-hosted, open-source collaborative bookmark manager to colle
 
 See the project's [documentation](https://docs.linkwarden.app) to learn what Linkwarden does and why it might be useful to you.
 
-For details about configuring the [Ansible role for Linkwarden](https://radicle.network/nodes/seed.radicle.garden/rad%3AzCF75tYyujYQ3T4L3BkBDrPzXree), you can check them via:
+For details about configuring the [Ansible role for Linkwarden](https://radicle.network/nodes/iris.radicle.network/rad%3AzCF75tYyujYQ3T4L3BkBDrPzXree), you can check them via:
 
-- 🌐 [the role's documentation](https://radicle.network/nodes/seed.radicle.garden/rad%3AzCF75tYyujYQ3T4L3BkBDrPzXree/tree/docs/configuring-linkwarden.md) online
+- 🌐 [the role's documentation](https://radicle.network/nodes/iris.radicle.network/rad%3AzCF75tYyujYQ3T4L3BkBDrPzXree/tree/docs/configuring-linkwarden.md) online
 - 📁 `roles/galaxy/linkwarden/docs/configuring-linkwarden.md` locally, if you have [fetched the Ansible roles](../installing.md)
 
 ## Dependencies
@@ -80,7 +80,7 @@ See [this page](meilisearch.md) for details about how to install it and setting 
 
 ## Usage
 
-After installation, the Linkwarden instance becomes available at the URL specified with `linkwarden_hostname`. With the configuration above, the service is hosted at `https://linkwarden.example.com`.
+After running the command for installation, the Linkwarden instance becomes available at the URL specified with `linkwarden_hostname`. With the configuration above, the service is hosted at `https://linkwarden.example.com`.
 
 To get started, open the URL with a web browser to create an account. **Note that the first registered user becomes an administrator automatically.**
 
@@ -88,10 +88,10 @@ Since account registration is disabled by default, you need to enable it first b
 
 ## Troubleshooting
 
-See [this section](https://radicle.network/nodes/seed.radicle.garden/rad%3AzCF75tYyujYQ3T4L3BkBDrPzXree/tree/docs/configuring-linkwarden.md#troubleshooting) on the role's documentation for details.
+See [this section](https://radicle.network/nodes/iris.radicle.network/rad%3AzCF75tYyujYQ3T4L3BkBDrPzXree/tree/docs/configuring-linkwarden.md#troubleshooting) on the role's documentation for details.
 
 ## Related services
 
-- [Karakeep](karakeep.md) — Self-hosted, open-source bookmark manager to collect, organize and archive webpages
+- [Karakeep](karakeep.md) — Bookmark manager to collect, organize and archive webpages
 - [linkding](linkding.md) — Bookmark manager designed to be minimal and fast
 - [Readeck](readeck.md) — Bookmark manager and a read-later tool combined in one

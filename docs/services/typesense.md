@@ -35,7 +35,7 @@ For details about configuring the [Ansible role for Typesense](https://github.co
 
 This service requires the following other services:
 
-- (optional) [Traefik](traefik.md) — a reverse-proxy server for exposing Typesense publicly
+- (optional) [Traefik](traefik.md) — Reverse-proxy server for exposing Typesense publicly
 
 ## Configuration
 
@@ -80,7 +80,7 @@ typesense_hostname: "typesense.example.com"
 
 ## Usage
 
-After running the command for installation, Typesense becomes available internally to other services on the same network. If the service is exposed to the internet, it becomes available at the URL specified with `typesense_hostname`. With the configuration above, the service is hosted at `https://typesense.example.com`.
+After running the command for installation, the Typesense instance becomes available internally to other services on the same network. If the service is exposed to the internet, it becomes available at the URL specified with `typesense_hostname`. With the configuration above, the service is hosted at `https://typesense.example.com`.
 
 To get started, refer to [the documentation](https://typesense.org/docs/guide/) for guides about how to integrate Typesense.
 

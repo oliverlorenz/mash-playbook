@@ -23,7 +23,7 @@ SPDX-License-Identifier: AGPL-3.0-or-later
 
 The playbook can install and configure [CouchDB](https://couchdb.apache.org/) for you.
 
-CouchDB is a document-oriented NoSQL database which uses JSON to store data.
+CouchDB is a document-oriented NoSQL database which uses JSON to store data, written in Erlang.
 
 See the project's [documentation](https://docs.couchdb.org/en/stable/) to learn what CouchDB does and why it might be useful to you.
 
@@ -36,7 +36,7 @@ For details about configuring the [Ansible role for CouchDB](https://github.com/
 
 This service requires the following other services:
 
-- (optional) [Traefik](traefik.md) — a reverse-proxy server for exposing CouchDB publicly
+- (optional) [Traefik](traefik.md) — Reverse-proxy server for exposing CouchDB publicly
 
 ## Configuration
 
@@ -80,7 +80,7 @@ couchdb_hostname: "couchdb.example.com"
 
 ## Usage
 
-After running the command for installation, CouchDB becomes available internally to other services on the same network. If the service is exposed to the internet, it becomes available at the URL specified with `couchdb_hostname`. With the configuration above, the service is hosted at `https://couchdb.example.com`.
+After running the command for installation, the CouchDB instance becomes available internally to other services on the same network. If the service is exposed to the internet, it becomes available at the URL specified with `couchdb_hostname`. With the configuration above, the service is hosted at `https://couchdb.example.com`.
 
 ### Creating users
 

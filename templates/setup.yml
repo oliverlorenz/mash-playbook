@@ -166,6 +166,10 @@
     - role: galaxy/barassistant
     # /role-specific:barassistant
 
+    # role-specific:bazarr
+    - role: galaxy/bazarr
+    # /role-specific:bazarr
+
     # role-specific:bentopdf
     - role: galaxy/bentopdf
     # /role-specific:bentopdf
@@ -218,6 +222,10 @@
     - role: galaxy/cinny
     # /role-specific:cinny
 
+    # role-specific:civicrm
+    - role: galaxy/civicrm
+    # /role-specific:civicrm
+
     # role-specific:clickhouse
     - role: galaxy/clickhouse
     # /role-specific:clickhouse
@@ -254,6 +262,10 @@
     - role: galaxy/databasus
     # /role-specific:databasus
 
+    # role-specific:dayplanner
+    - role: custom/dayplanner
+    # /role-specific:dayplanner
+
     # role-specific:ddclient
     - role: galaxy/ddclient
     # /role-specific:ddclient
@@ -289,6 +301,10 @@
     # role-specific:dokuwiki
     - role: galaxy/dokuwiki
     # /role-specific:dokuwiki
+
+    # role-specific:donetick
+    - role: galaxy/donetick
+    # /role-specific:donetick
 
     # role-specific:duplicati
     - role: galaxy/duplicati
@@ -346,6 +362,10 @@
     - role: galaxy/filebrowser_quantum
     # /role-specific:filebrowser_quantum
 
+    # role-specific:filegator
+    - role: galaxy/filegator
+    # /role-specific:filegator
+
     # role-specific:flaresolverr
     - role: galaxy/flaresolverr
     # /role-specific:flaresolverr
@@ -390,6 +410,10 @@
     - role: galaxy/gitea
     # /role-specific:gitea
 
+    # role-specific:gokapi
+    - role: galaxy/gokapi
+    # /role-specific:gokapi
+
     # role-specific:gotenberg
     - role: galaxy/gotenberg
     # /role-specific:gotenberg
@@ -406,9 +430,17 @@
     - role: galaxy/gotosocial
     # /role-specific:gotosocial
 
+    # role-specific:oliverlorenz-api
+    - role: custom/oliverlorenz-api
+    # /role-specific:oliverlorenz-api
+
     # role-specific:gowa
     - role: custom/gowa
     # /role-specific:gowa
+
+    # role-specific:app-dooropener
+    - role: custom/app-dooropener
+    # /role-specific:app-dooropener
 
     # role-specific:grafana
     - role: galaxy/grafana
@@ -550,6 +582,10 @@
     - role: galaxy/loki
     # /role-specific:loki
 
+    # role-specific:lute
+    - role: galaxy/lute
+    # /role-specific:lute
+
     # role-specific:mailcatcher
     - role: galaxy/mailcatcher
     # /role-specific:mailcatcher
@@ -593,6 +629,10 @@
     # role-specific:memos
     - role: galaxy/memos
     # /role-specific:memos
+
+    # role-specific:mermaid
+    - role: galaxy/mermaid
+    # /role-specific:mermaid
 
     # role-specific:minecraft
     - role: galaxy/minecraft
@@ -670,6 +710,10 @@
     - role: galaxy/nodebb
     # /role-specific:nodebb
 
+    # role-specific:nodered
+    - role: galaxy/nodered
+    # /role-specific:nodered
+
     # role-specific:notfellchen
     - role: galaxy/notfellchen
     # /role-specific:notfellchen
@@ -681,6 +725,10 @@
     # role-specific:oauth2_proxy
     - role: galaxy/oauth2_proxy
     # /role-specific:oauth2_proxy
+
+    # role-specific:ohrwurm
+    - role: custom/ohrwurm
+    # /role-specific:ohrwurm
 
     # role-specific:omnitools
     - role: galaxy/omnitools
@@ -782,6 +830,10 @@
     - role: galaxy/poodledonts
     # /role-specific:poodledonts
 
+    # role-specific:polaris
+    - role: galaxy/polaris
+    # /role-specific:polaris
+
     # role-specific:postgis
     - role: galaxy/postgis
     # /role-specific:postgis
@@ -878,6 +930,10 @@
     - role: galaxy/reitti
     # /role-specific:reitti
 
+    # role-specific:restserver
+    - role: galaxy/restserver
+    # /role-specific:restserver
+
     # role-specific:roundcube
     - role: galaxy/roundcube
     # /role-specific:roundcube
@@ -942,6 +998,10 @@
     - role: galaxy/soundcloak
     # /role-specific:soundcloak
 
+    # role-specific:sqlpage
+    - role: galaxy/sqlpage
+    # /role-specific:sqlpage
+
     # role-specific:statusnook
     - role: galaxy/statusnook
     # /role-specific:statusnook
@@ -961,6 +1021,10 @@
     # role-specific:tandoor
     - role: galaxy/tandoor
     # /role-specific:tandoor
+
+    # role-specific:tasksmd
+    - role: galaxy/tasksmd
+    # /role-specific:tasksmd
 
     # role-specific:teable
     - role: galaxy/teable
@@ -1014,6 +1078,10 @@
     - role: galaxy/vaultwarden
     # /role-specific:vaultwarden
 
+    # role-specific:vector
+    - role: galaxy/vector
+    # /role-specific:vector
+
     # role-specific:versatiles
     - role: galaxy/versatiles
     # /role-specific:versatiles
@@ -1021,6 +1089,10 @@
     # role-specific:vikunja
     - role: galaxy/vikunja
     # /role-specific:vikunja
+
+    # role-specific:wazuh
+    - role: galaxy/wazuh
+    # /role-specific:wazuh
 
     # role-specific:weblate
     - role: galaxy/weblate

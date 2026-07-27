@@ -25,9 +25,9 @@ RSSHub is a self-hosted service to create RSS feeds from web pages via various "
 
 See the project's [documentation](https://docs.rsshub.app/guide/) to learn what RSSHub does and why it might be useful to you.
 
-For details about configuring the [Ansible role for RSSHub](https://radicle.network/nodes/seed.radicle.garden/rad%3Az3yKvCwcEfxn41ozRTcNR8ad6kpUm), you can check them via:
+For details about configuring the [Ansible role for RSSHub](https://radicle.network/nodes/iris.radicle.network/rad%3Az3yKvCwcEfxn41ozRTcNR8ad6kpUm), you can check them via:
 
-- 🌐 [the role's documentation](https://radicle.network/nodes/seed.radicle.garden/rad%3Az3yKvCwcEfxn41ozRTcNR8ad6kpUm/tree/docs/configuring-rsshub.md) online
+- 🌐 [the role's documentation](https://radicle.network/nodes/iris.radicle.network/rad%3Az3yKvCwcEfxn41ozRTcNR8ad6kpUm/tree/docs/configuring-rsshub.md) online
 - 📁 `roles/galaxy/rsshub/docs/configuring-rsshub.md` locally, if you have [fetched the Ansible roles](../installing.md)
 
 ## Dependencies
@@ -260,13 +260,13 @@ Note that running the `just` commands for installation (`just install-all` or `j
 
 ## Usage
 
-After installation, the RSSHub instance becomes available at the URL specified with `rsshubp_hostname`. With the configuration above, the service is hosted at `https://rsshubp.example.com`.
+After running the command for installation, the RSSHub instance becomes available at the URL specified with `rsshubp_hostname`. With the configuration above, the service is hosted at `https://rsshubp.example.com`.
 
 See the [official documentation](https://docs.rsshub.app/guide/) for usage.
 
 ## Troubleshooting
 
-See [this section](https://radicle.network/nodes/seed.radicle.garden/rad%3Az3yKvCwcEfxn41ozRTcNR8ad6kpUm/tree/docs/configuring-rsshub.md#troubleshooting) on the role's documentation for details.
+See [this section](https://radicle.network/nodes/iris.radicle.network/rad%3Az3yKvCwcEfxn41ozRTcNR8ad6kpUm/tree/docs/configuring-rsshub.md#troubleshooting) on the role's documentation for details.
 
 ## Related services
 

@@ -26,9 +26,9 @@ Karakeep is a self-hosted, open-source bookmark manager to collect, organize and
 
 See the project's [documentation](https://docs.karakeep.app) to learn what Karakeep does and why it might be useful to you.
 
-For details about configuring the [Ansible role for Karakeep](https://radicle.network/nodes/seed.radicle.garden/rad%3Az4W1oeRiFKEikhj4Mk3HbVJM7er6S), you can check them via:
+For details about configuring the [Ansible role for Karakeep](https://radicle.network/nodes/iris.radicle.network/rad%3Az4W1oeRiFKEikhj4Mk3HbVJM7er6S), you can check them via:
 
-- 🌐 [the role's documentation](https://radicle.network/nodes/seed.radicle.garden/rad%3Az4W1oeRiFKEikhj4Mk3HbVJM7er6S/tree/docs/configuring-karakeep.md) online
+- 🌐 [the role's documentation](https://radicle.network/nodes/iris.radicle.network/rad%3Az4W1oeRiFKEikhj4Mk3HbVJM7er6S/tree/docs/configuring-karakeep.md) online
 - 📁 `roles/galaxy/karakeep/docs/configuring-karakeep.md` locally, if you have [fetched the Ansible roles](../installing.md)
 
 ## Dependencies
@@ -106,7 +106,7 @@ See [this page](https://docs.karakeep.app/configuration/) for a complete list of
 
 ## Usage
 
-After installation, the Karakeep instance becomes available at the URL specified with `karakeep_hostname`. With the configuration above, the service is hosted at `https://karakeep.example.com`.
+After running the command for installation, the Karakeep instance becomes available at the URL specified with `karakeep_hostname`. With the configuration above, the service is hosted at `https://karakeep.example.com`.
 
 To get started, open the URL with a web browser to create an account. **Note that the first registered user becomes an administrator automatically.**
 
@@ -114,10 +114,10 @@ Since account registration is disabled by default, you need to enable it first b
 
 ## Troubleshooting
 
-See [this section](https://radicle.network/nodes/seed.radicle.garden/rad%3Az4W1oeRiFKEikhj4Mk3HbVJM7er6S/tree/docs/configuring-karakeep.md#troubleshooting) on the role's documentation for details.
+See [this section](https://radicle.network/nodes/iris.radicle.network/rad%3Az4W1oeRiFKEikhj4Mk3HbVJM7er6S/tree/docs/configuring-karakeep.md#troubleshooting) on the role's documentation for details.
 
 ## Related services
 
 - [linkding](linkding.md) — Bookmark manager designed to be minimal and fast
-- [Linkwarden](linkwarden.md) — Self-hosted, open-source collaborative bookmark manager to collect, organize and archive webpages
+- [Linkwarden](linkwarden.md) — Collaborative bookmark manager
 - [Readeck](readeck.md) — Bookmark manager and a read-later tool combined in one

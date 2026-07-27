@@ -284,9 +284,9 @@ Note that running the `just` commands for installation (`just install-all` or `j
 
 ## Usage
 
-After installation, the Outline instance becomes available at the URL specified with `outline_hostname`. With the configuration above, the service is hosted at `https://outline.example.com`.
+After running the command for installation, the Outline instance becomes available at the URL specified with `outline_hostname`. With the configuration above, the service is hosted at `https://outline.example.com`.
 
 ## Related services
 
-- [BookStack](bookstack.md) — Platform for organising and storing information
+- [BookStack](bookstack.md) — Information organizer and storage
 - [Docmost](docmost.md) — Collaborative wiki and documentation software

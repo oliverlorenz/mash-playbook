@@ -26,9 +26,9 @@ asciinema server is a server-side component of the asciinema system, a suite of 
 
 See the project's [documentation](https://docs.asciinema.org/) to learn what asciinema does and why it might be useful to you.
 
-For details about configuring the [Ansible role for asciinema server](https://radicle.network/nodes/seed.radicle.garden/rad%3AzcSq6tnVLBUQ88zSRLThc7A7RDZb), you can check them via:
+For details about configuring the [Ansible role for asciinema server](https://radicle.network/nodes/iris.radicle.network/rad%3AzcSq6tnVLBUQ88zSRLThc7A7RDZb), you can check them via:
 
-- 🌐 [the role's documentation](https://radicle.network/nodes/seed.radicle.garden/rad%3AzcSq6tnVLBUQ88zSRLThc7A7RDZb/tree/docs/configuring-asciinema-server.md) online
+- 🌐 [the role's documentation](https://radicle.network/nodes/iris.radicle.network/rad%3AzcSq6tnVLBUQ88zSRLThc7A7RDZb/tree/docs/configuring-asciinema-server.md) online
 - 📁 `roles/galaxy/asciinema_server/docs/configuring-asciinema-server.md` locally, if you have [fetched the Ansible roles](../installing.md)
 
 ## Dependencies
@@ -106,7 +106,7 @@ asciinema_server_environment_variable_upload_auth_required: false
 
 ## Usage
 
-After installation, the asciinema server instance becomes available at the URL specified with `asciinema_server_hostname`. With the configuration above, the service is hosted at `https://asciinema-server.example.com`.
+After running the command for installation, the asciinema server instance becomes available at the URL specified with `asciinema_server_hostname`. With the configuration above, the service is hosted at `https://asciinema-server.example.com`.
 
 To get started, install the asciinema CLI on your local computer, and then point it to the server, so that the CLI will upload your recordings to it. The basic flow to use the CLI from recording a terminal session to upload the recording to your server is available on [this page](https://docs.asciinema.org/getting-started/).
 
@@ -116,4 +116,4 @@ Adding an authentication proxy service like [Keycloak](keycloak.md) and [Tinyaut
 
 ## Troubleshooting
 
-See [this section](https://radicle.network/nodes/seed.radicle.garden/rad%3AzcSq6tnVLBUQ88zSRLThc7A7RDZb/tree/docs/configuring-asciinema-server.md#troubleshooting) on the role's documentation for details.
+See [this section](https://radicle.network/nodes/iris.radicle.network/rad%3AzcSq6tnVLBUQ88zSRLThc7A7RDZb/tree/docs/configuring-asciinema-server.md#troubleshooting) on the role's documentation for details.

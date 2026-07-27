@@ -1,0 +1,108 @@
+# SPDX-FileCopyrightText: 2026 Oliver Lorenz
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+---
+name: Sync upstream
+on:  # yamllint disable-line rule:truthy
+  schedule:
+    - cron: '0 8 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  sync:
+    name: Sync from upstream
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          # GITHUB_TOKEN can never push changes to .github/workflows/* by
+          # GitHub design, and upstream syncs regularly touch those files.
+          # Use a PAT with the 'workflow' scope instead.
+          token: ${{ secrets.SYNC_UPSTREAM_PAT }}
+
+      - name: Configure git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Add upstream remote
+        run: git remote add upstream https://github.com/mother-of-all-self-hosting/mash-playbook.git
+
+      - name: Fetch upstream
+        run: git fetch upstream
+
+      - name: Check if sync is needed
+        id: check_sync
+        # Nothing to do if upstream/main is already merged into main - this
+        # is the normal weekly outcome, not a failure, so skip the rest of
+        # the job instead of pushing an empty branch and failing on PR
+        # creation ("No commits between main and sync/...").
+        run: |
+          if git merge-base --is-ancestor upstream/main main; then
+            echo "needed=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "needed=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Create sync branch
+        if: steps.check_sync.outputs.needed == 'true'
+        run: |
+          BRANCH="sync/upstream-$(date +%Y-%m-%d)"
+          git checkout -b "$BRANCH"
+          echo "BRANCH=$BRANCH" >> "$GITHUB_ENV"
+
+      - name: Merge upstream main
+        if: steps.check_sync.outputs.needed == 'true'
+        run: git merge upstream/main --no-edit
+
+      - name: Check for leftover conflict markers
+        if: steps.check_sync.outputs.needed == 'true'
+        # .gitattributes sets merge=union for templates/setup.yml and
+        # templates/group_vars_mash_servers so nearby insertions from
+        # upstream and our custom roles don't conflict. This is a cheap,
+        # reliable safety net in case a conflict marker is ever left behind
+        # regardless of merge strategy.
+        run: |
+          MARKERS=$(grep -rl '^<<<<<<< ' --exclude-dir=.git . || true)
+          if [ -n "$MARKERS" ]; then
+            echo "Leftover conflict markers found in:"
+            echo "$MARKERS"
+            exit 1
+          fi
+
+      - name: Push sync branch
+        if: steps.check_sync.outputs.needed == 'true'
+        run: git push origin "$BRANCH"
+
+      - name: Close existing sync PRs
+        if: steps.check_sync.outputs.needed == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.SYNC_UPSTREAM_PAT }}
+        # --repo is required: this repo is a registered GitHub fork of
+        # mother-of-all-self-hosting/mash-playbook, and gh defaults to
+        # targeting the parent repo instead of this one otherwise.
+        run: |
+          gh pr list --repo "$GITHUB_REPOSITORY" --search "chore: sync upstream in:title" --state open --json number,headRefName \
+            --jq '.[] | "\(.number) \(.headRefName)"' \
+          | while read -r number branch; do
+              gh pr close "$number" --repo "$GITHUB_REPOSITORY" --comment "Superseded by a newer sync PR." --delete-branch
+            done
+
+      - name: Create pull request
+        if: steps.check_sync.outputs.needed == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.SYNC_UPSTREAM_PAT }}
+        run: |
+          gh pr create \
+            --repo "$GITHUB_REPOSITORY" \
+            --assignee "@me" \
+            --title "chore: sync upstream $(date +%Y-%m-%d)" \
+            --body "Automated weekly sync from [mother-of-all-self-hosting/mash-playbook](https://github.com/mother-of-all-self-hosting/mash-playbook)." \
+            --base main \
+            --head "$BRANCH"

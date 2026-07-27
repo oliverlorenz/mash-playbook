@@ -27,16 +27,16 @@ The playbook can install and configure [Apprise API](https://github.com/caronc/a
 
 See the project's [documentation](https://github.com/caronc/apprise-api/blob/master/README.md) to learn what Apprise API does and why it might be useful to you.
 
-For details about configuring the [Ansible role for Apprise API](https://radicle.network/nodes/seed.radicle.garden/rad%3Az292aD8q3r8xqhJvLe2zv1b24gu7a), you can check them via:
+For details about configuring the [Ansible role for Apprise API](https://radicle.network/nodes/iris.radicle.network/rad%3Az292aD8q3r8xqhJvLe2zv1b24gu7a), you can check them via:
 
-- 🌐 [the role's documentation](https://radicle.network/nodes/seed.radicle.garden/rad%3Az292aD8q3r8xqhJvLe2zv1b24gu7a/tree/docs/configuring-apprise.md) online
+- 🌐 [the role's documentation](https://radicle.network/nodes/iris.radicle.network/rad%3Az292aD8q3r8xqhJvLe2zv1b24gu7a/tree/docs/configuring-apprise.md) online
 - 📁 `roles/galaxy/apprise/docs/configuring-apprise.md` locally, if you have [fetched the Ansible roles](../installing.md)
 
 ## Dependencies
 
 This service requires the following other services:
 
-- (optional) [Traefik](traefik.md) — a reverse-proxy server for exposing Configuration Manager publicly
+- (optional) [Traefik](traefik.md) — Reverse-proxy server for exposing Configuration Manager publicly
 
 ## Configuration
 
@@ -110,15 +110,15 @@ apprise_container_labels_traefik_metrics_middleware_basic_auth_users: ""
 
 ## Usage
 
-After running the command for installation, Apprise API becomes available. If the Configuration Manager is configured to be exposed to the internet, it becomes available at the URL specified with `apprise_hostname`. With the configuration above, it is hosted at `https://apprise.example.com`.
+After running the command for installation, the Apprise API instance becomes available. If the Configuration Manager is configured to be exposed to the internet, it becomes available at the URL specified with `apprise_hostname`. With the configuration above, it is hosted at `https://apprise.example.com`.
 
 You can check the list of notification services supported by Apprise at <https://github.com/caronc/apprise/wiki#notification-services>. The instruction to use the Apprise CLI is available at <https://github.com/caronc/apprise/wiki/CLI_Usage>.
 
 ## Troubleshooting
 
-See [this section](https://radicle.network/nodes/seed.radicle.garden/rad%3Az292aD8q3r8xqhJvLe2zv1b24gu7a/tree/docs/configuring-apprise.md#troubleshooting) on the role's documentation for details.
+See [this section](https://radicle.network/nodes/iris.radicle.network/rad%3Az292aD8q3r8xqhJvLe2zv1b24gu7a/tree/docs/configuring-apprise.md#troubleshooting) on the role's documentation for details.
 
 ## Related services
 
-- [Gotify](gotify.md) — Simple server for sending and receiving messages
-- [ntfy](ntfy.md) — Simple HTTP-based pub-sub notification service to send you push notifications from any computer
+- [Gotify](gotify.md) — Send and receive messages in real-time per WebSocket
+- [ntfy](ntfy.md) — HTTP-based pub-sub notification service to send you push notifications from any computer

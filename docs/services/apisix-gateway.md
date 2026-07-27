@@ -78,7 +78,7 @@ Path prefixes default to `/` for all services, so if you don't like the example 
 
 ## Usage
 
-After installation, you can send API requests to your API gateway (as specified in `apisix_gateway_hostname` and `apisix_gateway_path_prefix`).
+After running the command for installation, you can send API requests to your API gateway (as specified in `apisix_gateway_hostname` and `apisix_gateway_path_prefix`).
 
 Example: `curl https://api.example.com/api`
 
@@ -90,4 +90,4 @@ Example: `curl -H 'X-API-KEY: YOUR_SECRET_API_KEY_HERE' https://admin.api.exampl
 
 ## Related services
 
-- [APISIX dashboard](apisix-dashboard.md) — a dashboard (web UI) for APISIX
+- [APISIX dashboard](apisix-dashboard.md) — Dashboard (web UI) for APISIX Gateway

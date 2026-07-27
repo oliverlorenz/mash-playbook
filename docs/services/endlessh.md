@@ -40,8 +40,8 @@ The role is configured to set up the Endlessh-go instance to listen to the port 
 This service requires the following other services:
 
 - [Traefik](traefik.md)
-- (optional) [Grafana](grafana.md) — a web UI that can query the Prometheus datasource (connection) and display the logs
-- (optional) [Prometheus](prometheus.md) — a database for storing metrics
+- (optional) [Grafana](grafana.md) — Web-based tool for visualizing your Prometheus metrics (time-series)
+- (optional) [Prometheus](prometheus.md) — Metrics collection and alerting monitoring solution
 
 ## Configuration
 
@@ -119,8 +119,8 @@ It will expose the metrics at `https://mash.example.com/metrics/mash-endlessh`.
 To enable the HTTP Basic authentication, add the following configuration to your `vars.yml` file (adapt to your needs):
 
 ```yaml
-endlessh_container_labels_metrics_middleware_basic_auth_enabled: true
+endlessh_container_labels_traefik_metrics_middleware_basic_auth_enabled: true
 
 # See https://doc.traefik.io/traefik/middlewares/http/basicauth/#users for details.
-endlessh_container_labels_metrics_middleware_basic_auth_users: ""
+endlessh_container_labels_traefik_metrics_middleware_basic_auth_users: ""
 ```
