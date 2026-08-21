@@ -1,3 +1,19 @@
+# 2026-08-20
+
+## Updated Infisical requires manual database migration from MongoDB to Postgres
+
+[Infisical](docs/services/infisical.md) transitioned from MongoDB to Postgres backend on [v0.46.11](https://hub.docker.com/layers/infisical/infisical/v0.46.11-postgres/). The role to install the application ([ansible-role-infisical](https://github.com/mother-of-all-self-hosting/ansible-role-infisical)) does not provide an automated method to conduct database migration from MongoDB, so it is necessary to conduct manual migration if you have deployed an old Infisical instance with the playbook and wish to keep the data. Refer to [this page](https://infisical.com/docs/self-hosting/guides/mongo-to-postgres) for details about migration.
+
+# 2026-08-06
+
+## (Backward Compatibility Break) Jitsi no longer uses Colibri WebSockets
+
+This only affects you if you have [Jitsi](docs/services/jitsi.md) enabled.
+
+Jitsi has been updated to `stable-11146-1`, which [removes Colibri WebSocket support](https://github.com/jitsi/docker-jitsi-meet/pull/2285) in favour of SCTP data channels. The Jitsi Video Bridge no longer serves HTTP at all, so a few `jitsi_jvb_*` variables are gone. The playbook will tell you which ones, if your configuration still sets them.
+
+If you run [additional JVBs on other hosts](https://github.com/mother-of-all-self-hosting/ansible-role-jitsi/blob/main/docs/configuring-jitsi.md#set-up-additional-jvbs-for-more-video-conferences-optional), the Traefik configuration which routed `/colibri-ws/<server-id>/` to them is now dead and can be removed. Nothing will warn you about that one, as it lives in a free-form `traefik_provider_configuration_extension_yaml` block.
+
 # 2026-07-28
 
 ## (Backward Compatibility Break) ntfy users are now declared with hashed passwords
