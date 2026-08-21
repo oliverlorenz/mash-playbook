@@ -11,6 +11,7 @@ SPDX-FileCopyrightText: 2025 Gergely Horváth
 SPDX-FileCopyrightText: 2025 Suguru Hirahara
 SPDX-FileCopyrightText: 2025 XHawk87
 SPDX-FileCopyrightText: 2025 spatterlight
+SPDX-FileCopyrightText: 2026 sudo-Tiz
 
 SPDX-License-Identifier: AGPL-3.0-or-later
 -->
@@ -51,7 +52,7 @@ Below is an exhaustive list of the free and open-source software for self-hostin
 | [bitmagnet](https://bitmagnet.io/) | BitTorrent indexer, DHT crawler, content classifier and search engine | [Link](services/bitmagnet.md) |
 | [BookStack](https://www.bookstackapp.com) | Information organizer and storage | [Link](services/bookstack.md) |
 | [BorgBackup](https://www.borgbackup.org/) (via [borgmatic](https://torsion.org/borgmatic/)) | A deduplicating backup program with optional compression and encryption | [Link](services/backup-borg.md) |
-| [Borg Web UI](https://karanhudia.github.io/borg-ui/) | Unofficial web interface for BorgBackup | [Link](services/borg-ui.md) |
+| [Borg Web UI](https://github.com/karanhudia/borg-ui) | Unofficial web interface for BorgBackup | [Link](services/borg-ui.md) |
 | [Calibre-Web](https://github.com/janeczku/calibre-web) | Web app for browsing, reading and downloading eBooks stored in a [Calibre](https://calibre-ebook.com/) database | [Link](services/calibre-web.md) |
 | [Calibre-Web Automated](https://github.com/crocodilestick/Calibre-Web-Automated) | Web application based on [Calibre-Web](https://github.com/janeczku/calibre-web) with additional features and automation | [Link](services/calibre-web-automated.md) |
 | [Cap Standalone](https://capjs.js.org/guide/standalone/) | Backend of Cap, a POW Captcha | [Link](services/cap.md) |
@@ -140,6 +141,7 @@ Below is an exhaustive list of the free and open-source software for self-hostin
 | [Lago](https://www.getlago.com/) | Metering and usage-based billing | [Link](services/lago.md) |
 | [LanguageTool](https://languagetool.org/) | An online grammar, style and spell checker | [Link](services/languagetool.md) |
 | [LibreBooking](https://github.com/LibreBooking/librebooking) | Resource scheduling and booking application | [Link](services/librebooking.md) |
+| [Lidarr](https://lidarr.audio/) | Music collection manager for Usenet and BitTorrent users | [Link](services/lidarr.md) |
 | [LimeSurvey](https://www.limesurvey.org) | Web based forms and surveys | [Link](services/limesurvey.md) |
 | [linkding](https://github.com/sissbruecker/linkding/) | Bookmark manager designed to be minimal and fast | [Link](services/linkding.md) |
 | [Linkwarden](https://github.com/linkwarden/linkwarden) | Collaborative bookmark manager | [Link](services/linkwarden.md) |
@@ -217,7 +219,7 @@ Below is an exhaustive list of the free and open-source software for self-hostin
 | [Radarr](https://radarr.video/) | A movie organizer/manager for Usenet and BitTorrent users | [Link](services/radarr.md) |
 | [Radicale](https://radicale.org/) | A CalDAV and CardDAV Server (solution for hosting contacts and calendars) | [Link](services/radicale.md) |
 | [Radicle Explorer](https://radicle.network/nodes/seed.radicle.dev/rad%3Az4V1sjrXqjvFdnCUbxPFqd5p4DtH5) | [Radicle](https://radicle.dev/) user interface for the web browser | [Link](services/radicle-explorer.md) |
-| [Radicle HTTP Daemon](https://radicle.network/nodes/seed.radicle.dev/rad%3Az4V1sjrXqjvFdnCUbxPFqd5p4DtH5/tree/crates/radicle-httpd/radicle-httpd.1.adocradicle-httpd.1.adoc) | Gateway between the [Radicle](https://radicle.dev/) protocol and the HTTP protocol | [Link](services/radicle-httpd.md) |
+| [Radicle HTTP Daemon](https://radicle.network/nodes/seed.radicle.dev/rad%3Az4V1sjrXqjvFdnCUbxPFqd5p4DtH5/tree/crates/radicle-httpd/radicle-httpd.1.adoc) | Gateway between the [Radicle](https://radicle.dev/) protocol and the HTTP protocol | [Link](services/radicle-httpd.md) |
 | [Radicle node](https://radicle.network/nodes/seed.radicle.dev/rad%3Az3gqcJUoA1n9HaHKufZs5FCSGazv5) | Network daemon for the [Radicle](https://radicle.dev/) network | [Link](services/radicle-node.md) |
 | [ReactFlux](https://github.com/electh/ReactFlux) | Third-party web frontend for Miniflux | [Link](services/reactflux.md) |
 | [Readeck](https://readeck.org) | A bookmark manager and a read-later tool combined in one | [Link](services/readeck.md) |
@@ -249,7 +251,7 @@ Below is an exhaustive list of the free and open-source software for self-hostin
 | [Syncthing](https://syncthing.net/) | A continuous file synchronization program which synchronizes files between two or more computers in real time | [Link](services/syncthing.md) |
 | [Tandoor](https://docs.tandoor.dev/) | The recipe manager that allows you to manage your ever growing collection of digital recipes | [Link](services/tandoor.md) |
 | [Tasks.md](https://hub.docker.com/r/baldissaramatheus/tasks.md) | Markdown file-based task management board | [Link](services/tasksmd.md) |
-| [Teable](https://github.com/teableio/teable) | No-code database management platform with spreadsheet-like interface | [Link](services/teable.md) |
+| [Teable](https://github.com/teableio/teable) | Database management platform with spreadsheet-like interface | [Link](services/teable.md) |
 | [Telegraf](https://www.influxdata.com/time-series-platform/telegraf/) | A server agent to help you collect metrics from your stacks, sensors, and systems | [Link](services/telegraf.md) |
 | [Termix](https://docs.termix.site/) | Server management platform with SSH terminal | [Link](services/termix.md) |
 | [The Lounge](https://thelounge.chat/) | Web IRC client with modern features, which keeps a persistent connection to IRC servers | [Link](services/thelounge.md) |
