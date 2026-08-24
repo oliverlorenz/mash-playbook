@@ -9,7 +9,7 @@
   name: adguard_home
   activation_prefix: adguard_home_
 - src: git+https://iris.radicle.network/z3px8gLDo2opjQZW7qFiLoNuk4eSu.git
-  version: v5.5.1-0
+  version: v6.0.1-0
   name: adminer
   activation_prefix: adminer_
 - src: git+https://github.com/mother-of-all-self-hosting/ansible-role-anki.git
@@ -53,7 +53,7 @@
   name: audiobookshelf
   activation_prefix: audiobookshelf_
 - src: git+https://github.com/mother-of-all-self-hosting/ansible-role-authelia.git
-  version: v4.37.5-12
+  version: v4.37.5-13
   name: authelia
   activation_prefix: authelia_
 - src: git+https://github.com/mother-of-all-self-hosting/ansible-role-authentik.git
@@ -73,7 +73,7 @@
   name: backup_borg
   activation_prefix: backup_borg_
 - src: git+https://iris.radicle.network/z3JDUHjeHMqbZ3YLxquSUbCmAJLi.git
-  version: v5.15.3-0
+  version: v6.2.0-0
   name: barassistant
   activation_prefix: barassistant_
 - src: git+https://github.com/mother-of-all-self-hosting/ansible-role-bazarr.git
@@ -85,7 +85,7 @@
   name: bentopdf
   activation_prefix: bentopdf_
 - src: git+https://iris.radicle.network/z2nQcYvPh51zfvVu8hkftDYPmELYP.git
-  version: v1.6.2-0
+  version: v2.0.2-0
   name: bichon
   activation_prefix: bichon_
 - src: git+https://github.com/mother-of-all-self-hosting/ansible-role-bind.git
@@ -109,7 +109,7 @@
   name: browserless
   activation_prefix: browserless_
 - src: git+https://github.com/mother-of-all-self-hosting/ansible-role-calibre-web.git
-  version: v0.6.25-8
+  version: v0.6.27-0
   name: calibre_web
   activation_prefix: calibre_web_
 - src: git+https://iris.radicle.network/zSfEaojv4NnFnivPm248Lx123CNe.git
@@ -141,7 +141,7 @@
   name: cleanup
   activation_prefix: system_cleanup_
 - src: git+https://github.com/mother-of-all-self-hosting/ansible-role-clickhouse.git
-  version: v26.7.4.58-0
+  version: v26.7.5.10-1
   name: clickhouse
   activation_prefix: clickhouse_
 - src: git+https://iris.radicle.network/zp12kTQqmgqnFpUU6gPyVq19HNMD.git
@@ -349,7 +349,7 @@
   name: gothub
   activation_prefix: gothub_
 - src: git+https://iris.radicle.network/z3dQNNLitS9sByxZ83ivu5qg6qR4N.git
-  version: v2.9.1-8
+  version: v3.0.0-0
   name: gotify
   activation_prefix: gotify_
 - src: git+https://github.com/mother-of-all-self-hosting/ansible-role-gotosocial.git
@@ -381,7 +381,7 @@
   name: heyform
   activation_prefix: heyform_
 - src: git+https://github.com/mother-of-all-self-hosting/ansible-role-homarr.git
-  version: v1.75.0-0
+  version: v1.76.0-0
   name: homarr
   activation_prefix: homarr_
 - src: git+https://github.com/mother-of-all-self-hosting/ansible-role-hubsite.git
@@ -461,7 +461,7 @@
   name: labelstudio
   activation_prefix: labelstudio_
 - src: git+https://github.com/mother-of-all-self-hosting/ansible-role-lago.git
-  version: v0.50.0-3
+  version: v1.50.0-0
   name: lago
   activation_prefix: lago_
 - src: git+https://github.com/mother-of-all-self-hosting/ansible-role-languagetool.git
@@ -609,7 +609,7 @@
   name: neko
   activation_prefix: neko_
 - src: git+https://github.com/mother-of-all-self-hosting/ansible-role-netbox.git
-  version: v3.7.0-2.8.0-2
+  version: v4.6.8-5.0.2-1
   name: netbox
   activation_prefix: netbox_
 - src: git+https://github.com/mother-of-all-self-hosting/ansible-role-nextcloud.git
@@ -693,7 +693,7 @@
   name: oxitraffic
   activation_prefix: oxitraffic_
 - src: git+https://github.com/mother-of-all-self-hosting/ansible-role-paperless.git
-  version: v3.0.5-0
+  version: v3.0.5-2
   name: paperless
   activation_prefix: paperless_
 - src: git+https://iris.radicle.network/z2LGSfc7ziSKvErzZAQdTyTQ4sJcs.git
@@ -725,7 +725,7 @@
   name: plausible
   activation_prefix: plausible_
 - src: git+https://github.com/devture/com.devture.ansible.role.playbook_help.git
-  version: ea8c5cc750c4e23d004c9a836dfd9eda82d45ff4
+  version: 717de2c7fb03f8124abc2beeb34980305f723f33
   name: playbook_help
   activation_prefix: ""
 - src: git+https://github.com/devture/com.devture.ansible.role.playbook_runtime_messages.git
@@ -936,6 +936,10 @@
   version: v1.5.0-3
   name: stirling_pdf
   activation_prefix: stirling_pdf_
+- src: git+https://iris.radicle.network/z23UDsbsiGGq9B8M8TSNWB4MLk3vX.git
+  version: v1.100.0-0
+  name: svix
+  activation_prefix: svix_server_
 - src: git+https://github.com/mother-of-all-self-hosting/ansible-role-swap.git
   version: abfb18b6862108bbf24347500446203170324d7f
   name: swap
@@ -1021,7 +1025,7 @@
   name: valkey
   activation_prefix: valkey_
 - src: git+https://github.com/mother-of-all-self-hosting/ansible-role-vaultwarden.git
-  version: v1.37.1-0
+  version: v1.37.2-0
   name: vaultwarden
   activation_prefix: vaultwarden_
 - src: git+https://github.com/spatterIight/ansible-role-vector.git
@@ -1029,7 +1033,7 @@
   name: vector
   activation_prefix: vector_
 - src: git+https://github.com/mother-of-all-self-hosting/ansible-role-versatiles.git
-  version: v4.9.0-0
+  version: v4.9.1-0
   name: versatiles
   activation_prefix: versatiles_
 - src: git+https://github.com/mother-of-all-self-hosting/ansible-role-vikunja.git
