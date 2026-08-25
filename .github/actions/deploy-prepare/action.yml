@@ -5,8 +5,12 @@
 ---
 # Factored out of deploy-run.yml so deploy-run-setup-all.yml and deploy-run-setup-service.yml
 # don't duplicate the checkout/inventory/tooling/secrets steps.
+#
+# Expects to run inside the ghcr.io/devture/ansible container (set via `container:` on the
+# calling job), which already provides git, just, ansible and agru -- so there's no bash
+# either, hence `shell: sh` throughout.
 name: Deploy prepare
-description: Checks out the pinned inventory, installs tooling, optimizes for the target host, and writes SSH/secrets material.
+description: Checks out the pinned inventory, optimizes for the target host, and writes SSH/secrets material.
 
 inputs:
   host:
@@ -35,12 +39,12 @@ runs:
 
     - name: Record deployed commit
       id: resolve
-      shell: bash
+      shell: sh
       run: echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
 
     - name: Resolve pinned inventory commit
       id: inventory
-      shell: bash
+      shell: sh
       run: echo "sha=$(git rev-parse HEAD:inventory)" >> "$GITHUB_OUTPUT"
 
     - name: Checkout inventory
@@ -51,23 +55,22 @@ runs:
         path: inventory
         ref: ${{ steps.inventory.outputs.sha }}
 
-    - name: Install just
-      uses: extractions/setup-just@v2
-
-    - name: Install Ansible
-      shell: bash
-      run: pip install ansible regex
+    - name: Cache Ansible roles
+      uses: actions/cache@v4
+      with:
+        path: roles/galaxy
+        key: ansible-roles-${{ hashFiles('requirements.yml') }}
 
     - name: Optimize for host
-      shell: bash
+      shell: sh
       run: just optimize-for-host ${{ inputs.host }}
 
     - name: Install Ansible roles
-      shell: bash
+      shell: sh
       run: just roles
 
     - name: Write SSH private key
-      shell: bash
+      shell: sh
       run: |
         mkdir -p ~/.ssh
         echo "${{ inputs.ssh_private_key }}" > ~/.ssh/id_ed25519
@@ -79,6 +82,6 @@ runs:
         fi
 
     - name: Write secrets
-      shell: bash
+      shell: sh
       run: |
         echo "${{ inputs.inventory_secrets }}" > inventory/host_vars/${{ inputs.host }}/secrets.yml

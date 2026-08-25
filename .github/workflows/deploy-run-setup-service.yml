@@ -33,6 +33,9 @@ jobs:
   run:
     name: Deploy (setup-service)
     runs-on: ubuntu-latest
+    # Ships git, just, ansible and agru already, so deploy-prepare doesn't need to install
+    # any of that itself.
+    container: ghcr.io/devture/ansible:14.0.0-r0-3
     outputs:
       deployed_sha: ${{ steps.prepare.outputs.deployed_sha }}
     steps:
