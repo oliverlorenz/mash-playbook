@@ -37,6 +37,7 @@ on:
           - docker_sdk_for_python
           - gotosocial
           - gowa
+          - jellyfin
           - keydb
           - languagetool
           - n8n
