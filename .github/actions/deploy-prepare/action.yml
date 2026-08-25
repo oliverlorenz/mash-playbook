@@ -58,6 +58,22 @@ runs:
       shell: bash
       run: pip install ansible regex
 
+    - name: Install agru
+      shell: bash
+      # agru is a faster drop-in for `ansible-galaxy install` -- the justfile's `roles`
+      # recipe picks it up automatically from PATH, falling back to the much slower
+      # `ansible-galaxy install --force` (full re-clone of every role) if it's absent.
+      run: |
+        curl -sL https://github.com/etkecc/agru/releases/latest/download/agru_Linux_x86_64.tar.gz | tar xz -C /tmp agru
+        sudo mv /tmp/agru /usr/local/bin/agru
+        sudo chmod +x /usr/local/bin/agru
+
+    - name: Cache Ansible roles
+      uses: actions/cache@v4
+      with:
+        path: roles/galaxy
+        key: ansible-roles-${{ hashFiles('requirements.yml') }}
+
     - name: Optimize for host
       shell: bash
       run: just optimize-for-host ${{ inputs.host }}
