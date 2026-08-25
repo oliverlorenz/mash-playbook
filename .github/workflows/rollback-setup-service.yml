@@ -58,6 +58,7 @@ on:
           - tinyauth
           - traefik
           - uptime_kuma
+          - valkey
           - vaultwarden
           # END GENERATED: services
 
