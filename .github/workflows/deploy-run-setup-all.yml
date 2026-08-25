@@ -49,12 +49,20 @@ jobs:
           # Rollback needs full history to resolve the deployed/<host> tag below.
           fetch-depth: ${{ inputs.rollback && 0 || 1 }}
 
+      - name: Trust the checked-out workspace
+        if: inputs.rollback
+        # See the identical step in deploy-prepare for why this is needed: git refuses to
+        # touch $GITHUB_WORKSPACE otherwise, since it's owned by the host-side runner user
+        # rather than the root we run as inside the container.
+        run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
+
       - name: Resolve last known-good ref
         id: resolve-rollback
         if: inputs.rollback
         run: |
           if git rev-parse -q --verify "refs/tags/deployed/${{ inputs.host }}" >/dev/null; then
-            echo "sha=$(git rev-parse "refs/tags/deployed/${{ inputs.host }}")" >> "$GITHUB_OUTPUT"
+            sha="$(git rev-parse "refs/tags/deployed/${{ inputs.host }}")"
+            echo "sha=$sha" >> "$GITHUB_OUTPUT"
           else
             echo "::error::No previously successful deploy recorded for host '${{ inputs.host }}' -- nothing to roll back to."
             exit 1
