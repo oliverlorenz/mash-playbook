@@ -34,8 +34,7 @@ Below is an exhaustive list of the free and open-source software for self-hostin
 | [Apache Answer](https://answer.apache.org/) | Q&A community platform software for teams | [Link](services/answer.md) |
 | [Apache NiFi](https://nifi.apache.org/) | An easy to use, powerful, and reliable system to process and distribute data | [Link](services/nifi.md) |
 | [Apache Tika Server](https://github.com/apache/tika-docker) | Detect and extract metadata and text from different file types (such as PPT, XLS, and PDF) | [Link](services/tika.md) |
-| [APISIX Dashboard](https://apisix.apache.org/docs/dashboard/USER_GUIDE/) | Dashboard (web UI) for [APISIX Gateway](services/apisix-gateway.md) | [Link](services/apisix-dashboard.md) |
-| [APISIX Gateway](https://apisix.apache.org/docs/apisix/getting-started/README/) | An API Gateway, Ingress Controller, etc | [Link](services/apisix-gateway.md) |
+| [APISIX](https://apisix.apache.org/docs/apisix/getting-started/README/) | An API Gateway, Ingress Controller, etc | [Link](services/apisix.md) |
 | [Apprise API](https://github.com/caronc/apprise-api) | Lightweight REST framework that wraps the [Apprise](https://github.com/caronc/apprise) Notification Library | [Link](services/apprise.md) |
 | [Appsmith](https://www.appsmith.com/) | Platform for building and deploying custom internal tools and applications without writing code | [Link](services/appsmith.md) |
 | [asciinema server](https://github.com/asciinema/asciinema-server) | Server-side component of the [asciinema](https://docs.asciinema.org/) system, a suite of tools for recording, streaming, and sharing terminal sessions) | [Link](services/asciinema-server.md) |
@@ -134,7 +133,6 @@ Below is an exhaustive list of the free and open-source software for self-hostin
 | [Kanboard](https://kanboard.org/) | Kanban project management software | [Link](services/kanboard.md) |
 | [Karakeep](https://karakeep.app/) | Bookmark manager to collect, organize and archive webpages | [Link](services/karakeep.md) |
 | [Keycloak](https://www.keycloak.org/) | An identity and access management solution | [Link](services/keycloak.md) |
-| [KeyDB](https://docs.keydb.dev/) | An in-memory data store used as a database, cache, streaming engine, and message broker | [Link](services/keydb.md) |
 | [keyoxide-web](https://codeberg.org/keyoxide/keyoxide-web) | Web client for [Keyoxide](https://keyoxide.org/), a decentralized tool to create and verify decentralized online identities | [Link](services/keyoxide.md) |
 | [Kutt](https://kutt.to/) | Modern URL shortener with support for custom domains | [Link](services/kutt.md) |
 | [Label Studio](https://labelstud.io/) | Data labeling tool that supports multiple projects, users, and data types in one platform | [Link](services/labelstudio.md) |

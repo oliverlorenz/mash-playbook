@@ -5,8 +5,7 @@
 * Anki: 26.05
 * Anonymousoverflow: release
 * Answer: 2.0.2
-* Apisix Dashboard: 3.0.1
-* Apisix Gateway: 3.8.0
+* Apisix: 3.18.0
 * Apprise: 1.5.1
 * Appsmith: v2.3
 * Asciinema Server: 20260626
@@ -112,7 +111,6 @@
 * Kanboard: v1.2.53
 * Karakeep: 0.33.2
 * Keycloak: 26.7.2
-* Keydb: 6.3.4
 * Keyoxide: 5.1.0
 * Keyoxide Proxy: 5.1.0
 * Kutt: v3.2.6
