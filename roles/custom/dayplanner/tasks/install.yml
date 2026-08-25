@@ -23,6 +23,13 @@
   with_items:
     - labels
 
+- name: Log in to container image registry
+  when: dayplanner_container_image_registry_username != '' and dayplanner_container_image_registry_password != ''
+  community.docker.docker_login:
+    registry_url: "{{ dayplanner_container_image_registry_login_server }}"
+    username: "{{ dayplanner_container_image_registry_username }}"
+    password: "{{ dayplanner_container_image_registry_password }}"
+
 - name: Ensure Dayplanner container image is pulled via community.docker.docker_image
   when: devture_systemd_docker_base_container_image_pull_method == 'ansible-module'
   community.docker.docker_image:
