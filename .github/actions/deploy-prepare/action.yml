@@ -37,15 +37,32 @@ runs:
       with:
         ref: ${{ inputs.ref || github.ref }}
 
+    - name: Trust the checked-out workspace
+      shell: sh
+      # $GITHUB_WORKSPACE is bind-mounted from a directory the host-side runner process
+      # created (owned by the runner user), but we run as root inside the container, so git
+      # refuses every command below with "detected dubious ownership" otherwise -- the same
+      # issue docs/ansible.md warns about for running this image manually. Without this, the
+      # `git rev-parse` calls below fail silently (their output is swallowed by the `$(...)`
+      # command substitution) and produce an empty deployed_sha / inventory pin.
+      run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
+
     - name: Record deployed commit
       id: resolve
       shell: sh
-      run: echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+      # Assigning the substitution first (rather than `echo "sha=$(...)"` directly) means a
+      # failing `git rev-parse` fails this step under `set -e`, instead of being swallowed by
+      # `echo`'s own exit code and silently producing an empty deployed_sha.
+      run: |
+        sha="$(git rev-parse HEAD)"
+        echo "sha=$sha" >> "$GITHUB_OUTPUT"
 
     - name: Resolve pinned inventory commit
       id: inventory
       shell: sh
-      run: echo "sha=$(git rev-parse HEAD:inventory)" >> "$GITHUB_OUTPUT"
+      run: |
+        sha="$(git rev-parse HEAD:inventory)"
+        echo "sha=$sha" >> "$GITHUB_OUTPUT"
 
     - name: Checkout inventory
       uses: actions/checkout@v4
