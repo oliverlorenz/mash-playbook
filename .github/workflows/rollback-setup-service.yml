@@ -41,7 +41,6 @@ on:
           - gotosocial
           - gowa
           - jellyfin
-          - keydb
           - languagetool
           - n8n
           - ohrwurm
