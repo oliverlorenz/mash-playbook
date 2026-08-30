@@ -46,7 +46,7 @@ Below is an exhaustive list of the free and open-source software for self-hostin
 | [Bar Assistant](https://github.com/karlomikus/bar-assistant/) | Managing cocktail recipes at your home bar with cocktail-oriented features | [Link](services/barassistant.md) |
 | [Bazarr](https://www.bazarr.media/) | Companion application to Sonarr and Radarr that manages and downloads subtitles | [Link](services/bazarr.md) |
 | [BentoPDF](https://github.com/alam00000/bentopdf) | Client-side PDF editor and converter | [Link](services/bentopdf.md) |
-| [Bichon](https://github.com/rustmailer/bichon) | Email archiving server with with full-text search function | [Link](services/bichon.md) |
+| [Bichon](https://github.com/rustmailer/bichon) | Email archiving server with full-text search function | [Link](services/bichon.md) |
 | [BIND](https://www.isc.org/bind/) | A full-featured DNS server | [Link](services/bind.md) |
 | [bitmagnet](https://bitmagnet.io/) | BitTorrent indexer, DHT crawler, content classifier and search engine | [Link](services/bitmagnet.md) |
 | [BookStack](https://www.bookstackapp.com) | Information organizer and storage | [Link](services/bookstack.md) |
@@ -69,11 +69,11 @@ Below is an exhaustive list of the free and open-source software for self-hostin
 | [CyberChef](https://github.com/gchq/CyberChef) | Intuitive web application for encryption, encoding, compression, and data analysis within a browser | [Link](services/cyberchef.md) |
 | [Databasus](https://databasus.com/) | PostgreSQL, MySQL, MariaDB, and MongoDB database backup | [Link](services/databasus.md) |
 | [ddclient](https://ddclient.net/) | Dynamic DNS entries updater | [Link](services/ddclient.md) |
+| [Distribution Registry](https://github.com/distribution/distribution/) | Container image distribution registry | [Link](services/docker-registry.md) |
 | [Docker](https://www.docker.com/) | Containerized applications deployment | [Link](services/docker.md) |
-| [Docker Registry](https://docs.docker.com/registry/) | Container image distribution registry | [Link](services/docker-registry.md) |
 | [Docker Registry Browser](https://github.com/klausmeyer/docker-registry-browser) | Web interface for the Docker Registry HTTP API V2 | [Link](services/docker-registry-browser.md) |
 | [Docker Registry Proxy](https://github.com/etkecc/docker-registry-proxy) | Pass-through Docker registry (distribution) proxy with metadata caching, Docker-compatible errors, Prometheus metrics, etc. | [Link](services/docker-registry-proxy.md) |
-| [Docker Registry Purger](https://github.com/devture/docker-registry-purger) | A small tool used for purging a private Docker Registry's old tags | [Link](services/docker-registry-purger.md) |
+| [Docker Registry Purger](https://github.com/devture/docker-registry-purger) | A small tool used for purging a private Distribution Registry's old tags | [Link](services/docker-registry-purger.md) |
 | [Docmost](https://docmost.com/) | Collaborative wiki and documentation software | [Link](services/docmost.md) |
 | [DocuSeal](https://github.com/docusealco/docuseal) | Digital document signing and processing | [Link](services/docuseal.md) |
 | [DokuWiki](https://dokuwiki.org/) | File-based wiki engine without database requirement | [Link](services/dokuwiki.md) |
@@ -163,6 +163,7 @@ Below is an exhaustive list of the free and open-source software for self-hostin
 | [Miniflux](https://miniflux.app/) | Minimalist and opinionated feed reader | [Link](services/miniflux.md) |
 | [Misskey](https://misskey-hub.net/en/) | ActivityPub federated microblogging platform | [Link](services/misskey.md) |
 | [Mobilizon](https://joinmobilizon.org/en/) | ActivityPub federated server for creating and sharing events | [Link](services/mobilizon.md) |
+| [MollySocket](https://github.com/mollyim/mollysocket) | [Signal](https://signal.org/) notification receiver via UnifiedPush for [Molly](https://molly.im/) | [Link](services/mollysocket.md) |
 | [Moner.ooo](https://github.com/nice42q/moner.ooo) | Monero / fiat exchange rates in various currencies | [Link](services/monerooo.md) |
 | [Moodist](https://moodist.mvze.net/) | Web application to mix and play ambient soundtracks | [Link](services/moodist.md) |
 | [Mosquitto](https://mosquitto.org/) | MQTT broker | [Link](services/mosquitto.md) |
