@@ -29,7 +29,7 @@
   name: apisix
   activation_prefix: apisix_
 - src: git+https://iris.radicle.network/z292aD8q3r8xqhJvLe2zv1b24gu7a.git
-  version: v1.5.2-0
+  version: v1.5.3-0
   name: apprise
   activation_prefix: apprise_
 - src: git+https://github.com/mother-of-all-self-hosting/ansible-role-appsmith.git
@@ -209,7 +209,7 @@
   name: docmost
   activation_prefix: docmost_
 - src: git+https://iris.radicle.network/z2HG5jWufCQfA8cYAFkJ9GmZyRcCs.git
-  version: v3.2.2-0
+  version: v3.2.3-0
   name: docuseal
   activation_prefix: docuseal_
 - src: git+https://github.com/mother-of-all-self-hosting/ansible-role-dokuwiki.git
@@ -1029,7 +1029,7 @@
   name: vector
   activation_prefix: vector_
 - src: git+https://github.com/mother-of-all-self-hosting/ansible-role-versatiles.git
-  version: v4.12.1-0
+  version: v4.12.2-0
   name: versatiles
   activation_prefix: versatiles_
 - src: git+https://github.com/mother-of-all-self-hosting/ansible-role-vikunja.git
