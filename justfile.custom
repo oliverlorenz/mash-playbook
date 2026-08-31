@@ -8,6 +8,9 @@ default:
 receive_secrets mode +hostnames:
     ./bin/receive_secrets.sh {{ mode }} {{ hostnames }}
 
+push_secrets mode +hostnames:
+    ./bin/push_secrets.sh {{ mode }} {{ hostnames }}
+
 sync-deploy-options:
     ./bin/sync-deploy-workflow-options.py
 
