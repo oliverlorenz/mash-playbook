@@ -678,6 +678,10 @@
     - role: galaxy/mumble
     # /role-specific:mumble
 
+    # role-specific:music-assistant
+    - role: custom/music-assistant
+    # /role-specific:music-assistant
+
     # role-specific:n8n
     - role: galaxy/n8n
     # /role-specific:n8n
@@ -1021,6 +1025,10 @@
     # role-specific:syncthing
     - role: galaxy/syncthing
     # /role-specific:syncthing
+
+    # role-specific:tailscale
+    - role: custom/tailscale
+    # /role-specific:tailscale
 
     # role-specific:tandoor
     - role: galaxy/tandoor

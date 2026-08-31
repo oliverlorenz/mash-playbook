@@ -1,0 +1,141 @@
+# SPDX-FileCopyrightText: 2026 Oliver Lorenz
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+---
+# Project source code URL: https://github.com/music-assistant/server
+
+music_assistant_enabled: true
+
+music_assistant_identifier: music-assistant
+music_assistant_base_path: "{{ mash_playbook_base_path }}/{{ music_assistant_identifier }}"
+
+# Holds Music Assistant's library database, provider credentials and cache.
+music_assistant_data_path: "{{ music_assistant_base_path }}/data"
+
+# Optional: a host directory holding your own local music files, for use
+# with Music Assistant's local filesystem provider. Leave empty (default) to
+# not mount anything - set it to enable the mount below. Mounted read-only,
+# since Music Assistant only needs to read from it to build its library.
+music_assistant_library_path: ""
+music_assistant_library_container_path: /music
+
+music_assistant_container_image: "ghcr.io/music-assistant/server:latest"
+music_assistant_container_image_force_pull: true
+
+# Additional environment variables to pass to the container.
+music_assistant_environment_variables_additional_variables: ""
+
+# The port Music Assistant's web UI/API listens on inside the container.
+# Because the container uses host networking (see below), this is also the
+# port it listens on on the Docker host itself.
+music_assistant_container_http_port: 8095
+
+# The hostname at which Music Assistant is served.
+music_assistant_hostname: ""
+
+# The path at which Music Assistant is exposed.
+# This value must either be `/` or not end with a slash (e.g. `/music-assistant`).
+music_assistant_path_prefix: /
+
+# Music Assistant relies on mDNS/SSDP multicast discovery to find local
+# players (Sonos, Chromecast, AirPlay, DLNA, etc.), which doesn't traverse a
+# Docker bridge network. Unlike the other custom roles in this playbook, the
+# container therefore runs with `--network=host` (upstream's own
+# recommendation: https://github.com/music-assistant/server), rather than
+# joining/creating a dedicated bridge network.
+#
+# Two consequences of that:
+# - Ports can't be published via `-p` (Docker disallows combining
+#   `--network=host` with `-p`), so there is no host-bind-port setting here -
+#   the container's ports are the host's ports.
+# - Traefik's Docker provider can't discover the container's IP the way it
+#   does for bridge-networked services, so the label below points Traefik at
+#   an explicit URL on the Docker host instead of a `server.port` label -
+#   see `music_assistant_container_labels_traefik_service_url`.
+
+# A list of additional "volumes" to mount in the container.
+music_assistant_container_additional_volumes: "{{ music_assistant_container_additional_volumes_auto + music_assistant_container_additional_volumes_custom }}"
+music_assistant_container_additional_volumes_auto: []
+music_assistant_container_additional_volumes_custom: []
+
+# A list of extra arguments to pass to the container (`docker run` command)
+music_assistant_container_extra_arguments: []
+
+# music_assistant_container_labels_traefik_enabled controls whether labels to assist a Traefik reverse-proxy will be attached to the container.
+# See `../templates/labels.j2` for details.
+#
+# To inject your own other container labels, see `music_assistant_container_labels_additional_labels`.
+music_assistant_container_labels_traefik_enabled: true
+music_assistant_container_labels_traefik_hostname: "{{ music_assistant_hostname }}"
+# The path prefix must either be `/` or not end with a slash (e.g. `/music-assistant`).
+music_assistant_container_labels_traefik_path_prefix: "{{ music_assistant_path_prefix }}"
+music_assistant_container_labels_traefik_rule: "Host(`{{ music_assistant_container_labels_traefik_hostname }}`){% if music_assistant_container_labels_traefik_path_prefix != '/' %} && PathPrefix(`{{ music_assistant_container_labels_traefik_path_prefix }}`){% endif %}"
+music_assistant_container_labels_traefik_priority: 0
+music_assistant_container_labels_traefik_entrypoints: web-secure
+music_assistant_container_labels_traefik_tls: "{{ music_assistant_container_labels_traefik_entrypoints != 'web' }}"
+music_assistant_container_labels_traefik_tls_certResolver: default  # noqa var-naming
+
+# The URL at which Traefik reaches Music Assistant on the Docker host.
+# See the host-networking note above for why this is a URL rather than a port.
+#
+# Uses the host's main network-facing address rather than `host.docker.internal`:
+# that special hostname needs an explicit `--add-host=host.docker.internal:host-gateway`
+# on every container that resolves it, which Traefik's role supports
+# (`traefik_container_extra_arguments_custom`) but other roles (e.g. tsdproxy)
+# don't expose a hook for - so this uses an address every container can
+# already reach without extra plumbing.
+music_assistant_container_labels_traefik_service_url: "http://{{ ansible_default_ipv4.address }}:{{ music_assistant_container_http_port }}"
+
+# Controls which additional headers to attach to all HTTP requests.
+# To add your own custom request headers, use `music_assistant_container_labels_traefik_additional_request_headers_custom`
+music_assistant_container_labels_traefik_additional_request_headers: "{{ music_assistant_container_labels_traefik_additional_request_headers_auto | combine(music_assistant_container_labels_traefik_additional_request_headers_custom) }}"
+music_assistant_container_labels_traefik_additional_request_headers_auto: {}
+music_assistant_container_labels_traefik_additional_request_headers_custom: {}
+
+# Controls which additional headers to attach to all HTTP responses.
+# To add your own custom response headers, use `music_assistant_container_labels_traefik_additional_response_headers_custom`
+music_assistant_container_labels_traefik_additional_response_headers: "{{ music_assistant_container_labels_traefik_additional_response_headers_auto | combine(music_assistant_container_labels_traefik_additional_response_headers_custom) }}"
+music_assistant_container_labels_traefik_additional_response_headers_auto: |
+  {{
+    {}
+    | combine ({'X-XSS-Protection': music_assistant_http_header_xss_protection} if music_assistant_http_header_xss_protection else {})
+    | combine ({'X-Content-Type-Options': music_assistant_http_header_content_type_options} if music_assistant_http_header_content_type_options else {})
+    | combine ({'Content-Security-Policy': music_assistant_http_header_content_security_policy} if music_assistant_http_header_content_security_policy else {})
+    | combine ({'Permissions-Policy': music_assistant_http_header_permissions_policy} if music_assistant_http_header_permissions_policy else {})
+    | combine ({'Strict-Transport-Security': music_assistant_http_header_strict_transport_security} if music_assistant_http_header_strict_transport_security and music_assistant_container_labels_traefik_tls else {})
+  }}
+music_assistant_container_labels_traefik_additional_response_headers_custom: {}
+
+# music_assistant_container_labels_additional_labels contains a multiline string with additional labels to add to the container label file.
+music_assistant_container_labels_additional_labels: ""
+
+# Specifies the value of the `X-XSS-Protection` header
+music_assistant_http_header_xss_protection: "1; mode=block"
+
+# Specifies the value of the `X-Content-Type-Options` header.
+music_assistant_http_header_content_type_options: nosniff
+
+# Specifies the value of the `Content-Security-Policy` header.
+music_assistant_http_header_content_security_policy: frame-ancestors 'self'
+
+# Specifies the value of the `Permissions-Policy` header.
+music_assistant_http_header_permissions_policy: "{{ 'interest-cohort=()' if music_assistant_floc_optout_enabled else '' }}"
+
+# Specifies the value of the `Strict-Transport-Security` header.
+music_assistant_http_header_strict_transport_security: "max-age=31536000; includeSubDomains{{ '; preload' if music_assistant_hsts_preload_enabled else '' }}"
+
+music_assistant_floc_optout_enabled: true
+music_assistant_hsts_preload_enabled: false
+
+# List of systemd services that the music-assistant systemd service depends on
+music_assistant_systemd_required_services_list: "{{ music_assistant_systemd_required_services_list_default + music_assistant_systemd_required_services_list_auto + music_assistant_systemd_required_services_list_custom }}"
+music_assistant_systemd_required_services_list_default: "{{ [devture_systemd_docker_base_docker_service_name] if devture_systemd_docker_base_docker_service_name else [] }}"
+music_assistant_systemd_required_services_list_auto: []
+music_assistant_systemd_required_services_list_custom: []
+
+# List of systemd services that the music-assistant systemd service wants
+music_assistant_systemd_wanted_services_list: "{{ music_assistant_systemd_wanted_services_list_default + music_assistant_systemd_wanted_services_list_auto + music_assistant_systemd_wanted_services_list_custom }}"
+music_assistant_systemd_wanted_services_list_default: []
+music_assistant_systemd_wanted_services_list_auto: []
+music_assistant_systemd_wanted_services_list_custom: []

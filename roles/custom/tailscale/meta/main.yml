@@ -1,0 +1,15 @@
+---
+galaxy_info:
+  author: Oliver Lorenz
+  role_name: tailscale
+  namespace: oliverlorenz
+  description: Tailscale client (joins the host itself to a tailnet, e.g. a self-hosted Headscale one)
+  platforms:
+    - name: Debian
+      versions:
+        - all
+    - name: Ubuntu
+      versions:
+        - all
+  license: AGPL-3.0-or-later
+  min_ansible_version: "2.1"

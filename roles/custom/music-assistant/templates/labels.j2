@@ -1,0 +1,49 @@
+{#
+SPDX-FileCopyrightText: 2026 Oliver Lorenz
+
+SPDX-License-Identifier: AGPL-3.0-or-later
+#}
+
+{% if music_assistant_container_labels_traefik_enabled %}
+traefik.enable=true
+
+{% set middlewares = [] %}
+
+{% if music_assistant_container_labels_traefik_additional_request_headers.keys() | length > 0 %}
+{% for name, value in music_assistant_container_labels_traefik_additional_request_headers.items() %}
+traefik.http.middlewares.{{ music_assistant_identifier }}-add-request-headers.headers.customrequestheaders.{{ name }}={{ value }}
+{% endfor %}
+{% set middlewares = middlewares + [music_assistant_identifier + '-add-request-headers'] %}
+{% endif %}
+
+{% if music_assistant_container_labels_traefik_additional_response_headers.keys() | length > 0 %}
+{% for name, value in music_assistant_container_labels_traefik_additional_response_headers.items() %}
+traefik.http.middlewares.{{ music_assistant_identifier }}-add-response-headers.headers.customresponseheaders.{{ name }}={{ value }}
+{% endfor %}
+{% set middlewares = middlewares + [music_assistant_identifier + '-add-response-headers'] %}
+{% endif %}
+
+traefik.http.routers.{{ music_assistant_identifier }}.rule={{ music_assistant_container_labels_traefik_rule }}
+{% if music_assistant_container_labels_traefik_priority | int > 0 %}
+traefik.http.routers.{{ music_assistant_identifier }}.priority={{ music_assistant_container_labels_traefik_priority }}
+{% endif %}
+traefik.http.routers.{{ music_assistant_identifier }}.service={{ music_assistant_identifier }}
+{% if middlewares | length > 0 %}
+traefik.http.routers.{{ music_assistant_identifier }}.middlewares={{ middlewares | join(',') }}
+{% endif %}
+traefik.http.routers.{{ music_assistant_identifier }}.entrypoints={{ music_assistant_container_labels_traefik_entrypoints }}
+traefik.http.routers.{{ music_assistant_identifier }}.tls={{ music_assistant_container_labels_traefik_tls | to_json }}
+{% if music_assistant_container_labels_traefik_tls %}
+traefik.http.routers.{{ music_assistant_identifier }}.tls.certResolver={{ music_assistant_container_labels_traefik_tls_certResolver }}
+{% endif %}
+
+{#
+The container uses host networking (see defaults/main.yml), so it has no
+per-container IP for Traefik's Docker provider to discover on a shared
+network - the service is pointed at an explicit URL on the Docker host
+instead of the usual `loadbalancer.server.port` label.
+#}
+traefik.http.services.{{ music_assistant_identifier }}.loadbalancer.server.url={{ music_assistant_container_labels_traefik_service_url }}
+{% endif %}
+
+{{ music_assistant_container_labels_additional_labels }}

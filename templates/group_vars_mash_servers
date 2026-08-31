@@ -864,6 +864,11 @@ mash_playbook_devture_systemd_service_manager_services_list_auto_itemized:
     {{ ({'name': (mumble_identifier + '.service'), 'priority': 2000, 'restart_necessary': (mumble_restart_necessary | bool), 'groups': ['mash', 'mumble']} if mumble_enabled else omit) }}
   # /role-specific:mumble
 
+  # role-specific:music-assistant
+  - |-
+    {{ ({'name': (music_assistant_identifier + '.service'), 'priority': 2000, 'groups': ['mash', 'music-assistant']} if music_assistant_enabled else omit) }}
+  # /role-specific:music-assistant
+
   # role-specific:n8n
   - |-
     {{ ({'name': (n8n_identifier + '.service'), 'priority': 2000, 'restart_necessary': (n8n_restart_necessary | bool), 'groups': ['mash', 'n8n']} if n8n_enabled else omit) }}
@@ -11871,6 +11876,31 @@ mumble_environment_variables_mumble_config_sslkey: /privatekey.key
 #                                                                      #
 ########################################################################
 # /role-specific:mumble
+
+
+
+# role-specific:music-assistant
+########################################################################
+#                                                                      #
+# music-assistant                                                      #
+#                                                                      #
+########################################################################
+
+music_assistant_enabled: false
+
+music_assistant_identifier: "{{ mash_playbook_service_identifier_prefix }}music-assistant"
+
+music_assistant_base_path: "{{ mash_playbook_base_path }}/{{ mash_playbook_service_base_directory_name_prefix }}music-assistant"
+
+music_assistant_container_labels_traefik_entrypoints: "{{ traefik_entrypoint_primary }}"
+music_assistant_container_labels_traefik_tls_certResolver: "{{ traefik_certResolver_primary }}"
+
+########################################################################
+#                                                                      #
+# /music-assistant                                                     #
+#                                                                      #
+########################################################################
+# /role-specific:music-assistant
 
 
 

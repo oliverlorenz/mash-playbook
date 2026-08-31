@@ -1,0 +1,56 @@
+# SPDX-FileCopyrightText: 2026 Oliver Lorenz
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+---
+- name: Ensure tailscale apt signing key is present
+  ansible.builtin.get_url:
+    url: "https://pkgs.tailscale.com/stable/{{ tailscale_apt_distribution }}/{{ ansible_facts['distribution_release'] }}.noarmor.gpg"
+    dest: "{{ tailscale_apt_keyring_path }}"
+    mode: "0644"
+
+- name: Ensure tailscale apt repository is present
+  ansible.builtin.get_url:
+    url: "https://pkgs.tailscale.com/stable/{{ tailscale_apt_distribution }}/{{ ansible_facts['distribution_release'] }}.tailscale-keyring.list"
+    dest: "{{ tailscale_apt_sources_list_path }}"
+    mode: "0644"
+  register: tailscale_apt_sources_list_result
+
+- name: Ensure apt cache is updated after adding the tailscale repository
+  ansible.builtin.apt:
+    update_cache: true
+  when: tailscale_apt_sources_list_result is changed
+
+- name: Ensure tailscale package is installed
+  ansible.builtin.apt:
+    name: tailscale
+    state: present
+
+- name: Ensure tailscaled service is started and enabled
+  ansible.builtin.systemd:
+    name: tailscaled
+    state: started
+    enabled: true
+
+# `tailscale up` is safe to re-run (it just reconciles state), but we still
+# skip it once already connected so `--authkey` doesn't leak a "changed" task
+# result (and a needless network call) on every single playbook run.
+- name: Check current tailscale connection status
+  ansible.builtin.command: tailscale status --json
+  register: tailscale_status_result
+  changed_when: false
+  failed_when: false
+
+- name: Ensure this host is connected to the configured tailnet
+  ansible.builtin.command:
+    argv: >-
+      {{
+        ['tailscale', 'up', '--login-server=' + tailscale_login_server, '--authkey=' + tailscale_authkey]
+        + (['--hostname=' + tailscale_hostname] if tailscale_hostname | length > 0 else [])
+        + tailscale_extra_up_args
+      }}
+  when: >-
+    tailscale_status_result.rc != 0
+    or (tailscale_status_result.stdout | from_json).BackendState | default('') != 'Running'
+  no_log: true
+  changed_when: true

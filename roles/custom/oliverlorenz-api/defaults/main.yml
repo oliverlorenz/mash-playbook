@@ -26,7 +26,19 @@ oliverlorenz_api_environment_chatlog_nc_dir: ""
 oliverlorenz_api_environment_chatlog_local_mirror_dir: "/data/chatlogs-mirror"
 oliverlorenz_api_environment_db_vendo_user_agent: "eeleud0I"
 
+# The externally-reachable base URL of the API, used as the OAuth issuer/resource
+# identifier for the `/mcp` endpoint's OAuth authorization server. Derived from the
+# Traefik hostname/path-prefix/TLS settings below, so it normally does not need to be
+# set explicitly.
+oliverlorenz_api_environment_public_base_url: "{{ oliverlorenz_api_container_labels_traefik_tls | ternary('https', 'http') }}://{{ oliverlorenz_api_hostname }}{{ '' if oliverlorenz_api_path_prefix == '/' else oliverlorenz_api_path_prefix }}"
+
+# Path (inside the container) to the JSON file that persists OAuth clients dynamically
+# registered against the `/mcp` endpoint (e.g. by Claude.ai/Claude Desktop), so they
+# survive container restarts/redeploys.
+oliverlorenz_api_environment_oauth_clients_file: "/data/oauth/oauth-clients.json"
+
 oliverlorenz_api_chatlog_data_path: "{{ oliverlorenz_api_base_path }}/chatlogs-mirror"
+oliverlorenz_api_oauth_data_path: "{{ oliverlorenz_api_base_path }}/oauth-data"
 
 # Controls whether the container exposes its HTTP port (tcp/8080 in the container).
 #
@@ -60,6 +72,10 @@ oliverlorenz_api_container_additional_volumes_auto:
   - type: bind
     src: "{{ oliverlorenz_api_chatlog_data_path }}"
     dst: "{{ oliverlorenz_api_environment_chatlog_local_mirror_dir }}"
+    options: ""
+  - type: bind
+    src: "{{ oliverlorenz_api_oauth_data_path }}"
+    dst: "{{ oliverlorenz_api_environment_oauth_clients_file | dirname }}"
     options: ""
 oliverlorenz_api_container_additional_volumes_custom: []
 

@@ -1,0 +1,26 @@
+# SPDX-FileCopyrightText: 2026 Oliver Lorenz
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+---
+- name: Perform music-assistant installation tasks
+  when: music_assistant_enabled | bool
+  tags:
+    - setup-all
+    - setup-music-assistant
+    - install-all
+    - install-music-assistant
+  block:
+    - name: Validate music-assistant configuration
+      ansible.builtin.include_tasks: "{{ role_path }}/tasks/validate_config.yml"
+    - name: Install music-assistant
+      ansible.builtin.include_tasks: "{{ role_path }}/tasks/install.yml"
+
+- name: Perform music-assistant uninstallation tasks
+  when: not music_assistant_enabled | bool
+  tags:
+    - setup-all
+    - setup-music-assistant
+  block:
+    - name: Uninstall music-assistant
+      ansible.builtin.include_tasks: "{{ role_path }}/tasks/uninstall.yml"

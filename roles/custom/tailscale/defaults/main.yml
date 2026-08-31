@@ -1,0 +1,32 @@
+# SPDX-FileCopyrightText: 2026 Oliver Lorenz
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+---
+# Unlike the rest of this playbook's services, Tailscale can't run as a Docker
+# container here: it needs to join the *host itself* to a tailnet (e.g. so
+# Traefik on this host can reach another host's private tailnet services),
+# not just expose one container on it. See docs/services/tailscale.md.
+
+tailscale_enabled: false
+
+# The Tailscale coordination ("control") server to connect to.
+# Point this at your own Headscale instance, e.g. https://headscale.example.com
+# Leave at the default (empty) to use Tailscale's own SaaS control server.
+tailscale_login_server: ""
+
+# A pre-auth key for unattended registration (`tailscale up --authkey=...`).
+# Generate one with, e.g.: /mash/headscale/bin/headscale preauthkeys create
+tailscale_authkey: ""
+
+# Overrides the machine name Tailscale registers this host under.
+# Leave empty to let Tailscale derive it from the host's own hostname.
+tailscale_hostname: ""
+
+# Extra arguments appended to the `tailscale up` command, e.g. to advertise
+# routes or an exit node. See `tailscale up --help` for what's available.
+tailscale_extra_up_args: []
+
+tailscale_apt_distribution: "{{ ansible_distribution | lower }}"
+tailscale_apt_keyring_path: /usr/share/keyrings/tailscale-archive-keyring.gpg
+tailscale_apt_sources_list_path: /etc/apt/sources.list.d/tailscale.list

@@ -1,0 +1,26 @@
+# SPDX-FileCopyrightText: 2026 Oliver Lorenz
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+---
+- name: Perform tailscale installation tasks
+  when: tailscale_enabled | bool
+  tags:
+    - setup-all
+    - setup-tailscale
+    - install-all
+    - install-tailscale
+  block:
+    - name: Validate tailscale configuration
+      ansible.builtin.include_tasks: "{{ role_path }}/tasks/validate_config.yml"
+    - name: Install tailscale
+      ansible.builtin.include_tasks: "{{ role_path }}/tasks/install.yml"
+
+- name: Perform tailscale uninstallation tasks
+  when: not tailscale_enabled | bool
+  tags:
+    - setup-all
+    - setup-tailscale
+  block:
+    - name: Uninstall tailscale
+      ansible.builtin.include_tasks: "{{ role_path }}/tasks/uninstall.yml"

@@ -17,6 +17,7 @@ on:
         type: choice
         options:
           # BEGIN GENERATED: hosts
+          - homeserver.oliverlorenz.com
           - mash.oliverlorenz.com
           # END GENERATED: hosts
         default: mash.oliverlorenz.com
@@ -27,6 +28,7 @@ on:
         options:
           # BEGIN GENERATED: services
           - app-dooropener
+          - auxiliary
           - bentopdf
           - cleanup
           - container_socket_proxy
@@ -37,8 +39,10 @@ on:
           - docker_sdk_for_python
           - gotosocial
           - gowa
-          - jellyfin
+          - headplane
+          - headscale
           - languagetool
+          - music-assistant
           - n8n
           - ohrwurm
           - oliverlorenz-api
@@ -51,9 +55,11 @@ on:
           - rssbridge
           - systemd_docker_base
           - systemd_service_manager
+          - tailscale
           - timesync
           - tinyauth
           - traefik
+          - tsdproxy
           - uptime_kuma
           - valkey
           - vaultwarden

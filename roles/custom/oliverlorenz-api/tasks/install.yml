@@ -17,6 +17,14 @@
     state: directory
     mode: "0777"
 
+- name: Ensure API OAuth data path exists
+  ansible.builtin.file:
+    path: "{{ oliverlorenz_api_oauth_data_path }}"
+    state: directory
+    mode: "0750"
+    owner: "{{ oliverlorenz_api_uid }}"
+    group: "{{ oliverlorenz_api_gid }}"
+
 - name: Ensure API support files installed
   ansible.builtin.template:
     src: "{{ role_path }}/templates/{{ item }}.j2"

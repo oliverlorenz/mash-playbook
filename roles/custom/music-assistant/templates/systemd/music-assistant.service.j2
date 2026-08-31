@@ -1,0 +1,61 @@
+{#
+SPDX-FileCopyrightText: 2026 Oliver Lorenz
+
+SPDX-License-Identifier: AGPL-3.0-or-later
+#}
+
+[Unit]
+Description=music-assistant ({{ music_assistant_identifier }})
+{% for service in music_assistant_systemd_required_services_list %}
+Requires={{ service }}
+After={{ service }}
+{% endfor %}
+{% for service in music_assistant_systemd_wanted_services_list %}
+Wants={{ service }}
+{% endfor %}
+DefaultDependencies=no
+
+[Service]
+Type=simple
+Environment="HOME={{ devture_systemd_docker_base_systemd_unit_home_path }}"
+ExecStartPre=-{{ devture_systemd_docker_base_host_command_sh }} -c '{{ devture_systemd_docker_base_host_command_docker }} stop -t {{ devture_systemd_docker_base_container_stop_grace_time_seconds }} {{ music_assistant_identifier }} 2>/dev/null || true'
+ExecStartPre=-{{ devture_systemd_docker_base_host_command_sh }} -c '{{ devture_systemd_docker_base_host_command_docker }} rm {{ music_assistant_identifier }} 2>/dev/null || true'
+
+{#
+Uses --network=host (rather than a dedicated bridge network, unlike the
+other custom roles in this playbook) so that mDNS/SSDP player discovery
+(Sonos, Chromecast, AirPlay, DLNA, ...) works as upstream intends. This
+also means no `-p` port publishing here - Docker rejects combining
+--network=host with -p.
+#}
+ExecStartPre={{ devture_systemd_docker_base_host_command_docker }} create \
+      --rm \
+      --name={{ music_assistant_identifier }} \
+      --log-driver=none \
+      --cap-drop=ALL \
+      --network=host \
+      --env-file={{ music_assistant_base_path }}/env \
+      --label-file={{ music_assistant_base_path }}/labels \
+      --mount type=bind,src={{ music_assistant_data_path }},dst=/data \
+      {% if music_assistant_library_path %}
+      --mount type=bind,src={{ music_assistant_library_path }},dst={{ music_assistant_library_container_path }},readonly \
+      {% endif %}
+      {% for volume in music_assistant_container_additional_volumes %}
+      --mount type={{ volume.type | default('bind' if '/' in volume.src else 'volume') }},src={{ volume.src }},dst={{ volume.dst }}{{ (',' + volume.options) if volume.options else '' }} \
+      {% endfor %}
+      {% for arg in music_assistant_container_extra_arguments %}
+      {{ arg }} \
+      {% endfor %}
+      {{ music_assistant_container_image }}
+
+ExecStart={{ devture_systemd_docker_base_host_command_docker }} start --attach {{ music_assistant_identifier }}
+
+ExecStop=-{{ devture_systemd_docker_base_host_command_sh }} -c '{{ devture_systemd_docker_base_host_command_docker }} stop -t {{ devture_systemd_docker_base_container_stop_grace_time_seconds }} {{ music_assistant_identifier }} 2>/dev/null || true'
+ExecStop=-{{ devture_systemd_docker_base_host_command_sh }} -c '{{ devture_systemd_docker_base_host_command_docker }} rm {{ music_assistant_identifier }} 2>/dev/null || true'
+
+Restart=always
+RestartSec=30
+SyslogIdentifier={{ music_assistant_identifier }}
+
+[Install]
+WantedBy=multi-user.target

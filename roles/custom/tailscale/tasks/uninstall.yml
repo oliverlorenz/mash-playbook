@@ -1,0 +1,35 @@
+# SPDX-FileCopyrightText: 2026 Oliver Lorenz
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+---
+# Deliberately does not run `tailscale logout`: that deregisters the node
+# from the tailnet's control server too, which is a control-plane change
+# (and, with Headscale, needs manual re-approval to reconnect later) rather
+# than something to do implicitly on every `tailscale_enabled: false` run.
+# Remove the node via Headscale yourself first if that's what you want.
+
+- name: Check existence of tailscaled service
+  ansible.builtin.stat:
+    path: /lib/systemd/system/tailscaled.service
+  register: tailscale_service_stat
+
+- name: Ensure tailscaled service is stopped and disabled
+  when: tailscale_service_stat.stat.exists | bool
+  ansible.builtin.systemd:
+    name: tailscaled
+    state: stopped
+    enabled: false
+
+- name: Ensure tailscale package is absent
+  ansible.builtin.apt:
+    name: tailscale
+    state: absent
+
+- name: Ensure tailscale apt repository files are absent
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: absent
+  with_items:
+    - "{{ tailscale_apt_sources_list_path }}"
+    - "{{ tailscale_apt_keyring_path }}"
