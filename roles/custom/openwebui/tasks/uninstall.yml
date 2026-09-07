@@ -1,0 +1,57 @@
+# SPDX-FileCopyrightText: 2026 Oliver Lorenz
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+---
+- name: Check existence of OpenWebUI systemd service
+  ansible.builtin.stat:
+    path: "{{ devture_systemd_docker_base_systemd_path }}/{{ openwebui_identifier }}.service"
+  register: openwebui_service_stat
+
+- name: Uninstall OpenWebUI systemd services and files
+  when: openwebui_service_stat.stat.exists | bool
+  block:
+    - name: Ensure OpenWebUI systemd service is stopped
+      ansible.builtin.service:
+        name: "{{ openwebui_identifier }}"
+        state: stopped
+        enabled: false
+        daemon_reload: true
+
+    - name: Ensure OpenWebUI systemd service does not exist
+      ansible.builtin.file:
+        path: "{{ devture_systemd_docker_base_systemd_path }}/{{ openwebui_identifier }}.service"
+        state: absent
+
+    - name: Ensure OpenWebUI container network does not exist via community.docker.docker_network
+      when: devture_systemd_docker_base_container_network_creation_method == 'ansible-module'
+      community.docker.docker_network:
+        name: "{{ openwebui_container_network }}"
+        state: absent
+
+    - name: Ensure OpenWebUI container network does not exist via ansible.builtin.command
+      when: devture_systemd_docker_base_container_network_creation_method == 'command'
+      ansible.builtin.command:
+        cmd: >-
+          {{ devture_systemd_docker_base_host_command_docker }} network rm
+          {{ openwebui_container_network }}
+      register: network_deletion_result
+      changed_when: openwebui_container_network in network_deletion_result.stdout
+
+    - name: Ensure OpenWebUI support files do not exist
+      ansible.builtin.file:
+        path: "{{ openwebui_base_path }}/{{ item }}"
+        state: absent
+      with_items:
+        - env
+        - labels
+
+    # The data directory is deliberately kept, matching how galaxy roles
+    # handle uninstalls: the instance can be brought back with its chat
+    # history / users intact. Remove openwebui_base_path by hand to discard it.
+    - name: Inject the message about the remaining OpenWebUI data path
+      ansible.builtin.debug:
+        msg: >-
+          OpenWebUI has been uninstalled, but its data directory
+          ({{ openwebui_data_path }}) was left behind. Remove
+          {{ openwebui_base_path }} manually if you want to discard it.
