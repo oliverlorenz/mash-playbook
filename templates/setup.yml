@@ -346,6 +346,14 @@
     - role: galaxy/feishin
     # /role-specific:feishin
 
+    # role-specific:ffc-mesh-client
+    - role: custom/ffc-mesh-client
+    # /role-specific:ffc-mesh-client
+
+    # role-specific:ffc-hello
+    - role: custom/ffc-hello
+    # /role-specific:ffc-hello
+
     # role-specific:fider
     - role: galaxy/fider
     # /role-specific:fider

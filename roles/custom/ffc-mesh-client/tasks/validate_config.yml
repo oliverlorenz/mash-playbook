@@ -1,0 +1,25 @@
+# SPDX-FileCopyrightText: 2026 Oliver Lorenz
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+---
+- name: Fail if required ffc-mesh-client settings are not defined
+  ansible.builtin.fail:
+    msg: >-
+      You need to define a required configuration setting (`{{ item }}`).
+  when: "lookup('vars', item, default='') | string | length == 0"
+  with_items:
+    - ffc_mesh_client_container_network
+    - ffc_mesh_client_fastd_secret
+    - ffc_mesh_client_mesh_mac
+    - ffc_mesh_client_site_ffc_domain
+
+- name: Fail if ffc-mesh-client registry credentials are incomplete
+  ansible.builtin.fail:
+    msg: >-
+      `ffc_mesh_client_container_image_registry_username` and
+      `ffc_mesh_client_container_image_registry_password` must be set together
+      (or both left empty for an anonymous pull of a public image).
+  when: >-
+    (ffc_mesh_client_container_image_registry_username | length > 0)
+    != (ffc_mesh_client_container_image_registry_password | length > 0)

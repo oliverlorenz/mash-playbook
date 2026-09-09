@@ -1,0 +1,69 @@
+# SPDX-FileCopyrightText: 2026 Oliver Lorenz
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+---
+# A minimal nginx that returns "hello world" on port 80, run as a sidecar of the
+# ffc-mesh-client container: it joins that container's network namespace
+# (`--network=container:<ffc-mesh-client>`), so it has no network of its own and
+# is reachable exactly where ffc-mesh-client is - in particular directly from the
+# internet over ffc-mesh-client's public Freifunk IPv6, with no port-forward.
+#
+# It listens on both 0.0.0.0:80 and [::]:80 (the mesh reachability is IPv6).
+
+ffc_hello_enabled: true
+
+ffc_hello_identifier: ffc-hello
+ffc_hello_base_path: "{{ mash_playbook_base_path }}/{{ ffc_hello_identifier }}"
+
+# renovate: datasource=docker depName=nginx
+ffc_hello_version: "1.29-alpine"
+
+ffc_hello_container_image: "{{ ffc_hello_container_image_registry_prefix }}nginx:{{ ffc_hello_version }}"
+ffc_hello_container_image_registry_prefix: docker.io/
+ffc_hello_container_image_force_pull: "{{ ffc_hello_container_image.endswith(':latest') }}"
+
+# The container (from the ffc-mesh-client role) whose network namespace this
+# sidecar joins. Everything network-facing - including the public Freifunk IPv6 -
+# belongs to that container.
+ffc_hello_shared_netns_container: "{{ ffc_mesh_client_identifier | default('ffc-mesh-client') }}"
+
+# The systemd service of that same container. This sidecar is BindsTo/PartOf it,
+# so it stops and restarts together with it (the shared netns is recreated on
+# every ffc-mesh-client restart, which invalidates this container's netns handle).
+ffc_hello_shared_netns_service: "{{ ffc_hello_shared_netns_container }}.service"
+
+# The port nginx listens on inside the shared netns (v4 + v6). Not published as a
+# host port - a `--network=container:` sidecar can't publish ports; expose it on
+# the ffc-mesh-client container instead (ffc_mesh_client_container_published_ports)
+# if you want a host port in addition to the Freifunk IPv6.
+ffc_hello_listen_port: 80
+
+# The plain-text body returned for every request. Keep it to a single line -
+# it is rendered verbatim into an nginx `return 200 "..."` directive.
+ffc_hello_response_body: "hello world"
+
+# Linux capabilities for the container. Default: drop everything, add back only
+# what stock nginx needs (bind :80, drop privileges for workers, fix cache perms).
+ffc_hello_container_capabilities:
+  - NET_BIND_SERVICE
+  - SETUID
+  - SETGID
+  - CHOWN
+  - DAC_OVERRIDE
+
+# A list of extra arguments to pass to the container (`docker run` command).
+ffc_hello_container_extra_arguments: []
+
+# List of systemd services that the ffc-hello systemd service depends on
+# (in addition to the shared-netns service, which is wired in unconditionally).
+ffc_hello_systemd_required_services_list: "{{ ffc_hello_systemd_required_services_list_default + ffc_hello_systemd_required_services_list_auto + ffc_hello_systemd_required_services_list_custom }}"
+ffc_hello_systemd_required_services_list_default: "{{ [devture_systemd_docker_base_docker_service_name] if devture_systemd_docker_base_docker_service_name else [] }}"
+ffc_hello_systemd_required_services_list_auto: []
+ffc_hello_systemd_required_services_list_custom: []
+
+# List of systemd services that the ffc-hello systemd service wants
+ffc_hello_systemd_wanted_services_list: "{{ ffc_hello_systemd_wanted_services_list_default + ffc_hello_systemd_wanted_services_list_auto + ffc_hello_systemd_wanted_services_list_custom }}"
+ffc_hello_systemd_wanted_services_list_default: []
+ffc_hello_systemd_wanted_services_list_auto: []
+ffc_hello_systemd_wanted_services_list_custom: []

@@ -1,0 +1,89 @@
+# SPDX-FileCopyrightText: 2026 Oliver Lorenz
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+---
+- name: Ensure batman-adv kernel module is loaded on the host
+  when: ffc_mesh_client_host_manage_batman_adv_module | bool
+  community.general.modprobe:
+    name: batman-adv
+    state: present
+    persistent: present
+
+- name: Ensure ffc-mesh-client base path exists
+  ansible.builtin.file:
+    path: "{{ ffc_mesh_client_base_path }}"
+    state: directory
+    mode: "0750"
+    owner: "{{ ffc_mesh_client_uid }}"
+    group: "{{ ffc_mesh_client_gid }}"
+
+- name: Ensure ffc-mesh-client support files installed
+  ansible.builtin.template:
+    src: "{{ role_path }}/templates/{{ item }}.j2"
+    dest: "{{ ffc_mesh_client_base_path }}/{{ item }}"
+    mode: "0640"
+    owner: "{{ ffc_mesh_client_uid }}"
+    group: "{{ ffc_mesh_client_gid }}"
+  with_items:
+    - env
+    - labels
+  notify: ffc-mesh-client-restart
+
+- name: Log in to the ffc-mesh-client container image registry
+  when: ffc_mesh_client_container_image_registry_login | bool
+  community.docker.docker_login:
+    registry_url: "{{ ffc_mesh_client_container_image_registry_login_server }}"
+    username: "{{ ffc_mesh_client_container_image_registry_username }}"
+    password: "{{ ffc_mesh_client_container_image_registry_password }}"
+
+- name: Ensure ffc-mesh-client container image is pulled via community.docker.docker_image
+  when: devture_systemd_docker_base_container_image_pull_method == 'ansible-module'
+  community.docker.docker_image:
+    name: "{{ ffc_mesh_client_container_image }}"
+    source: "{{ 'pull' if ansible_version.major > 2 or ansible_version.minor > 7 else omit }}"
+    force_source: "{{ ffc_mesh_client_container_image_force_pull if ansible_version.major > 2 or ansible_version.minor >= 8 else omit }}"
+    force: "{{ omit if ansible_version.major > 2 or ansible_version.minor >= 8 else ffc_mesh_client_container_image_force_pull }}"
+  register: result
+  retries: "{{ devture_playbook_help_container_retries_count }}"
+  delay: "{{ devture_playbook_help_container_retries_delay }}"
+  until: result is not failed
+  notify: ffc-mesh-client-restart
+
+- name: Ensure ffc-mesh-client container image is pulled via ansible.builtin.command
+  when: devture_systemd_docker_base_container_image_pull_method == 'command'
+  ansible.builtin.command:
+    cmd: "{{ devture_systemd_docker_base_host_command_docker }} pull {{ ffc_mesh_client_container_image }}"
+  register: result
+  retries: "{{ devture_playbook_help_container_retries_count }}"
+  delay: "{{ devture_playbook_help_container_retries_delay }}"
+  until: result is not failed
+  changed_when: "'Downloaded newer image' in result.stdout"
+  notify: ffc-mesh-client-restart
+
+- name: Ensure ffc-mesh-client container network is created via community.docker.docker_network
+  when: devture_systemd_docker_base_container_network_creation_method == 'ansible-module'
+  community.docker.docker_network:
+    enable_ipv6: "{{ ffc_mesh_client_container_network_ipv6_enabled }}"
+    name: "{{ ffc_mesh_client_container_network }}"
+    driver: bridge
+    driver_options: "{{ devture_systemd_docker_base_container_networks_driver_options }}"
+
+- name: Ensure ffc-mesh-client container network is created via ansible.builtin.command
+  when: devture_systemd_docker_base_container_network_creation_method == 'command'
+  ansible.builtin.command:
+    cmd: >-
+      {{ devture_systemd_docker_base_host_command_docker }} network create
+      {% if ffc_mesh_client_container_network_ipv6_enabled %}--ipv6{% endif %}
+      {{ devture_systemd_docker_base_container_networks_driver_options_string }}
+      {{ ffc_mesh_client_container_network }}
+  register: network_creation_result
+  changed_when: network_creation_result.rc == 0
+  failed_when: network_creation_result.rc != 0 and 'already exists' not in network_creation_result.stderr
+
+- name: Ensure ffc-mesh-client systemd service is present
+  ansible.builtin.template:
+    src: "{{ role_path }}/templates/systemd/ffc-mesh-client.service.j2"
+    dest: "{{ devture_systemd_docker_base_systemd_path }}/{{ ffc_mesh_client_identifier }}.service"
+    mode: "0644"
+  notify: ffc-mesh-client-restart

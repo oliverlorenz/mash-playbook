@@ -1,0 +1,171 @@
+# SPDX-FileCopyrightText: 2026 Oliver Lorenz
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+---
+# Project source code URL: https://github.com/FreifunkChemnitz/ffc-mesh-client
+#
+# ffc-mesh-client is a fastd + batman-adv mesh client for Freifunk Chemnitz,
+# running as a Docker container. It joins the FFC mesh, gets a globally routed
+# public IPv6 (reachable from the internet without any port-forward) and can
+# route its own traffic - or that of sidecar containers sharing its network
+# namespace (`network_mode: "service:ffc-mesh-client"`) - through the Freifunk
+# exit gateways.
+#
+# This is NOT a full Freifunk node: no WiFi, no client SSID. It is only the
+# uplink / `mesh_vpn` side of a node, comparable to a VPN client container.
+
+ffc_mesh_client_enabled: true
+
+ffc_mesh_client_identifier: ffc-mesh-client
+ffc_mesh_client_base_path: "{{ mash_playbook_base_path }}/{{ ffc_mesh_client_identifier }}"
+
+# renovate: datasource=github-releases depName=FreifunkChemnitz/ffc-mesh-client
+ffc_mesh_client_version: 1.0.0
+
+ffc_mesh_client_container_image: "{{ ffc_mesh_client_container_image_registry_prefix }}freifunkchemnitz/ffc-mesh-client:{{ ffc_mesh_client_container_image_tag }}"
+ffc_mesh_client_container_image_tag: "{{ 'latest' if ffc_mesh_client_version == 'latest' else ffc_mesh_client_version }}"
+ffc_mesh_client_container_image_registry_prefix: ghcr.io/
+ffc_mesh_client_container_image_force_pull: "{{ ffc_mesh_client_container_image.endswith(':latest') }}"
+
+# The GHCR package is private by default (see the project README). Set these to
+# pull it with a personal access token that has the `read:packages` scope.
+# Define the password in an ansible-vault-encrypted file, not in plain group_vars.
+ffc_mesh_client_container_image_registry_login: "{{ ffc_mesh_client_container_image_registry_username != '' and ffc_mesh_client_container_image_registry_password != '' }}"
+ffc_mesh_client_container_image_registry_login_server: ghcr.io
+ffc_mesh_client_container_image_registry_username: ""
+ffc_mesh_client_container_image_registry_password: ""
+
+# The base container network. It will be auto-created by this role if it doesn't
+# exist already. The mesh client needs this for its initial outbound uplink
+# (fastd handshake + fetching the site-ffc config) before it pins the supernode
+# routes and - with ffc_mesh_client_default_via_mesh - moves its default route
+# onto the mesh.
+ffc_mesh_client_container_network: "{{ ffc_mesh_client_identifier }}"
+
+# Whether Docker gives the role's own container network an IPv6 subnet.
+# Deliberately independent of - and defaulting off, unlike - the playbook-global
+# `devture_systemd_docker_base_ipv6_enabled`: this container gets its IPv6 from
+# the mesh (bat0), and a second, Docker-managed IPv6 default route on eth0 would
+# compete with bat0's (same metric) and break the symmetric return path that the
+# publicly reachable mesh IPv6 depends on. The container only needs the network
+# for its initial IPv4 uplink (fastd handshake, site-ffc fetch).
+ffc_mesh_client_container_network_ipv6_enabled: false
+
+# A list of additional container networks that the container would be connected to.
+# The role does not create these networks, so make sure they already exist.
+ffc_mesh_client_container_additional_networks: "{{ ffc_mesh_client_container_additional_networks_auto + ffc_mesh_client_container_additional_networks_custom }}"
+ffc_mesh_client_container_additional_networks_auto: []
+ffc_mesh_client_container_additional_networks_custom: []
+
+# Host ports to publish from the container (list of "hostport:containerport" or
+# "ip:hostport:containerport" strings). Because sidecar containers join this
+# container's network namespace, a sidecar's web UI has to be published HERE,
+# on the mesh-client container, not on the sidecar itself. Example:
+#   ffc_mesh_client_container_published_ports:
+#     - "127.0.0.1:3001:3001"
+ffc_mesh_client_container_published_ports: []
+
+# A list of extra arguments to pass to the container (`docker run` command).
+ffc_mesh_client_container_extra_arguments: []
+
+# --- Mesh configuration ----------------------------------------------------
+
+# The fastd secret key (hex). REQUIRED. Generate a keypair once with:
+#   docker run --rm --entrypoint "fastd --generate-key" \
+#     ghcr.io/freifunkchemnitz/ffc-mesh-client:latest
+# Put the `Secret:` value here (vault-encrypted) and, if the supernodes don't
+# auto-accept unknown keys, register the `Public:` value with FFC.
+ffc_mesh_client_fastd_secret: ""
+
+# Stable, locally-administered MAC address for the bat0 interface. This also
+# determines the container's public Freifunk IPv6 (via EUI-64), under which it
+# is reachable from the internet - so keep it fixed. Only the last bytes are
+# freely choosable. Example: 02:ff:c0:11:22:33 -> 2001:bc8:3f13:ffc2:ff:c0ff:fe11:2233
+ffc_mesh_client_mesh_mac: "02:ff:c0:00:00:42"
+
+# 1 = the container's whole default route goes through the Freifunk exit
+#     (also applies to sidecar containers that share this netns).
+# 0 = only NAT'ed / routed clients go through FFC; the container's own default
+#     route stays on the real uplink.
+ffc_mesh_client_default_via_mesh: true
+
+# 1 = enable NAT (MASQUERADE on bat0) + MSS clamping for routed clients.
+ffc_mesh_client_enable_nat: true
+
+# --- site-ffc: where the domain config comes from -------------------------
+# Peers, MTU, methods, IPv4 prefix and the batman-adv routing_algo are fetched
+# at every container start from github.com/FreifunkChemnitz/site-ffc. An
+# image-baked snapshot is the fallback when GitHub is unreachable.
+
+# Branch/tag/commit in the site-ffc repo.
+ffc_mesh_client_site_ffc_ref: multidomain
+
+# Freifunk domain: chemnitz, floeha, zwickau, umland, ...
+ffc_mesh_client_site_ffc_domain: chemnitz
+
+# 1 = fetch site-ffc live at start (fall back to the snapshot on failure).
+# 0 = never fetch, always use the image-baked snapshot.
+ffc_mesh_client_site_ffc_fetch: true
+
+# 1 = keep the "null@l2tp" fastd method (needs l2tp_eth in the container).
+ffc_mesh_client_enable_l2tp: false
+
+# Override the site-ffc mesh MTU. Leave empty to use the value from site-ffc.
+# Lower it (e.g. 1312) if the gateway TQ is poor (`batctl gwl`).
+ffc_mesh_client_fastd_mtu: ""
+
+# fastd log level: error, warn, info, verbose, debug, debug2
+ffc_mesh_client_fastd_log_level: info
+
+# Additional environment variables to pass to the container (raw string,
+# appended to the env file).
+ffc_mesh_client_environment_variables_additional_variables: ""
+
+# --- Host prerequisites ---------------------------------------------------
+
+# The batman-adv kernel module cannot be loaded from inside the container - it
+# has to be present on the host. When true, this role loads it now (modprobe)
+# and makes it load on boot (/etc/modules-load.d/batman-adv.conf). Set to false
+# if you manage kernel modules yourself.
+ffc_mesh_client_host_manage_batman_adv_module: true
+
+# Grants the container full privileges instead of the NET_ADMIN + NET_RAW
+# capabilities and the /dev/net/tun device. Only needed if the capability set
+# below turns out to be insufficient on your host/kernel.
+ffc_mesh_client_container_privileged: false
+
+# Linux capabilities added to the container (ignored when privileged).
+ffc_mesh_client_container_capabilities:
+  - NET_ADMIN
+  - NET_RAW
+
+# Devices exposed to the container (ignored when privileged).
+ffc_mesh_client_container_devices:
+  - /dev/net/tun:/dev/net/tun
+
+# Sysctls set on the container.
+ffc_mesh_client_container_sysctls:
+  net.ipv4.ip_forward: "1"
+  net.ipv6.conf.all.disable_ipv6: "0"
+
+# --- Container labels ----------------------------------------------------
+
+# ffc-mesh-client has no web interface of its own, so there is no Traefik
+# integration. Use this to attach your own labels (e.g. for tsdproxy on a
+# sidecar), one `key=value` per line.
+ffc_mesh_client_container_labels_additional_labels: ""
+
+# --- systemd -----------------------------------------------------------
+
+# List of systemd services that the ffc-mesh-client systemd service depends on.
+ffc_mesh_client_systemd_required_services_list: "{{ ffc_mesh_client_systemd_required_services_list_default + ffc_mesh_client_systemd_required_services_list_auto + ffc_mesh_client_systemd_required_services_list_custom }}"
+ffc_mesh_client_systemd_required_services_list_default: "{{ [devture_systemd_docker_base_docker_service_name] if devture_systemd_docker_base_docker_service_name else [] }}"
+ffc_mesh_client_systemd_required_services_list_auto: []
+ffc_mesh_client_systemd_required_services_list_custom: []
+
+# List of systemd services that the ffc-mesh-client systemd service wants.
+ffc_mesh_client_systemd_wanted_services_list: "{{ ffc_mesh_client_systemd_wanted_services_list_default + ffc_mesh_client_systemd_wanted_services_list_auto + ffc_mesh_client_systemd_wanted_services_list_custom }}"
+ffc_mesh_client_systemd_wanted_services_list_default: []
+ffc_mesh_client_systemd_wanted_services_list_auto: []
+ffc_mesh_client_systemd_wanted_services_list_custom: []
