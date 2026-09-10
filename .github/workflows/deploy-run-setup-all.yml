@@ -36,7 +36,7 @@ permissions:
 
 jobs:
   run:
-    name: Deploy (setup-all)
+    name: deploy
     runs-on: ubuntu-latest
     # Ships git, just, ansible and agru already, so deploy-prepare doesn't need to install
     # any of that itself.

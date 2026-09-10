@@ -121,7 +121,7 @@ jobs:
           echo "hosts=$(ansible-inventory -i inventory/hosts.yml --list --limit '${{ inputs.host }}' | jq -c '._meta.hostvars | keys')" >> "$GITHUB_OUTPUT"
 
   deploy:
-    name: Deploy (${{ matrix.host }})
+    name: ${{ matrix.host }}
     needs: resolve-hosts
     strategy:
       fail-fast: false
@@ -135,7 +135,7 @@ jobs:
     secrets: inherit
 
   record-success:
-    name: Record last known-good ref (${{ matrix.host }})
+    name: ${{ matrix.host }}
     needs: [resolve-hosts, deploy]
     if: needs.deploy.result == 'success'
     strategy:
@@ -158,7 +158,7 @@ jobs:
       - run: echo "Approved -- proceeding with rollback of all targeted hosts."
 
   rollback:
-    name: Auto-rollback (${{ matrix.host }})
+    name: ${{ matrix.host }}
     needs: [resolve-hosts, await-rollback-approval]
     if: always() && needs.await-rollback-approval.result == 'success'
     strategy:
