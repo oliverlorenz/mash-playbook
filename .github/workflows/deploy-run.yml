@@ -38,6 +38,10 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       deployed_sha: ${{ steps.resolve.outputs.sha }}
+    env:
+      # Vaultwarden host as SCREAMING_SNAKE_CASE -- names the `<prefix>__BW_*` repo secrets
+      # and is turned back into the server URL by the Fetch step below.
+      BW_VAULT_PREFIX: ${{ vars.BW_VAULT_PREFIX || 'VAULT_OLIVERLORENZ_COM' }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -89,12 +93,14 @@ jobs:
 
       - name: Fetch secrets from Bitwarden
         env:
-          BW_CLIENTID: ${{ secrets.BW_CLIENTID }}
-          BW_CLIENTSECRET: ${{ secrets.BW_CLIENTSECRET }}
-          BW_PASSWORD: ${{ secrets.BW_PASSWORD }}
-          BW_SERVER: ${{ secrets.BW_SERVER }}
+          BW_CLIENTID: ${{ secrets[format('{0}__BW_CLIENTID', env.BW_VAULT_PREFIX)] }}
+          BW_CLIENTSECRET: ${{ secrets[format('{0}__BW_CLIENT_SECRET', env.BW_VAULT_PREFIX)] }}
+          BW_PASSWORD: ${{ secrets[format('{0}__BW_PASSWORD', env.BW_VAULT_PREFIX)] }}
           HOST: ${{ inputs.host }}
-        run: just -f justfile.custom receive_secrets folder "$HOST"
+        run: |
+          BW_SERVER="https://$(printf '%s' "$BW_VAULT_PREFIX" | tr 'A-Z_' 'a-z.')"
+          export BW_SERVER
+          just -f justfile.custom receive_secrets folder "$HOST"
 
       - name: Deploy (setup-service)
         if: inputs.mode == 'setup-service'

@@ -46,6 +46,11 @@ jobs:
     container: ghcr.io/devture/ansible:14.0.0-r0-3
     outputs:
       deployed_sha: ${{ steps.prepare.outputs.deployed_sha }}
+    env:
+      # Vaultwarden host as SCREAMING_SNAKE_CASE. Names the `<prefix>__BW_*` repo secrets
+      # holding the API credentials, and deploy-prepare turns it back into the server URL.
+      # Override with a repo variable if a host's secrets live in a different vault.
+      BW_VAULT_PREFIX: ${{ vars.BW_VAULT_PREFIX || 'VAULT_OLIVERLORENZ_COM' }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -79,10 +84,10 @@ jobs:
           ref: ${{ inputs.rollback && steps.resolve-rollback.outputs.sha || inputs.ref }}
           gh_pat: ${{ secrets.GH_PAT }}
           ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
-          bw_clientid: ${{ secrets.BW_CLIENTID }}
-          bw_clientsecret: ${{ secrets.BW_CLIENTSECRET }}
-          bw_password: ${{ secrets.BW_PASSWORD }}
-          bw_server: ${{ secrets.BW_SERVER }}
+          bw_clientid: ${{ secrets[format('{0}__BW_CLIENTID', env.BW_VAULT_PREFIX)] }}
+          bw_clientsecret: ${{ secrets[format('{0}__BW_CLIENT_SECRET', env.BW_VAULT_PREFIX)] }}
+          bw_password: ${{ secrets[format('{0}__BW_PASSWORD', env.BW_VAULT_PREFIX)] }}
+          bw_vault_prefix: ${{ env.BW_VAULT_PREFIX }}
 
       - name: Deploy
         run: just -f justfile.custom setup-service ${{ inputs.service }} ${{ inputs.host }}

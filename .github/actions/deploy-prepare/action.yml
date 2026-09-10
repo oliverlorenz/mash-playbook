@@ -31,9 +31,12 @@ inputs:
   bw_password:
     description: Bitwarden master password, to unlock the vault after API-key login.
     required: true
-  bw_server:
-    description: Bitwarden/Vaultwarden server URL. Empty means the hosted default.
-    required: false
+  bw_vault_prefix:
+    description: >-
+      Screaming-snake-case of the Vaultwarden host, e.g. VAULT_OLIVERLORENZ_COM. It
+      names the <prefix>__BW_* repo secrets and is turned back into the server URL
+      (https://vault.oliverlorenz.com). Domains containing a hyphen are not representable.
+    required: true
 
 outputs:
   deployed_sha:
@@ -143,9 +146,14 @@ runs:
         BW_CLIENTID: ${{ inputs.bw_clientid }}
         BW_CLIENTSECRET: ${{ inputs.bw_clientsecret }}
         BW_PASSWORD: ${{ inputs.bw_password }}
-        BW_SERVER: ${{ inputs.bw_server }}
+        BW_VAULT_PREFIX: ${{ inputs.bw_vault_prefix }}
         HOST: ${{ inputs.host }}
       # Non-interactive API-key login (see bin/receive_secrets.sh). Writes
       # inventory/host_vars/$HOST/secrets.yml from the Bitwarden folder named after the host,
       # one variable per item. Credentials arrive via env, never inlined as `${{ }}`.
-      run: just -f justfile.custom receive_secrets folder "$HOST"
+      # The server URL is the prefix lower-cased with `_` -> `.` (VAULT_OLIVERLORENZ_COM ->
+      # https://vault.oliverlorenz.com).
+      run: |
+        BW_SERVER="https://$(printf '%s' "$BW_VAULT_PREFIX" | tr 'A-Z_' 'a-z.')"
+        export BW_SERVER
+        just -f justfile.custom receive_secrets folder "$HOST"
