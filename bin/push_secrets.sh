@@ -15,6 +15,14 @@
 # Item names are matched case-insensitively against the local key, mirroring the
 # `$lowercase($v.name)` transform done by `bin/receive_secrets.sh`.
 #
+# Every secrets file must contain a comment line declaring which Vaultwarden
+# server it belongs to (any position in the file):
+#
+#   # vaultwarden_server: https://bitwarden.com
+#
+# That URL is read up front and the Bitwarden CLI is pointed at it before any
+# push happens. All hosts passed in one invocation must agree on the server.
+#
 # Usage: bin/push_secrets.sh <folder|collection> <hostname> [hostname...]
 
 set -eu
@@ -34,6 +42,58 @@ for BIN in bw jq; do
     exit 1
   fi
 done
+
+# --- target vaultwarden server ----------------------------------------------
+
+# Read the `# vaultwarden_server: <url>` declaration from a secrets file, wherever
+# it appears. Prints the first match, or nothing if no line matches.
+secrets_server_url() {
+  sed -n \
+    's/^[[:space:]]*#[[:space:]]*vaultwarden_server:[[:space:]]*\([^[:space:]].*[^[:space:]]\|[^[:space:]]\)[[:space:]]*$/\1/p' \
+    "$1" | head -n 1
+}
+
+TARGET_SERVER=""
+
+for MASH_HOSTNAME in "$@"; do
+  SECRETS_FILE="inventory/host_vars/${MASH_HOSTNAME}/secrets.yml"
+
+  if [ ! -f "$SECRETS_FILE" ]; then
+    echo "No secrets file at '${SECRETS_FILE}', skipping." >&2
+    continue
+  fi
+
+  server_url="$(secrets_server_url "$SECRETS_FILE")"
+
+  if [ -z "$server_url" ]; then
+    echo "Error: '${SECRETS_FILE}' must contain a Vaultwarden server declaration:" >&2
+    echo "       # vaultwarden_server: https://bitwarden.com" >&2
+    exit 1
+  fi
+
+  if [ -z "$TARGET_SERVER" ]; then
+    TARGET_SERVER="$server_url"
+  elif [ "$TARGET_SERVER" != "$server_url" ]; then
+    echo "Error: hosts declare different Vaultwarden servers:" >&2
+    echo "       '${TARGET_SERVER}' vs '${server_url}'" >&2
+    echo "       Push hosts of one server at a time." >&2
+    exit 1
+  fi
+done
+
+if [ -z "$TARGET_SERVER" ]; then
+  echo "Nothing to push." >&2
+  exit 1
+fi
+
+# Point the CLI at the declared server. Switching servers requires a logout.
+echo "Pushing secrets to Vaultwarden server: ${TARGET_SERVER}" >&2
+CURRENT_SERVER="$(bw config server 2>/dev/null || true)"
+if [ "$CURRENT_SERVER" != "$TARGET_SERVER" ]; then
+  echo "Switching Bitwarden server ${CURRENT_SERVER:-unset} -> ${TARGET_SERVER}..." >&2
+  bw logout >/dev/null 2>&1 || true
+  bw config server "$TARGET_SERVER" >/dev/null
+fi
 
 # --- Bitwarden session -------------------------------------------------------
 
@@ -96,7 +156,7 @@ for MASH_HOSTNAME in "$@"; do
   ITEMS_JSON="$(bw list items --"${MODE}id" "$CONTAINER_ID")"
 
   echo ""
-  echo "== ${MASH_HOSTNAME} (${MODE}) =="
+  echo "== ${MASH_HOSTNAME} (${MODE}) @ ${TARGET_SERVER} =="
 
   # Read `key: value` lines, ignoring comments and blanks. Split on the first ": ".
   while IFS= read -r line || [ -n "$line" ]; do
@@ -163,4 +223,4 @@ for MASH_HOSTNAME in "$@"; do
 done
 
 echo ""
-echo "Done. created=${created} updated=${updated} skipped=${skipped} unchanged=${unchanged_confirmed}"
+echo "Done (${TARGET_SERVER}). created=${created} updated=${updated} skipped=${skipped} unchanged=${unchanged_confirmed}"

@@ -24,6 +24,14 @@ JSONATA_FILTER='$map($, function($v) {
     $lowercase($v.name) & ": " & $v.login.password
 })'
 
+# Recorded as the first line of every secrets file so `bin/push_secrets.sh` knows
+# which Vaultwarden server to push back to. An unset `bw config server` means the
+# hosted default, https://bitwarden.com.
+VAULTWARDEN_SERVER="$(bw config server 2>/dev/null || true)"
+[ -n "$VAULTWARDEN_SERVER" ] || VAULTWARDEN_SERVER="https://bitwarden.com"
+
+echo "Receiving secrets from Vaultwarden server: ${VAULTWARDEN_SERVER}" >&2
+
 for MASH_HOSTNAME in "$@"; do
   ITEM_ID=$(bw get "$MODE" "$MASH_HOSTNAME" | jq -r .id)
 
@@ -35,6 +43,16 @@ for MASH_HOSTNAME in "$@"; do
   OUTPUT_DIR="inventory/host_vars/${MASH_HOSTNAME}"
   mkdir -p "$OUTPUT_DIR"
 
-  bw list items --"${MODE}id" "$ITEM_ID" | jfq "$JSONATA_FILTER" > "${OUTPUT_DIR}/secrets.yml"
-  echo "Wrote ${OUTPUT_DIR}/secrets.yml"
+  {
+    printf '# vaultwarden_server: %s\n' "$VAULTWARDEN_SERVER"
+    bw list items --"${MODE}id" "$ITEM_ID" | jfq "$JSONATA_FILTER"
+  } > "${OUTPUT_DIR}/secrets.yml"
+
+  # List the variable names that were fetched (names only, never their values),
+  # so the run is auditable from the logs.
+  KEYS="$(sed -n 's/^\([A-Za-z0-9_.-]\{1,\}\): .*/\1/p' "${OUTPUT_DIR}/secrets.yml")"
+  KEY_COUNT="$(printf '%s' "$KEYS" | grep -c . || true)"
+
+  echo "Wrote ${OUTPUT_DIR}/secrets.yml (from ${VAULTWARDEN_SERVER}, ${KEY_COUNT} variable(s)):" >&2
+  [ -n "$KEYS" ] && printf '%s\n' "$KEYS" | sed 's/^/  - /' >&2 || true
 done
