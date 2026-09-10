@@ -22,8 +22,18 @@ inputs:
     required: true
   ssh_private_key:
     required: true
-  inventory_secrets:
+  bw_clientid:
+    description: Bitwarden API key client_id, for non-interactive secret fetching.
     required: true
+  bw_clientsecret:
+    description: Bitwarden API key client_secret.
+    required: true
+  bw_password:
+    description: Bitwarden master password, to unlock the vault after API-key login.
+    required: true
+  bw_server:
+    description: Bitwarden/Vaultwarden server URL. Empty means the hosted default.
+    required: false
 
 outputs:
   deployed_sha:
@@ -115,14 +125,27 @@ runs:
           ssh-keyscan -H "$host_ip" >> /root/.ssh/known_hosts
         fi
 
-    - name: Write secrets
+    - name: Install Bitwarden CLI and jfq
+      shell: sh
+      # The devture/ansible container (Alpine) has no node; the Bitwarden CLI and jfq (the
+      # JSONata filter bin/receive_secrets.sh pipes item lists through) come from npm, and
+      # jq is used by that script too. libc6-compat is for the bw CLI's native SDK bindings,
+      # which ship glibc-only prebuilds. bw CLI is pinned: >= 2026.2.0 crashes on login
+      # against self-hosted Vaultwarden with "Cannot read properties of null (reading
+      # 'toWrappedAccountCryptographicState')" (bitwarden/clients#19553, #19413).
+      run: |
+        apk add --no-cache nodejs npm jq libc6-compat
+        npm install -g @bitwarden/cli@2026.1.0 jfq
+
+    - name: Fetch secrets from Bitwarden
       shell: sh
       env:
-        INVENTORY_SECRETS: ${{ inputs.inventory_secrets }}
+        BW_CLIENTID: ${{ inputs.bw_clientid }}
+        BW_CLIENTSECRET: ${{ inputs.bw_clientsecret }}
+        BW_PASSWORD: ${{ inputs.bw_password }}
+        BW_SERVER: ${{ inputs.bw_server }}
         HOST: ${{ inputs.host }}
-      # Via env + `printf`, not `echo "${{ inputs.inventory_secrets }}"`: the secrets file
-      # is real YAML with arbitrary values, and an inlined `${{ }}` runs any `$(...)` /
-      # backticks it contains as shell (that's the "npm: not found" / "openssl: not found"
-      # noise) and silently truncates those values in the written file.
-      run: |
-        printf '%s\n' "$INVENTORY_SECRETS" > "inventory/host_vars/$HOST/secrets.yml"
+      # Non-interactive API-key login (see bin/receive_secrets.sh). Writes
+      # inventory/host_vars/$HOST/secrets.yml from the Bitwarden folder named after the host,
+      # one variable per item. Credentials arrive via env, never inlined as `${{ }}`.
+      run: just -f justfile.custom receive_secrets folder "$HOST"

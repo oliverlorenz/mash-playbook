@@ -4,6 +4,19 @@
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
+# Fetches secrets from Bitwarden/Vaultwarden into
+# `inventory/host_vars/<hostname>/secrets.yml` -- one `key: value` line per item
+# (item name -> variable name, item password field -> value). Counterpart of
+# `bin/push_secrets.sh`.
+#
+# Auth: if BW_CLIENTID, BW_CLIENTSECRET and BW_PASSWORD are set in the
+# environment (how CI passes them), log in non-interactively via API key against
+# BW_SERVER, in a throwaway data dir that neither touches nor depends on any `bw`
+# session already on the machine. Otherwise fall back to the interactive `bw`
+# session.
+#
+# Usage: bin/receive_secrets.sh <folder|collection> <hostname> [hostname...]
+
 MODE="$1"
 
 if [ "$MODE" != "folder" ] && [ "$MODE" != "collection" ] || [ $# -lt 2 ]; then
@@ -13,11 +26,28 @@ fi
 
 shift
 
-LOGIN_CHECK="$(bw login --check | grep 'You are logged in!')"
-if [ -z "$LOGIN_CHECK" ]; then
-  echo ""
+if [ -n "${BW_CLIENTID:-}" ] && [ -n "${BW_CLIENTSECRET:-}" ] && [ -n "${BW_PASSWORD:-}" ]; then
+  BITWARDENCLI_APPDATA_DIR="$(mktemp -d)"
+  export BITWARDENCLI_APPDATA_DIR
+  trap 'rm -rf "$BITWARDENCLI_APPDATA_DIR"' EXIT
+
+  # The script has no `set -e` (the interactive path below depends on that), so
+  # fail loudly here instead of writing a half-empty secrets file downstream.
+  if [ -n "${BW_SERVER:-}" ]; then
+    bw config server "$BW_SERVER" > /dev/null || { echo "bw config server failed" >&2; exit 1; }
+  fi
+
+  # bw login reads BW_CLIENTID / BW_CLIENTSECRET from the environment.
+  bw login --apikey > /dev/null || { echo "bw login --apikey failed" >&2; exit 1; }
+  BW_SESSION="$(bw unlock "$BW_PASSWORD" --raw)" || { echo "bw unlock failed" >&2; exit 1; }
+  export BW_SESSION
 else
-  export BW_SESSION=$(bw login --raw)
+  LOGIN_CHECK="$(bw login --check | grep 'You are logged in!')"
+  if [ -z "$LOGIN_CHECK" ]; then
+    echo ""
+  else
+    export BW_SESSION=$(bw login --raw)
+  fi
 fi
 
 JSONATA_FILTER='$map($, function($v) {

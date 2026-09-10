@@ -79,7 +79,10 @@ jobs:
           ref: ${{ inputs.rollback && steps.resolve-rollback.outputs.sha || inputs.ref }}
           gh_pat: ${{ secrets.GH_PAT }}
           ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
-          inventory_secrets: ${{ secrets.INVENTORY_SECRETS }}
+          bw_clientid: ${{ secrets.BW_CLIENTID }}
+          bw_clientsecret: ${{ secrets.BW_CLIENTSECRET }}
+          bw_password: ${{ secrets.BW_PASSWORD }}
+          bw_server: ${{ secrets.BW_SERVER }}
 
       - name: Deploy
         run: just -f justfile.custom setup-service ${{ inputs.service }} ${{ inputs.host }}
