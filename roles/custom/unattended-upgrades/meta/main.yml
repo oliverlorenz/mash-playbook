@@ -1,0 +1,15 @@
+---
+galaxy_info:
+  author: Oliver Lorenz
+  role_name: unattended_upgrades
+  namespace: oliverlorenz
+  description: Debian/Ubuntu unattended-upgrades (unattended security patching via systemd timers)
+  platforms:
+    - name: Debian
+      versions:
+        - all
+    - name: Ubuntu
+      versions:
+        - all
+  license: AGPL-3.0-or-later
+  min_ansible_version: "2.1"

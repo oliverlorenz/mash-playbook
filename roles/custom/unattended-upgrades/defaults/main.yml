@@ -1,0 +1,35 @@
+# SPDX-FileCopyrightText: 2026 Oliver Lorenz
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+---
+# Unlike the rest of this playbook's services, unattended-upgrades can't run as a
+# Docker container: it patches the *host itself*. It complements the `cleanup`
+# role (`system_cleanup_apt`), which only upgrades packages while the playbook
+# runs — this keeps security updates flowing between deploys via systemd timers.
+
+unattended_upgrades_enabled: false
+
+# We deliberately don't override the origins/allowed-list: the distribution's
+# stock `/etc/apt/apt.conf.d/50unattended-upgrades` already restricts to the
+# security pocket on both Debian and Ubuntu.
+
+# Reboot automatically when an upgrade requires it (kernel, libc, ...).
+unattended_upgrades_automatic_reboot: true
+unattended_upgrades_automatic_reboot_time: "04:00"
+
+# Whether to `apt autoremove` obsolete dependencies after an upgrade.
+# Off by default — the `cleanup` role's `system_cleanup_apt` already does this,
+# and old kernels are handled by `system_cleanup_kernels`.
+unattended_upgrades_remove_unused_dependencies: false
+
+# Address for failure reports. Empty = no mail (the hosts have no MTA/relay).
+unattended_upgrades_mail: ""
+
+# When to mail (only used when `unattended_upgrades_mail` is set):
+# "always" | "only-on-error" | "on-change"
+unattended_upgrades_mail_report: "only-on-error"
+
+# Absolute paths of the apt.conf.d drop-ins this role manages.
+unattended_upgrades_periodic_config_path: /etc/apt/apt.conf.d/20auto-upgrades
+unattended_upgrades_local_config_path: /etc/apt/apt.conf.d/52unattended-upgrades-mash.conf

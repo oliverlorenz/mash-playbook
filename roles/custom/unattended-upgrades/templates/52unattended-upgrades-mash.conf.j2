@@ -1,0 +1,19 @@
+{#
+SPDX-FileCopyrightText: 2026 Oliver Lorenz
+
+SPDX-License-Identifier: AGPL-3.0-or-later
+-#}
+// Managed by the mash-playbook `custom/unattended-upgrades` role.
+// Loaded after the distribution's 50unattended-upgrades, so these win.
+
+Unattended-Upgrade::Automatic-Reboot "{{ 'true' if unattended_upgrades_automatic_reboot | bool else 'false' }}";
+Unattended-Upgrade::Automatic-Reboot-WithUsers "{{ 'true' if unattended_upgrades_automatic_reboot | bool else 'false' }}";
+Unattended-Upgrade::Automatic-Reboot-Time "{{ unattended_upgrades_automatic_reboot_time }}";
+
+Unattended-Upgrade::Remove-Unused-Dependencies "{{ 'true' if unattended_upgrades_remove_unused_dependencies | bool else 'false' }}";
+Unattended-Upgrade::Remove-New-Unused-Dependencies "{{ 'true' if unattended_upgrades_remove_unused_dependencies | bool else 'false' }}";
+{% if unattended_upgrades_mail | length > 0 %}
+
+Unattended-Upgrade::Mail "{{ unattended_upgrades_mail }}";
+Unattended-Upgrade::MailReport "{{ unattended_upgrades_mail_report }}";
+{% endif %}

@@ -1,0 +1,18 @@
+# SPDX-FileCopyrightText: 2026 Oliver Lorenz
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+---
+- name: Fail if this host's OS is not supported by the unattended-upgrades role
+  ansible.builtin.fail:
+    msg: >-
+      The unattended-upgrades role only supports Debian/Ubuntu (apt).
+      This host's OS family is `{{ ansible_facts['os_family'] }}`.
+  when: ansible_facts['os_family'] != 'Debian'
+
+- name: Fail if unattended_upgrades_mail_report has an unsupported value
+  ansible.builtin.fail:
+    msg: >-
+      `unattended_upgrades_mail_report` must be one of "always", "only-on-error"
+      or "on-change" (got `{{ unattended_upgrades_mail_report }}`).
+  when: unattended_upgrades_mail_report not in ['always', 'only-on-error', 'on-change']

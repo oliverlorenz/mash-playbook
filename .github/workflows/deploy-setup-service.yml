@@ -44,6 +44,7 @@ on:
           - auxiliary
           - bentopdf
           - cleanup
+          - collabora_online
           - container_socket_proxy
           - convertx
           - dayplanner
@@ -76,6 +77,7 @@ on:
           - tinyauth
           - traefik
           - tsdproxy
+          - unattended-upgrades
           - uptime_kuma
           - valkey
           - vaultwarden

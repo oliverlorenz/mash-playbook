@@ -1,0 +1,26 @@
+# SPDX-FileCopyrightText: 2026 Oliver Lorenz
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+---
+- name: Perform unattended-upgrades installation tasks
+  when: unattended_upgrades_enabled | bool
+  tags:
+    - setup-all
+    - setup-unattended-upgrades
+    - install-all
+    - install-unattended-upgrades
+  block:
+    - name: Validate unattended-upgrades configuration
+      ansible.builtin.include_tasks: "{{ role_path }}/tasks/validate_config.yml"
+    - name: Install unattended-upgrades
+      ansible.builtin.include_tasks: "{{ role_path }}/tasks/install.yml"
+
+- name: Perform unattended-upgrades uninstallation tasks
+  when: not unattended_upgrades_enabled | bool
+  tags:
+    - setup-all
+    - setup-unattended-upgrades
+  block:
+    - name: Uninstall unattended-upgrades
+      ansible.builtin.include_tasks: "{{ role_path }}/tasks/uninstall.yml"

@@ -1,0 +1,44 @@
+# SPDX-FileCopyrightText: 2026 Oliver Lorenz
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+---
+- name: Ensure unattended-upgrades package is installed
+  ansible.builtin.apt:
+    name: unattended-upgrades
+    state: present
+    update_cache: true
+    cache_valid_time: 3600
+
+- name: Ensure apt periodic tasks are enabled
+  ansible.builtin.copy:
+    dest: "{{ unattended_upgrades_periodic_config_path }}"
+    owner: root
+    group: root
+    mode: "0644"
+    content: |
+      // Managed by the mash-playbook `custom/unattended-upgrades` role.
+      APT::Periodic::Update-Package-Lists "1";
+      APT::Periodic::Unattended-Upgrade "1";
+
+- name: Ensure local unattended-upgrades overrides are configured
+  ansible.builtin.template:
+    src: "{{ role_path }}/templates/52unattended-upgrades-mash.conf.j2"
+    dest: "{{ unattended_upgrades_local_config_path }}"
+    owner: root
+    group: root
+    mode: "0644"
+
+- name: Ensure unattended-upgrades service and timers are enabled
+  ansible.builtin.systemd:
+    name: "{{ item }}"
+    enabled: true
+  with_items:
+    - unattended-upgrades.service
+    - apt-daily.timer
+    - apt-daily-upgrade.timer
+
+- name: Ensure unattended-upgrades service is started
+  ansible.builtin.systemd:
+    name: unattended-upgrades.service
+    state: started

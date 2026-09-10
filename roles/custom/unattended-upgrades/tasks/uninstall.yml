@@ -1,0 +1,32 @@
+# SPDX-FileCopyrightText: 2026 Oliver Lorenz
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+---
+# Deliberately does not remove the `unattended-upgrades` package or touch the
+# apt-daily timers: those are part of a stock Debian/Ubuntu install and removing
+# them is a system-level change rather than something to do implicitly on every
+# `unattended_upgrades_enabled: false` run. This only backs out what the role
+# added on top.
+
+- name: Ensure local unattended-upgrades overrides are absent
+  ansible.builtin.file:
+    path: "{{ unattended_upgrades_local_config_path }}"
+    state: absent
+
+- name: Ensure apt unattended-upgrade periodic task is disabled
+  ansible.builtin.stat:
+    path: "{{ unattended_upgrades_periodic_config_path }}"
+  register: unattended_upgrades_periodic_config_stat
+
+- name: Ensure apt periodic tasks are disabled
+  ansible.builtin.copy:
+    dest: "{{ unattended_upgrades_periodic_config_path }}"
+    owner: root
+    group: root
+    mode: "0644"
+    content: |
+      // Managed by the mash-playbook `custom/unattended-upgrades` role.
+      APT::Periodic::Update-Package-Lists "0";
+      APT::Periodic::Unattended-Upgrade "0";
+  when: unattended_upgrades_periodic_config_stat.stat.exists | bool
