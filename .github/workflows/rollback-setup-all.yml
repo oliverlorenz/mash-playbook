@@ -73,7 +73,7 @@ jobs:
           echo "hosts=$(ansible-inventory -i inventory/hosts.yml --list --limit '${{ inputs.host }}' | jq -c '._meta.hostvars | keys')" >> "$GITHUB_OUTPUT"
 
   rollback:
-    name: Rollback to ${{ inputs.ref }} (${{ matrix.host }})
+    name: ${{ matrix.host }}
     needs: resolve-hosts
     strategy:
       fail-fast: false
@@ -86,7 +86,7 @@ jobs:
     secrets: inherit
 
   record-success:
-    name: Record last known-good ref (${{ matrix.host }})
+    name: ${{ matrix.host }}
     needs: [resolve-hosts, rollback]
     if: success()
     strategy:
