@@ -202,7 +202,25 @@ run +extra_args: _requirements-yml _setup-yml _group-vars-mash-servers
     _tmpdir="$(mktemp -d)"
     chmod 700 "$_tmpdir"
     trap 'rm -rf "$_tmpdir"' EXIT INT TERM HUP
-    (cd inventory && etkepass --decrypt-inv-to "$_tmpdir")
+    _limit=""
+    set -- {{ extra_args }}
+    while [ $# -gt 0 ]; do
+        case "$1" in
+            -l|--limit) _limit="${2:-}" ;;
+            -l=*|--limit=*) _limit="${1#*=}" ;;
+            -l?*) _limit="${1#-l}" ;;
+        esac
+        shift
+    done
+    _dhosts=""
+    _oldifs=$IFS; IFS=,
+    for _h in $_limit; do
+        [ -e "inventory/host_vars/$_h" ] && _dhosts="${_dhosts:+$_dhosts,}$_h"
+    done
+    IFS=$_oldifs
+    if [ -n "$_dhosts" ]; then
+        (cd inventory && etkepass -l "$_dhosts" --decrypt-inv-to "$_tmpdir")
+    fi
     ansible-playbook -i inventory/hosts.yml -i "$_tmpdir" setup.yml {{ extra_args }}
 
 # Runs the playbook with the given list of comma-separated tags and optional arguments
