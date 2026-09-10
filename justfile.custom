@@ -29,7 +29,7 @@ _ensure-secrets hostname:
         HOSTS="{{ hostname }}"
         just optimize-for-host {{ hostname }}
     else
-        HOSTS=$(ansible-inventory -i inventory/hosts --list | jq -r '.mash_servers.hosts[]')
+        HOSTS=$(ansible-inventory -i inventory/hosts.yml --list | jq -r '.mash_servers.hosts[]')
         just optimize
     fi
 

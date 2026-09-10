@@ -4,23 +4,35 @@
 
 ---
 # Entry point (user-triggered), service-scoped counterpart of deploy-setup-all.yml. Same
-# orchestration (deploy -> record known-good -> approval-gated auto-rollback); the deploy
-# step itself lives in deploy-run-setup-service.yml so it can be reused for both paths.
+# orchestration (resolve hosts -> deploy -> record known-good -> approval-gated auto-rollback);
+# the deploy step itself lives in deploy-run-setup-service.yml so it can be reused for both paths.
+#
+# `host` accepts an inventory group (e.g. "all" or "mash_servers") or a single host. resolve-hosts
+# expands whatever is chosen to the concrete host list via `ansible-inventory --limit`, and the
+# deploy/rollback jobs fan it out as a parallel matrix so every host gets its own deployed/<host>
+# tag and rollback decision. The group and host options are kept in sync with the inventory by
+# bin/sync-deploy-workflow-options.py (the "# BEGIN GENERATED: groups" / "# BEGIN GENERATED: hosts"
+# blocks). record-rollback-success is intentionally not present: rollback redeploys exactly the
+# sha the deployed/<host> tag already points to, so re-tagging it afterwards would be a no-op.
 name: Deploy - setup-service
 
 on:
   workflow_dispatch:
     inputs:
       host:
-        description: Target host
+        description: Inventory group or single host to set the service up on.
         required: true
         type: choice
         options:
+          # BEGIN GENERATED: groups
+          - all
+          - mash_servers
+          # END GENERATED: groups
           # BEGIN GENERATED: hosts
           - homeserver.oliverlorenz.com
           - mash.oliverlorenz.com
           # END GENERATED: hosts
-        default: mash.oliverlorenz.com
+        default: mash_servers
       service:
         description: Service to set up
         required: true
@@ -73,22 +85,62 @@ permissions:
   contents: write
 
 jobs:
+  resolve-hosts:
+    name: Resolve target hosts
+    runs-on: ubuntu-latest
+    outputs:
+      hosts: ${{ steps.resolve.outputs.hosts }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.ref || github.ref }}
+
+      - name: Resolve pinned inventory commit
+        id: inventory
+        run: echo "sha=$(git rev-parse HEAD:inventory)" >> "$GITHUB_OUTPUT"
+
+      - name: Checkout inventory
+        uses: actions/checkout@v4
+        with:
+          repository: oliverlorenz/mash-inventories
+          token: ${{ secrets.GH_PAT }}
+          path: inventory
+          ref: ${{ steps.inventory.outputs.sha }}
+
+      - name: Install Ansible
+        run: pip install ansible regex
+
+      - name: Resolve hosts
+        id: resolve
+        # `host` is a group (all, mash_servers, ...) or a single host; --limit expands both.
+        run: |
+          echo "hosts=$(ansible-inventory -i inventory/hosts.yml --list --limit '${{ inputs.host }}' | jq -c '._meta.hostvars | keys')" >> "$GITHUB_OUTPUT"
+
   deploy:
-    name: Deploy
+    name: Deploy (${{ matrix.host }})
+    needs: resolve-hosts
+    strategy:
+      fail-fast: false
+      matrix:
+        host: ${{ fromJson(needs.resolve-hosts.outputs.hosts) }}
     uses: ./.github/workflows/deploy-run-setup-service.yml
     with:
       service: ${{ inputs.service }}
-      host: ${{ inputs.host }}
+      host: ${{ matrix.host }}
       ref: ${{ inputs.ref }}
     secrets: inherit
 
   record-success:
-    name: Record last known-good ref
-    needs: deploy
+    name: Record last known-good ref (${{ matrix.host }})
+    needs: [resolve-hosts, deploy]
     if: needs.deploy.result == 'success'
+    strategy:
+      matrix:
+        host: ${{ fromJson(needs.resolve-hosts.outputs.hosts) }}
     uses: ./.github/workflows/record-deployed-ref.yml
     with:
-      host: ${{ inputs.host }}
+      host: ${{ matrix.host }}
+      # Same ref is deployed to every host, so every matrix instance resolves the same sha.
       sha: ${{ needs.deploy.outputs.deployed_sha }}
     secrets: inherit
 
@@ -98,40 +150,20 @@ jobs:
     if: failure()
     environment: rollback-approval
     runs-on: ubuntu-latest
-    outputs:
-      sha: ${{ steps.resolve.outputs.sha }}
     steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: Resolve last known-good ref
-        id: resolve
-        run: |
-          if git rev-parse -q --verify "refs/tags/deployed/${{ inputs.host }}" >/dev/null; then
-            echo "sha=$(git rev-parse "refs/tags/deployed/${{ inputs.host }}")" >> "$GITHUB_OUTPUT"
-          else
-            echo "::error::No previously successful deploy recorded for host '${{ inputs.host }}' -- nothing to roll back to."
-            exit 1
-          fi
+      - run: echo "Approved -- proceeding with rollback of all targeted hosts."
 
   rollback:
-    name: Auto-rollback (${{ inputs.host }})
-    needs: await-rollback-approval
+    name: Auto-rollback (${{ matrix.host }})
+    needs: [resolve-hosts, await-rollback-approval]
     if: always() && needs.await-rollback-approval.result == 'success'
+    strategy:
+      fail-fast: false
+      matrix:
+        host: ${{ fromJson(needs.resolve-hosts.outputs.hosts) }}
     uses: ./.github/workflows/deploy-run-setup-service.yml
     with:
       service: ${{ inputs.service }}
-      host: ${{ inputs.host }}
-      ref: ${{ needs.await-rollback-approval.outputs.sha }}
-    secrets: inherit
-
-  record-rollback-success:
-    name: Record last known-good ref (post-rollback)
-    needs: rollback
-    if: always() && needs.rollback.result == 'success'
-    uses: ./.github/workflows/record-deployed-ref.yml
-    with:
-      host: ${{ inputs.host }}
-      sha: ${{ needs.rollback.outputs.deployed_sha }}
+      host: ${{ matrix.host }}
+      rollback: true
     secrets: inherit

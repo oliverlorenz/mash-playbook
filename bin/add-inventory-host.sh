@@ -2,11 +2,12 @@
 
 # SPDX-FileCopyrightText: 2026 MASH project contributors
 # SPDX-FileCopyrightText: 2026 Slavi Pantaleev
+# SPDX-FileCopyrightText: 2026 Oliver Lorenz
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
 # Adds a new host to the inventory, based on the example files in `examples/`:
-# - creates `inventory/hosts` (or adds the host to it, if it already exists)
+# - creates `inventory/hosts.yml` (or adds the host to it, if it already exists)
 # - creates `inventory/host_vars/HOST/vars.yml` with strong secrets generated automatically
 #
 # Existing configuration for the same host is never overwritten - the script refuses to run instead.
@@ -39,10 +40,9 @@ if ! printf '%s' "${server_address}" | grep -Eq '^[A-Za-z0-9.:_-]+$'; then
 	exit 1
 fi
 
-hosts_file="${base_path}/inventory/hosts"
+hosts_file="${base_path}/inventory/hosts.yml"
 vars_dir="${base_path}/inventory/host_vars/${host}"
 vars_file="${vars_dir}/vars.yml"
-hosts_entry="${host} ansible_host=${server_address} ansible_ssh_user=root"
 
 if [ -e "${vars_dir}" ]; then
 	echo "Error: ${vars_dir} already exists. Refusing to overwrite it." >&2
@@ -50,15 +50,15 @@ if [ -e "${vars_dir}" ]; then
 fi
 
 if [ -f "${hosts_file}" ]; then
-	if ! grep -q '^\[mash_servers\]' "${hosts_file}"; then
-		echo "Error: ${hosts_file} exists, but does not contain a [mash_servers] section." >&2
+	if ! grep -q '^mash_servers:' "${hosts_file}" || ! grep -Eq '^  hosts:[[:space:]]*$' "${hosts_file}"; then
+		echo "Error: ${hosts_file} exists, but is not in the expected 'mash_servers:' / 'hosts:' YAML form." >&2
 		echo "Unrecognized inventory format. Add the host to it manually:" >&2
-		echo "${hosts_entry}" >&2
+		printf '    %s:\n      ansible_host: %s\n      ansible_ssh_user: root\n' "${host}" "${server_address}" >&2
 		exit 1
 	fi
 
 	host_pattern="$(printf '%s' "${host}" | sed 's|\.|\\.|g')"
-	if grep -Eq "^${host_pattern}([[:space:]]|$)" "${hosts_file}"; then
+	if grep -Eq "^    ${host_pattern}:[[:space:]]*$" "${hosts_file}"; then
 		echo "Error: ${hosts_file} already contains an entry for ${host}. Refusing to modify it." >&2
 		exit 1
 	fi
@@ -92,15 +92,23 @@ sed \
 	"${base_path}/examples/vars.yml" > "${vars_file}"
 
 if [ -f "${hosts_file}" ]; then
-	# Insert the new host right after the [mash_servers] section header.
+	# Insert the new host right after the "  hosts:" line of the mash_servers group.
 	hosts_file_tmp="$(mktemp "${hosts_file}.XXXXXX")"
-	awk -v entry="${hosts_entry}" '{print} $0 ~ /^\[mash_servers\]/ && !done {print entry; done=1}' \
-		"${hosts_file}" > "${hosts_file_tmp}"
+	awk -v host="${host}" -v addr="${server_address}" '
+		{ print }
+		$0 ~ /^  hosts:[[:space:]]*$/ && !done {
+			print "    " host ":"
+			print "      ansible_host: " addr
+			print "      ansible_ssh_user: root"
+			done = 1
+		}
+	' "${hosts_file}" > "${hosts_file_tmp}"
 	mv "${hosts_file_tmp}" "${hosts_file}"
 else
 	sed \
-		-e "s|^<your-domain> .*|${hosts_entry}|" \
-		"${base_path}/examples/hosts" > "${hosts_file}"
+		-e "s|^    <your-domain>:|    ${host}:|" \
+		-e "s|^      ansible_host: <your-server's external IP address>|      ansible_host: ${server_address}|" \
+		"${base_path}/examples/hosts.yml" > "${hosts_file}"
 fi
 
 echo "Added host ${host} to the inventory:"
