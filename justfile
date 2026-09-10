@@ -194,7 +194,7 @@ run +extra_args: _requirements-yml _setup-yml _group-vars-mash-servers
     #!/usr/bin/env sh
     set -eu
     if ! [ -x "$(command -v etkepass)" ]; then
-        ansible-playbook -i inventory/hosts setup.yml {{ extra_args }}
+        ansible-playbook -i inventory/hosts.yml setup.yml {{ extra_args }}
         exit $?
     fi
     export SSH_ASKPASS="$(command -v etkepass)"
@@ -203,7 +203,7 @@ run +extra_args: _requirements-yml _setup-yml _group-vars-mash-servers
     chmod 700 "$_tmpdir"
     trap 'rm -rf "$_tmpdir"' EXIT INT TERM HUP
     (cd inventory && etkepass --decrypt-inv-to "$_tmpdir")
-    ansible-playbook -i inventory/hosts -i "$_tmpdir" setup.yml {{ extra_args }}
+    ansible-playbook -i inventory/hosts.yml -i "$_tmpdir" setup.yml {{ extra_args }}
 
 # Runs the playbook with the given list of comma-separated tags and optional arguments
 run-tags tags *extra_args:

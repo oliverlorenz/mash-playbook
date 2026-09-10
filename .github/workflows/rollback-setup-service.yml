@@ -3,8 +3,16 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
 ---
-# Manual rollback entry point. Reuses deploy-run-setup-service.yml (the same job the normal
-# deploy uses) so rolling back is just "deploy an older ref".
+# Manual rollback entry point, service-scoped counterpart of rollback-setup-all.yml. Reuses
+# deploy-run-setup-service.yml (the same job the normal deploy uses) so rolling back is just
+# "deploy an older ref".
+#
+# `host` accepts an inventory group (e.g. "all" or "mash_servers") or a single host.
+# resolve-hosts expands whatever is chosen to the concrete host list via
+# `ansible-inventory --limit`, and the rollback jobs fan it out as a parallel matrix, all to
+# the same explicit `ref`. The group and host options are kept in sync with the inventory by
+# bin/sync-deploy-workflow-options.py (the "# BEGIN GENERATED: groups" / "# BEGIN GENERATED:
+# hosts" blocks).
 name: Rollback - setup-service
 
 on:
@@ -15,15 +23,19 @@ on:
         required: true
         type: string
       host:
-        description: Target host
+        description: Inventory group or single host to roll back.
         required: true
         type: choice
         options:
+          # BEGIN GENERATED: groups
+          - all
+          - mash_servers
+          # END GENERATED: groups
           # BEGIN GENERATED: hosts
           - homeserver.oliverlorenz.com
           - mash.oliverlorenz.com
           # END GENERATED: hosts
-        default: mash.oliverlorenz.com
+        default: mash_servers
       service:
         description: Service to set up
         required: true
@@ -72,21 +84,62 @@ permissions:
   contents: write
 
 jobs:
+  resolve-hosts:
+    name: Resolve target hosts
+    runs-on: ubuntu-latest
+    outputs:
+      hosts: ${{ steps.resolve.outputs.hosts }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.ref }}
+
+      - name: Resolve pinned inventory commit
+        id: inventory
+        run: echo "sha=$(git rev-parse HEAD:inventory)" >> "$GITHUB_OUTPUT"
+
+      - name: Checkout inventory
+        uses: actions/checkout@v4
+        with:
+          repository: oliverlorenz/mash-inventories
+          token: ${{ secrets.GH_PAT }}
+          path: inventory
+          ref: ${{ steps.inventory.outputs.sha }}
+
+      - name: Install Ansible
+        run: pip install ansible regex
+
+      - name: Resolve hosts
+        id: resolve
+        # `host` is a group (all, mash_servers, ...) or a single host; --limit expands both.
+        run: |
+          echo "hosts=$(ansible-inventory -i inventory/hosts.yml --list --limit '${{ inputs.host }}' | jq -c '._meta.hostvars | keys')" >> "$GITHUB_OUTPUT"
+
   rollback:
-    name: Rollback to ${{ inputs.ref }}
+    name: Rollback to ${{ inputs.ref }} (${{ matrix.host }})
+    needs: resolve-hosts
+    strategy:
+      fail-fast: false
+      matrix:
+        host: ${{ fromJson(needs.resolve-hosts.outputs.hosts) }}
     uses: ./.github/workflows/deploy-run-setup-service.yml
     with:
       service: ${{ inputs.service }}
-      host: ${{ inputs.host }}
+      host: ${{ matrix.host }}
       ref: ${{ inputs.ref }}
     secrets: inherit
 
   record-success:
-    name: Record last known-good ref
-    needs: rollback
+    name: Record last known-good ref (${{ matrix.host }})
+    needs: [resolve-hosts, rollback]
     if: success()
+    strategy:
+      matrix:
+        host: ${{ fromJson(needs.resolve-hosts.outputs.hosts) }}
     uses: ./.github/workflows/record-deployed-ref.yml
     with:
-      host: ${{ inputs.host }}
+      host: ${{ matrix.host }}
+      # Same explicit ref is rolled back to on every host, so every matrix instance resolves
+      # the same sha.
       sha: ${{ needs.rollback.outputs.deployed_sha }}
     secrets: inherit

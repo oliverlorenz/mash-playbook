@@ -6,8 +6,12 @@
 # Manual rollback entry point. Reuses deploy-run-setup-all.yml (the same job the normal
 # deploy uses) so rolling back is just "deploy an older ref".
 #
-# Leaving `host` empty rolls back every host in mash_servers in parallel (resolve-hosts below
-# resolves the group via ansible-inventory), all to the same explicit `ref`.
+# `host` accepts an inventory group (e.g. "all" or "mash_servers") or a single host.
+# resolve-hosts expands whatever is chosen to the concrete host list via
+# `ansible-inventory --limit`, and the rollback jobs fan it out as a parallel matrix, all to
+# the same explicit `ref`. The group and host options are kept in sync with the inventory by
+# bin/sync-deploy-workflow-options.py (the "# BEGIN GENERATED: groups" / "# BEGIN GENERATED:
+# hosts" blocks).
 name: Rollback - setup-all
 
 on:
@@ -18,9 +22,19 @@ on:
         required: true
         type: string
       host:
-        description: Target host. Leave empty to roll back every host in mash_servers.
-        required: false
-        type: string
+        description: Inventory group or single host to roll back.
+        required: true
+        type: choice
+        options:
+          # BEGIN GENERATED: groups
+          - all
+          - mash_servers
+          # END GENERATED: groups
+          # BEGIN GENERATED: hosts
+          - homeserver.oliverlorenz.com
+          - mash.oliverlorenz.com
+          # END GENERATED: hosts
+        default: mash_servers
 
 permissions:
   contents: write
@@ -33,17 +47,14 @@ jobs:
       hosts: ${{ steps.resolve.outputs.hosts }}
     steps:
       - uses: actions/checkout@v4
-        if: inputs.host == ''
         with:
           ref: ${{ inputs.ref }}
 
       - name: Resolve pinned inventory commit
         id: inventory
-        if: inputs.host == ''
         run: echo "sha=$(git rev-parse HEAD:inventory)" >> "$GITHUB_OUTPUT"
 
       - name: Checkout inventory
-        if: inputs.host == ''
         uses: actions/checkout@v4
         with:
           repository: oliverlorenz/mash-inventories
@@ -52,17 +63,13 @@ jobs:
           ref: ${{ steps.inventory.outputs.sha }}
 
       - name: Install Ansible
-        if: inputs.host == ''
         run: pip install ansible regex
 
       - name: Resolve hosts
         id: resolve
+        # `host` is a group (all, mash_servers, ...) or a single host; --limit expands both.
         run: |
-          if [ -n "${{ inputs.host }}" ]; then
-            echo 'hosts=["${{ inputs.host }}"]' >> "$GITHUB_OUTPUT"
-          else
-            echo "hosts=$(ansible-inventory -i inventory/hosts --list | jq -c '.mash_servers.hosts')" >> "$GITHUB_OUTPUT"
-          fi
+          echo "hosts=$(ansible-inventory -i inventory/hosts.yml --list --limit '${{ inputs.host }}' | jq -c '._meta.hostvars | keys')" >> "$GITHUB_OUTPUT"
 
   rollback:
     name: Rollback to ${{ inputs.ref }} (${{ matrix.host }})
