@@ -423,6 +423,16 @@ mash_playbook_devture_systemd_service_manager_services_list_auto_itemized:
     {{ ({'name': (feishin_identifier + '.service'), 'priority': 2000, 'restart_necessary': (feishin_restart_necessary | bool), 'groups': ['mash', 'feishin']} if feishin_enabled else omit) }}
   # /role-specific:feishin
 
+  # role-specific:ffc-mesh-client
+  - |-
+    {{ ({'name': (ffc_mesh_client_identifier + '.service'), 'priority': 2000, 'groups': ['mash', 'ffc-mesh-client']} if ffc_mesh_client_enabled else omit) }}
+  # /role-specific:ffc-mesh-client
+
+  # role-specific:ffc-hello
+  - |-
+    {{ ({'name': (ffc_hello_identifier + '.service'), 'priority': 2100, 'groups': ['mash', 'ffc-hello']} if ffc_hello_enabled else omit) }}
+  # /role-specific:ffc-hello
+
   # role-specific:fider
   - |-
     {{ ({'name': (fider_identifier + '.service'), 'priority': 2000, 'restart_necessary': (fider_restart_necessary | bool), 'groups': ['mash', 'fider']} if fider_enabled else omit) }}
@@ -5982,6 +5992,48 @@ feishin_container_labels_traefik_tls_certResolver: "{{ traefik_certResolver_prim
 #                                                                      #
 ########################################################################
 # /role-specific:feishin
+
+
+
+# role-specific:ffc-mesh-client
+########################################################################
+#                                                                      #
+# ffc-mesh-client                                                       #
+#                                                                      #
+########################################################################
+
+ffc_mesh_client_enabled: false
+
+ffc_mesh_client_uid: "{{ mash_playbook_uid }}"
+ffc_mesh_client_gid: "{{ mash_playbook_gid }}"
+
+########################################################################
+#                                                                      #
+# /ffc-mesh-client                                                      #
+#                                                                      #
+########################################################################
+# /role-specific:ffc-mesh-client
+
+
+
+# role-specific:ffc-hello
+########################################################################
+#                                                                      #
+# ffc-hello                                                             #
+#                                                                      #
+########################################################################
+
+ffc_hello_enabled: false
+
+ffc_hello_uid: "{{ mash_playbook_uid }}"
+ffc_hello_gid: "{{ mash_playbook_gid }}"
+
+########################################################################
+#                                                                      #
+# /ffc-hello                                                            #
+#                                                                      #
+########################################################################
+# /role-specific:ffc-hello
 
 
 

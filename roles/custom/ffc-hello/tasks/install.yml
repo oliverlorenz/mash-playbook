@@ -1,0 +1,52 @@
+# SPDX-FileCopyrightText: 2026 Oliver Lorenz
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+---
+- name: Ensure ffc-hello base path exists
+  ansible.builtin.file:
+    path: "{{ ffc_hello_base_path }}"
+    state: directory
+    mode: "0750"
+    owner: "{{ ffc_hello_uid }}"
+    group: "{{ ffc_hello_gid }}"
+
+- name: Ensure ffc-hello nginx config is present
+  ansible.builtin.template:
+    src: "{{ role_path }}/templates/default.conf.j2"
+    dest: "{{ ffc_hello_base_path }}/default.conf"
+    mode: "0640"
+    owner: "{{ ffc_hello_uid }}"
+    group: "{{ ffc_hello_gid }}"
+  notify: ffc-hello-restart
+
+- name: Ensure ffc-hello container image is pulled via community.docker.docker_image
+  when: devture_systemd_docker_base_container_image_pull_method == 'ansible-module'
+  community.docker.docker_image:
+    name: "{{ ffc_hello_container_image }}"
+    source: "{{ 'pull' if ansible_version.major > 2 or ansible_version.minor > 7 else omit }}"
+    force_source: "{{ ffc_hello_container_image_force_pull if ansible_version.major > 2 or ansible_version.minor >= 8 else omit }}"
+    force: "{{ omit if ansible_version.major > 2 or ansible_version.minor >= 8 else ffc_hello_container_image_force_pull }}"
+  register: result
+  retries: "{{ devture_playbook_help_container_retries_count }}"
+  delay: "{{ devture_playbook_help_container_retries_delay }}"
+  until: result is not failed
+  notify: ffc-hello-restart
+
+- name: Ensure ffc-hello container image is pulled via ansible.builtin.command
+  when: devture_systemd_docker_base_container_image_pull_method == 'command'
+  ansible.builtin.command:
+    cmd: "{{ devture_systemd_docker_base_host_command_docker }} pull {{ ffc_hello_container_image }}"
+  register: result
+  retries: "{{ devture_playbook_help_container_retries_count }}"
+  delay: "{{ devture_playbook_help_container_retries_delay }}"
+  until: result is not failed
+  changed_when: "'Downloaded newer image' in result.stdout"
+  notify: ffc-hello-restart
+
+- name: Ensure ffc-hello systemd service is present
+  ansible.builtin.template:
+    src: "{{ role_path }}/templates/systemd/ffc-hello.service.j2"
+    dest: "{{ devture_systemd_docker_base_systemd_path }}/{{ ffc_hello_identifier }}.service"
+    mode: "0644"
+  notify: ffc-hello-restart

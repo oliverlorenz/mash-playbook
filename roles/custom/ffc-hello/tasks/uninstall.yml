@@ -1,0 +1,29 @@
+# SPDX-FileCopyrightText: 2026 Oliver Lorenz
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+---
+- name: Check existence of ffc-hello systemd service
+  ansible.builtin.stat:
+    path: "{{ devture_systemd_docker_base_systemd_path }}/{{ ffc_hello_identifier }}.service"
+  register: ffc_hello_service_stat
+
+- name: Uninstall ffc-hello systemd service and files
+  when: ffc_hello_service_stat.stat.exists | bool
+  block:
+    - name: Ensure ffc-hello systemd service is stopped
+      ansible.builtin.service:
+        name: "{{ ffc_hello_identifier }}"
+        state: stopped
+        enabled: false
+        daemon_reload: true
+
+    - name: Ensure ffc-hello systemd service does not exist
+      ansible.builtin.file:
+        path: "{{ devture_systemd_docker_base_systemd_path }}/{{ ffc_hello_identifier }}.service"
+        state: absent
+
+    - name: Ensure ffc-hello path does not exist
+      ansible.builtin.file:
+        path: "{{ ffc_hello_base_path }}"
+        state: absent

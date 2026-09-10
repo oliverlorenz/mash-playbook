@@ -1,0 +1,55 @@
+{#
+SPDX-FileCopyrightText: 2026 Oliver Lorenz
+
+SPDX-License-Identifier: AGPL-3.0-or-later
+#}
+[Unit]
+Description=hello-world nginx over Freifunk ({{ ffc_hello_identifier }})
+
+# Shares the network namespace of the ffc-mesh-client container: must start after
+# it, and stop/restart together with it (its netns handle goes stale whenever
+# that container is recreated).
+Requires={{ ffc_hello_shared_netns_service }}
+After={{ ffc_hello_shared_netns_service }}
+BindsTo={{ ffc_hello_shared_netns_service }}
+PartOf={{ ffc_hello_shared_netns_service }}
+{% for service in ffc_hello_systemd_required_services_list %}
+Requires={{ service }}
+After={{ service }}
+{% endfor %}
+{% for service in ffc_hello_systemd_wanted_services_list %}
+Wants={{ service }}
+{% endfor %}
+DefaultDependencies=no
+
+[Service]
+Type=simple
+Environment="HOME={{ devture_systemd_docker_base_systemd_unit_home_path }}"
+ExecStartPre=-{{ devture_systemd_docker_base_host_command_sh }} -c '{{ devture_systemd_docker_base_host_command_docker }} stop -t {{ devture_systemd_docker_base_container_stop_grace_time_seconds }} {{ ffc_hello_identifier }} 2>/dev/null || true'
+ExecStartPre=-{{ devture_systemd_docker_base_host_command_sh }} -c '{{ devture_systemd_docker_base_host_command_docker }} rm {{ ffc_hello_identifier }} 2>/dev/null || true'
+
+ExecStartPre={{ devture_systemd_docker_base_host_command_docker }} create \
+      --rm \
+      --name={{ ffc_hello_identifier }} \
+      --network=container:{{ ffc_hello_shared_netns_container }} \
+      --cap-drop=ALL \
+      {% for capability in ffc_hello_container_capabilities %}
+      --cap-add={{ capability }} \
+      {% endfor %}
+      --mount type=bind,src={{ ffc_hello_base_path }}/default.conf,dst=/etc/nginx/conf.d/default.conf,ro \
+      {% for arg in ffc_hello_container_extra_arguments %}
+      {{ arg }} \
+      {% endfor %}
+      {{ ffc_hello_container_image }}
+
+ExecStart={{ devture_systemd_docker_base_host_command_docker }} start --attach {{ ffc_hello_identifier }}
+
+ExecStop=-{{ devture_systemd_docker_base_host_command_sh }} -c '{{ devture_systemd_docker_base_host_command_docker }} stop -t {{ devture_systemd_docker_base_container_stop_grace_time_seconds }} {{ ffc_hello_identifier }} 2>/dev/null || true'
+ExecStop=-{{ devture_systemd_docker_base_host_command_sh }} -c '{{ devture_systemd_docker_base_host_command_docker }} rm {{ ffc_hello_identifier }} 2>/dev/null || true'
+
+Restart=always
+RestartSec=15
+SyslogIdentifier={{ ffc_hello_identifier }}
+
+[Install]
+WantedBy=multi-user.target

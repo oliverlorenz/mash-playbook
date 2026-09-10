@@ -1,0 +1,11 @@
+# SPDX-FileCopyrightText: 2026 Oliver Lorenz
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+---
+- name: Restart ffc-mesh-client
+  ansible.builtin.systemd:
+    name: "{{ ffc_mesh_client_identifier }}.service"
+    state: restarted
+    daemon_reload: true
+  listen: "ffc-mesh-client-restart"

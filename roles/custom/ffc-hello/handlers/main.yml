@@ -1,0 +1,11 @@
+# SPDX-FileCopyrightText: 2026 Oliver Lorenz
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+---
+- name: Restart ffc-hello
+  ansible.builtin.systemd:
+    name: "{{ ffc_hello_identifier }}.service"
+    state: restarted
+    daemon_reload: true
+  listen: "ffc-hello-restart"

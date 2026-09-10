@@ -1,0 +1,22 @@
+# SPDX-FileCopyrightText: 2026 Oliver Lorenz
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+---
+- name: Fail if required ffc-hello settings are not defined
+  ansible.builtin.fail:
+    msg: >-
+      You need to define a required configuration setting (`{{ item }}`).
+  when: "lookup('vars', item, default='') | string | length == 0"
+  with_items:
+    - ffc_hello_shared_netns_container
+    - ffc_hello_shared_netns_service
+    - ffc_hello_listen_port
+
+- name: Warn if the shared-netns provider (ffc-mesh-client) is not enabled
+  ansible.builtin.debug:
+    msg: >-
+      ffc-hello joins the network namespace of `{{ ffc_hello_shared_netns_container }}`,
+      but `ffc_mesh_client_enabled` is not true. ffc-hello will fail to start until
+      that container is running.
+  when: not (ffc_mesh_client_enabled | default(false) | bool)

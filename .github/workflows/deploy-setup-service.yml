@@ -49,10 +49,13 @@ on:
           - dns_records
           - docker
           - docker_sdk_for_python
+          - ffc-hello
+          - ffc-mesh-client
           - gotosocial
           - gowa
           - headplane
           - headscale
+          - jellyfin
           - languagetool
           - music-assistant
           - n8n

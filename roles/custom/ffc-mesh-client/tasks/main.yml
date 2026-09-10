@@ -1,0 +1,26 @@
+# SPDX-FileCopyrightText: 2026 Oliver Lorenz
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+---
+- name: Perform ffc-mesh-client installation tasks
+  when: ffc_mesh_client_enabled | bool
+  tags:
+    - setup-all
+    - setup-ffc-mesh-client
+    - install-all
+    - install-ffc-mesh-client
+  block:
+    - name: Validate ffc-mesh-client configuration
+      ansible.builtin.include_tasks: "{{ role_path }}/tasks/validate_config.yml"
+    - name: Install ffc-mesh-client
+      ansible.builtin.include_tasks: "{{ role_path }}/tasks/install.yml"
+
+- name: Perform ffc-mesh-client uninstallation tasks
+  when: not ffc_mesh_client_enabled | bool
+  tags:
+    - setup-all
+    - setup-ffc-mesh-client
+  block:
+    - name: Uninstall ffc-mesh-client
+      ansible.builtin.include_tasks: "{{ role_path }}/tasks/uninstall.yml"

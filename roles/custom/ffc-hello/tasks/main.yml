@@ -1,0 +1,26 @@
+# SPDX-FileCopyrightText: 2026 Oliver Lorenz
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+---
+- name: Perform ffc-hello installation tasks
+  when: ffc_hello_enabled | bool
+  tags:
+    - setup-all
+    - setup-ffc-hello
+    - install-all
+    - install-ffc-hello
+  block:
+    - name: Validate ffc-hello configuration
+      ansible.builtin.include_tasks: "{{ role_path }}/tasks/validate_config.yml"
+    - name: Install ffc-hello
+      ansible.builtin.include_tasks: "{{ role_path }}/tasks/install.yml"
+
+- name: Perform ffc-hello uninstallation tasks
+  when: not ffc_hello_enabled | bool
+  tags:
+    - setup-all
+    - setup-ffc-hello
+  block:
+    - name: Uninstall ffc-hello
+      ansible.builtin.include_tasks: "{{ role_path }}/tasks/uninstall.yml"
