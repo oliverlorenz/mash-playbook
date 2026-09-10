@@ -62,20 +62,30 @@ VAULTWARDEN_SERVER="$(bw config server 2>/dev/null || true)"
 
 echo "Receiving secrets from Vaultwarden server: ${VAULTWARDEN_SERVER}" >&2
 
+FAILED=0
+
 for MASH_HOSTNAME in "$@"; do
   ITEM_ID=$(bw get "$MODE" "$MASH_HOSTNAME" | jq -r .id)
 
   if [ -z "$ITEM_ID" ] || [ "$ITEM_ID" = "null" ]; then
-    echo "No Bitwarden ${MODE} found for '${MASH_HOSTNAME}', skipping." >&2
+    echo "ERROR: no Bitwarden ${MODE} named '${MASH_HOSTNAME}'." >&2
+    FAILED=1
     continue
   fi
 
   OUTPUT_DIR="inventory/host_vars/${MASH_HOSTNAME}"
   mkdir -p "$OUTPUT_DIR"
 
+  BODY="$(bw list items --"${MODE}id" "$ITEM_ID" | jfq "$JSONATA_FILTER")"
+  if [ -z "$BODY" ]; then
+    echo "ERROR: Bitwarden ${MODE} '${MASH_HOSTNAME}' has no items -- not writing an empty secrets.yml." >&2
+    FAILED=1
+    continue
+  fi
+
   {
     printf '# vaultwarden_server: %s\n' "$VAULTWARDEN_SERVER"
-    bw list items --"${MODE}id" "$ITEM_ID" | jfq "$JSONATA_FILTER"
+    printf '%s\n' "$BODY"
   } > "${OUTPUT_DIR}/secrets.yml"
 
   # List the variable names that were fetched (names only, never their values),
@@ -86,3 +96,5 @@ for MASH_HOSTNAME in "$@"; do
   echo "Wrote ${OUTPUT_DIR}/secrets.yml (from ${VAULTWARDEN_SERVER}, ${KEY_COUNT} variable(s)):" >&2
   [ -n "$KEYS" ] && printf '%s\n' "$KEYS" | sed 's/^/  - /' >&2 || true
 done
+
+exit "$FAILED"
