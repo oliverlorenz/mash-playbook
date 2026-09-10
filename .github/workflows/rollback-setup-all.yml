@@ -32,6 +32,7 @@ on:
           # END GENERATED: groups
           # BEGIN GENERATED: hosts
           - homeserver.oliverlorenz.com
+          - mash.mitsinnen.me
           - mash.oliverlorenz.com
           # END GENERATED: hosts
         default: mash_servers
