@@ -13,30 +13,48 @@ from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 WORKFLOWS_DIR = REPO_ROOT / ".github" / "workflows"
+INVENTORY_PATH = REPO_ROOT / "inventory" / "hosts.yml"
+
+
+def load_inventory():
+    if not INVENTORY_PATH.is_file():
+        return None
+    # Imported lazily: environments without a local inventory checkout (e.g. the CI
+    # pre-commit run) don't get here and needn't have PyYAML installed.
+    import yaml
+
+    # Expects the plain top-level-group YAML form: "<group>:\n  hosts:\n    <host>: {...}".
+    return yaml.safe_load(INVENTORY_PATH.read_text()) or {}
 
 
 def get_ready_hosts():
-    hosts_path = REPO_ROOT / "inventory" / "hosts"
-    if not hosts_path.is_file():
+    inventory = load_inventory()
+    if inventory is None:
         return None
 
     hosts = []
-    in_group = False
-    for line in hosts_path.read_text().splitlines():
-        stripped = line.strip()
-        if not stripped or stripped.startswith("#"):
+    for body in inventory.values():
+        if not isinstance(body, dict):
             continue
-        if stripped.startswith("["):
-            in_group = stripped == "[mash_servers]"
-            continue
-        if in_group:
-            hosts.append(stripped.split()[0])
+        for host in body.get("hosts") or {}:
+            if host not in hosts:
+                hosts.append(host)
 
     return sorted(
         host
         for host in hosts
         if (REPO_ROOT / "inventory" / "host_vars" / host / "secrets.yml").is_file()
     )
+
+
+def get_groups():
+    inventory = load_inventory()
+    if inventory is None:
+        return None
+
+    # Top-level keys are group names; "all" is Ansible's implicit group of every host.
+    groups = (set(inventory) | {"all"}) - {"ungrouped"}
+    return ["all"] + sorted(groups - {"all"})
 
 
 def get_role_specific_names_by_path():
@@ -121,11 +139,12 @@ def main():
 
     if hosts is None:
         print(
-            "inventory/hosts not found -- skipping "
+            "inventory/hosts.yml not found -- skipping "
             "(this check requires a local checkout of the private inventory submodule).",
         )
         return 0
 
+    groups = get_groups()
     services = get_enabled_services()
 
     if not hosts:
@@ -140,6 +159,7 @@ def main():
         text = path.read_text()
         original = text
 
+        text, group_replacements = replace_generated_block(text, "groups", groups)
         text, host_replacements = replace_generated_block(text, "hosts", hosts)
         text, service_replacements = replace_generated_block(text, "services", services)
 

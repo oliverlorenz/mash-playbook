@@ -7,20 +7,34 @@
 # auto-rollback. The actual deploy step is factored out to deploy-run-setup-all.yml so it
 # can be reused here for both the initial deploy (below) and the rollback job.
 #
-# Leaving `host` empty targets every host in the mash_servers inventory group, fanned out as
-# a parallel matrix (resolve-hosts below resolves the group via ansible-inventory). A single
-# host still targets just that host. record-rollback-success is intentionally not present:
-# rollback redeploys exactly the sha the deployed/<host> tag already points to, so re-tagging
-# it afterwards would be a no-op.
+# `host` accepts either an inventory group (e.g. "all" or "mash_servers") or a single host.
+# resolve-hosts below expands whatever is chosen to the concrete host list via
+# `ansible-inventory --limit`, and the deploy/rollback jobs fan that list out as a parallel
+# matrix so every host gets its own deployed/<host> tag and rollback decision. The group and
+# host options are kept in sync with the inventory by bin/sync-deploy-workflow-options.py
+# (the "# BEGIN GENERATED: groups" / "# BEGIN GENERATED: hosts" blocks). record-rollback-success
+# is intentionally not present: rollback redeploys exactly the sha the deployed/<host> tag
+# already points to, so re-tagging it afterwards would be a no-op.
 name: Deploy - setup-all
 
 on:
   workflow_dispatch:
     inputs:
       host:
-        description: Target host. Leave empty to deploy to every host in mash_servers.
-        required: false
-        type: string
+        description: Inventory group or single host to deploy to.
+        required: true
+        type: choice
+        options:
+          # BEGIN GENERATED: groups
+          - all
+          - mash_servers
+          # END GENERATED: groups
+          # BEGIN GENERATED: hosts
+          - homeserver.oliverlorenz.com
+          - mash.mitsinnen.me
+          - mash.oliverlorenz.com
+          # END GENERATED: hosts
+        default: mash_servers
       ref:
         description: mash-playbook ref (branch, tag, or commit) to deploy. Leave empty to deploy the ref this workflow is run from.
         required: false
@@ -33,21 +47,32 @@ jobs:
   resolve-hosts:
     name: Resolve target hosts
     runs-on: ubuntu-latest
+    # Same image the deploy jobs run in, so the inventory host list is resolved by exactly
+    # the ansible version that will consume it -- and there's no separate ansible install to
+    # wait on. Ships no bash (hence `shell: sh`) and no jq.
+    container: ghcr.io/devture/ansible:14.0.0-r0-3
     outputs:
       hosts: ${{ steps.resolve.outputs.hosts }}
     steps:
       - uses: actions/checkout@v4
-        if: inputs.host == ''
         with:
           ref: ${{ inputs.ref || github.ref }}
 
+      - name: Trust the checked-out workspace
+        shell: sh
+        # git otherwise refuses $GITHUB_WORKSPACE as "dubious ownership": the dir is owned by
+        # the host-side runner user, but we run as root inside the container. Same reason as
+        # the identical step in deploy-prepare.
+        run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
+
       - name: Resolve pinned inventory commit
         id: inventory
-        if: inputs.host == ''
-        run: echo "sha=$(git rev-parse HEAD:inventory)" >> "$GITHUB_OUTPUT"
+        shell: sh
+        run: |
+          sha="$(git rev-parse HEAD:inventory)"
+          echo "sha=$sha" >> "$GITHUB_OUTPUT"
 
       - name: Checkout inventory
-        if: inputs.host == ''
         uses: actions/checkout@v4
         with:
           repository: oliverlorenz/mash-inventories
@@ -55,18 +80,15 @@ jobs:
           path: inventory
           ref: ${{ steps.inventory.outputs.sha }}
 
-      - name: Install Ansible
-        if: inputs.host == ''
-        run: pip install ansible regex
-
       - name: Resolve hosts
         id: resolve
+        shell: sh
+        # `host` is a group (all, mash_servers, ...) or a single host; --limit expands both.
+        # The container ships no jq, so python extracts the host keys (sorted, like jq's `keys`).
         run: |
-          if [ -n "${{ inputs.host }}" ]; then
-            echo 'hosts=["${{ inputs.host }}"]' >> "$GITHUB_OUTPUT"
-          else
-            echo "hosts=$(ansible-inventory -i inventory/hosts --list | jq -c '.mash_servers.hosts')" >> "$GITHUB_OUTPUT"
-          fi
+          ansible-inventory -i inventory/hosts.yml --list --limit '${{ inputs.host }}' \
+            | python3 -c 'import json, sys; print("hosts=" + json.dumps(sorted(json.load(sys.stdin)["_meta"]["hostvars"])))' \
+            >> "$GITHUB_OUTPUT"
 
   deploy:
     name: Deploy (${{ matrix.host }})
