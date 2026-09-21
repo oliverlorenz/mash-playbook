@@ -36,14 +36,10 @@
   ],
   "packageRules": [
     {
+      "description": "Roles use `vUPSTREAM-N` tags. `sourceUrl` is only known after lookup, so `matchSourceUrls` cannot select the versioning; match the datasource instead",
       "ignoreUnstable": false,
       "versioning": "loose",
-      "matchSourceUrls": [
-        "https://codeberg.org{/,}**",
-        "https://github.com{/,}**",
-        "https://gitlab.com{/,}**",
-        "https://iris.radicle.network{/,}**"
-      ]
+      "matchDatasources": ["git-tags"]
     },
     {
       "description": "Automerge version bumps of roles maintained in the MASH organization and of devture roles (via branch push - no PR)",
@@ -65,6 +61,7 @@
       "description": "Automerge updates of the self-hosted Renovate runner (via branch push - no PR) monthly",
       "matchManagers": ["custom.regex"],
       "matchDepNames": ["mash-renovate-runner"],
+      "allowedVersions": "!/^44\\.64\\.0$/",
       "automerge": true,
       "automergeType": "branch",
       "schedule": ["* 0-3 1 * *"],
