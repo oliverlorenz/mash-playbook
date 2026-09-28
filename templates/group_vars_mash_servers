@@ -291,6 +291,11 @@ mash_playbook_devture_systemd_service_manager_services_list_auto_itemized:
     {{ ({'name': (convertx_identifier + '.service'), 'priority': 2000, 'restart_necessary': (convertx_restart_necessary | bool), 'groups': ['mash', 'convertx']} if convertx_enabled else omit) }}
   # /role-specific:convertx
 
+  # role-specific:copyparty
+  - |-
+    {{ ({'name': (copyparty_identifier + '.service'), 'priority': 2000, 'restart_necessary': (copyparty_restart_necessary | bool), 'groups': ['mash', 'copyparty']} if copyparty_enabled else omit) }}
+  # /role-specific:copyparty
+
   # role-specific:couchdb
   - |-
     {{ ({'name': (couchdb_identifier + '.service'), 'priority': 2000, 'restart_necessary': (couchdb_restart_necessary | bool), 'groups': ['mash', 'couchdb']} if couchdb_enabled else omit) }}
@@ -2037,7 +2042,7 @@ mash_playbook_postgres_managed_databases_auto_itemized:
         'name': n8n_database_name,
         'username': n8n_database_username,
         'password': n8n_database_password,
-      } if n8n_enabled and (n8n_database_hostname == postgres_connection_hostname or n8n_database_socket_enabled) else omit)
+      } if n8n_enabled and (n8n_database_hostname == postgres_connection_hostname or n8n_database_socket_enabled) and n8n_database_type == 'postgres' else omit)
     }}
   # /role-specific:n8n
 
@@ -3865,6 +3870,10 @@ bazarr_gid: "{{ mash_playbook_gid }}"
 bazarr_container_additional_networks_auto: |
   {{
     ([mash_playbook_reverse_proxyable_services_additional_network] if mash_playbook_reverse_proxyable_services_additional_network else [])
+    +
+    ([radarr_container_network] if radarr_enabled | default(false) and bazarr_container_network != radarr_container_network else [])
+    +
+    ([sonarr_container_network] if sonarr_enabled | default(false) and bazarr_container_network != sonarr_container_network else [])
   }}
 
 bazarr_container_labels_traefik_enabled: "{{ mash_playbook_traefik_labels_enabled }}"
@@ -4809,6 +4818,44 @@ convertx_container_labels_traefik_tls_certResolver: "{{ traefik_certResolver_pri
 
 
 
+# role-specific:copyparty
+########################################################################
+#                                                                      #
+# copyparty                                                            #
+#                                                                      #
+########################################################################
+
+copyparty_enabled: false
+
+copyparty_identifier: "{{ mash_playbook_service_identifier_prefix }}copyparty"
+
+copyparty_base_path: "{{ mash_playbook_base_path }}/{{ mash_playbook_service_base_directory_name_prefix }}copyparty"
+
+copyparty_uid: "{{ mash_playbook_uid }}"
+copyparty_gid: "{{ mash_playbook_gid }}"
+
+copyparty_container_additional_networks_auto: |
+  {{
+    ([mash_playbook_reverse_proxyable_services_additional_network] if mash_playbook_reverse_proxyable_services_additional_network else [])
+  }}
+
+copyparty_container_labels_traefik_enabled: "{{ mash_playbook_traefik_labels_enabled }}"
+copyparty_container_labels_traefik_docker_network: "{{ mash_playbook_reverse_proxyable_services_additional_network }}"
+
+# role-specific:traefik
+copyparty_container_labels_traefik_entrypoints: "{{ traefik_entrypoint_primary }}"
+copyparty_container_labels_traefik_tls_certResolver: "{{ traefik_certResolver_primary }}"
+# /role-specific:traefik
+
+########################################################################
+#                                                                      #
+# /copyparty                                                           #
+#                                                                      #
+########################################################################
+# /role-specific:copyparty
+
+
+
 # role-specific:couchdb
 ########################################################################
 #                                                                      #
@@ -5088,15 +5135,26 @@ docker_registry_browser_base_path: "{{ mash_playbook_base_path }}/{{ mash_playbo
 docker_registry_browser_uid: "{{ mash_playbook_uid }}"
 docker_registry_browser_gid: "{{ mash_playbook_gid }}"
 
-docker_registry_browser_secret_key_base: "{{ (mash_playbook_generic_secret_key + ':browser') | hash('sha512') }}"
+docker_registry_browser_systemd_wanted_services_list_auto: |
+  {{
+    ([docker_registry_identifier ~ '.service'] if docker_registry_enabled | default(false) entifier else [])
+  }}
 
 docker_registry_browser_container_additional_networks_auto: |
   {{
+    ([docker_registry_container_network] if docker_registry_enabled | default(false) and docker_registry_browser_container_network != docker_registry_container_network else [])
+    +
     ([mash_playbook_reverse_proxyable_services_additional_network] if mash_playbook_reverse_proxyable_services_additional_network else [])
   }}
 
 docker_registry_browser_container_labels_traefik_enabled: "{{ mash_playbook_traefik_labels_enabled }}"
 docker_registry_browser_container_labels_traefik_docker_network: "{{ mash_playbook_reverse_proxyable_services_additional_network }}"
+
+docker_registry_browser_secret_key_base: "{{ (mash_playbook_generic_secret_key + ':browser') | hash('sha512') }}"
+
+# role-specific:docker_registry
+docker_registry_browser_docker_registry_url: "http://{{ docker_registry_identifier }}:5000"
+# /role-specific:docker_registry
 
 # role-specific:traefik
 docker_registry_browser_container_labels_traefik_entrypoints: "{{ traefik_entrypoint_primary }}"
@@ -7415,6 +7473,7 @@ headplane_headscale_config_path: "{{ headscale_config_path if headscale_enabled 
 headplane_headscale_container_name: "{{ headscale_identifier if headscale_enabled else '' }}"
 headplane_headscale_extra_records_enabled: "{{ true if headscale_enabled and headscale_extra_records_path_enabled else false }}"
 headplane_headscale_public_url: "{{ (headscale_scheme + '://' + headscale_hostname + headscale_path_prefix) if headscale_enabled else '' }}"
+headplane_config_integration_agent_tailscale_netns: "{{ false if headplane_config_integration_agent_enabled and headplane_headscale_hostname == headscale_identifier else true }}" # let the agent use ordinary route selection
 # /role-specific:headscale
 
 # role-specific:traefik
@@ -11978,15 +12037,17 @@ n8n_gid: "1000"
 
 n8n_systemd_required_services_list_auto: |
   {{
-    ([postgres_identifier ~ '.service'] if postgres_enabled and (n8n_database_hostname == postgres_connection_hostname or n8n_database_socket_enabled) else [])
+    ([postgres_identifier ~ '.service'] if postgres_enabled | default(false) and (n8n_database_hostname == postgres_connection_hostname or n8n_database_socket_enabled) and n8n_database_type == 'postgres' else [])
   }}
 
 n8n_container_additional_networks_auto: |
   {{
     ([mash_playbook_reverse_proxyable_services_additional_network] if mash_playbook_reverse_proxyable_services_additional_network else [])
     +
-    ([postgres_container_network] if postgres_enabled and (n8n_database_hostname == postgres_connection_hostname and n8n_container_network != postgres_container_network and not n8n_database_socket_enabled) else [])
+    ([postgres_container_network] if postgres_enabled | default(false) and (n8n_database_hostname == postgres_connection_hostname and n8n_container_network != postgres_container_network and not n8n_database_socket_enabled) and n8n_database_type == 'postgres' else [])
   }}
+
+n8n_database_type: "{{ 'postgres' if postgres_enabled | default(false) else 'sqlite' }}"
 
 n8n_container_labels_traefik_enabled: "{{ mash_playbook_traefik_labels_enabled }}"
 n8n_container_labels_traefik_docker_network: "{{ mash_playbook_reverse_proxyable_services_additional_network }}"
