@@ -27,7 +27,7 @@ roles: _requirements-yml
     #!/usr/bin/env sh
     if [ -x "$(command -v agru)" ]; then
         echo "[NOTE] This command just updates the roles, but if you want to update everything at once (playbook, roles, etc.) - use 'just update'"
-        agru -r {{ justfile_directory() }}/requirements.yml -no-tui
+        agru -r {{ justfile_directory() }}/requirements.yml -p roles/galaxy/ -no-tui
     else
         echo "[NOTE] You are using the standard ansible-galaxy tool to install roles, which is slow and lacks other features. We recommend installing the 'agru' tool to speed up the process: https://github.com/etkecc/agru#where-to-get"
         echo "[NOTE] This command just updates the roles, but if you want to update everything at once (playbook, roles, etc.) - use 'just update'"
@@ -92,7 +92,7 @@ update *flags: _requirements-yml update-playbook-only
     #!/usr/bin/env sh
     if [ -x "$(command -v agru)" ]; then
         echo {{ if flags == "" { "Installing roles pinned in requirements.yml..." } else if flags == "-u" { "Updating roles and pinning new versions in requirements.yml..." } else { "Unknown flags passed" } }}
-        agru -r {{ templates_directory_path }}/requirements.yml -no-tui {{ flags }}
+        agru -r {{ templates_directory_path }}/requirements.yml -p roles/galaxy/ -no-tui {{ flags }}
     else
         echo "[NOTE] You are using the standard ansible-galaxy tool to install roles, which is slow and lacks other features. We recommend installing the 'agru' tool to speed up the process: https://github.com/etkecc/agru#where-to-get"
         echo "Installing roles..."
@@ -108,9 +108,7 @@ update *flags: _requirements-yml update-playbook-only
 # Updates the playbook without installing/updating Ansible roles
 update-playbook-only:
     @echo "Updating playbook..."
-    @git stash -q
-    @git pull -q
-    @-git stash pop -q
+    @git pull -q --ff-only
 
 # Invokes mise with the project-local data directory
 mise *args: _ensure_mise_data_directory
