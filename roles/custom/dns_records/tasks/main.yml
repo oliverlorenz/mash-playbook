@@ -18,11 +18,6 @@
     - name: Install DNS Records for {{ dns_records_provider }}
       ansible.builtin.include_tasks: "{{ role_path }}/tasks/{{ dns_records_provider }}/install.yml"
 
-- name: Perform DNS Records uninstallation tasks
-  when: not dns_records_enabled | bool
-  tags:
-    - setup-all
-    - setup-dns-records
-  block:
-    - name: Uninstall DNS Records
-      ansible.builtin.include_tasks: "{{ role_path }}/tasks/uninstall.yml"
+# Nothing to uninstall: the role only manages records at the DNS provider and
+# leaves nothing on the host. (Since components/ (upstream sync #822) the role
+# also runs on hosts where it is disabled, so it must not fail there.)
