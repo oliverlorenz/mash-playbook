@@ -1,0 +1,18 @@
+# SPDX-FileCopyrightText: 2023 Slavi Pantaleev
+# SPDX-FileCopyrightText: 2024 Sergio Durigan Junior
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+---
+
+activation_prefix: searxng_
+
+# Entries added to other components' lists, while those components are in use
+inject:
+  systemd_service_manager:
+    services:
+      - name: "{{ searxng_identifier }}.service"
+        priority: 2000
+        restart_necessary: "{{ searxng_restart_necessary | bool }}"
+        groups: [mash, searxng]
+        when: "{{ searxng_enabled }}"

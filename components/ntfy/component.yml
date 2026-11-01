@@ -1,0 +1,26 @@
+# SPDX-FileCopyrightText: 2023 Slavi Pantaleev
+# SPDX-FileCopyrightText: 2025 Suguru Hirahara
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+---
+
+activation_prefix: ntfy_
+
+# Entries added to other components' lists, while those components are in use
+inject:
+  systemd_service_manager:
+    services:
+      - name: "{{ ntfy_identifier }}.service"
+        priority: 2000
+        restart_necessary: "{{ ntfy_restart_necessary | bool }}"
+        groups: [mash, ntfy]
+        when: "{{ ntfy_enabled }}"
+  hubsite:
+    services:
+      - name: "{{ mash_playbook_hubsite_service_ntfy_name }}"
+        url: "{{ mash_playbook_hubsite_service_ntfy_url }}"
+        logo_location: "{{ mash_playbook_hubsite_service_ntfy_logo_location }}"
+        description: "{{ mash_playbook_hubsite_service_ntfy_description }}"
+        priority: "{{ mash_playbook_hubsite_service_ntfy_priority }}"
+        when: "{{ mash_playbook_hubsite_service_ntfy_enabled }}"

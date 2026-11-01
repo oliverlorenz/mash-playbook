@@ -1,0 +1,17 @@
+# SPDX-FileCopyrightText: 2023, 2024 Slavi Pantaleev
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+---
+
+activation_prefix: etcd_
+
+# Entries added to other components' lists, while those components are in use
+inject:
+  systemd_service_manager:
+    services:
+      - name: "{{ etcd_identifier }}.service"
+        priority: 500
+        restart_necessary: "{{ etcd_restart_necessary | bool }}"
+        groups: [mash, etcd]
+        when: "{{ etcd_enabled }}"

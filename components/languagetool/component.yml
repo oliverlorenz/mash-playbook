@@ -1,0 +1,26 @@
+# SPDX-FileCopyrightText: 2023 Slavi Pantaleev
+# SPDX-FileCopyrightText: 2024 sudo-Tiz
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+---
+
+activation_prefix: languagetool_
+
+# Entries added to other components' lists, while those components are in use
+inject:
+  systemd_service_manager:
+    services:
+      - name: "{{ languagetool_identifier }}.service"
+        priority: 2000
+        restart_necessary: "{{ languagetool_restart_necessary | bool }}"
+        groups: [mash, languagetool]
+        when: "{{ languagetool_enabled }}"
+  hubsite:
+    services:
+      - name: "{{ mash_playbook_hubsite_service_languagetool_name }}"
+        url: "{{ mash_playbook_hubsite_service_languagetool_url }}"
+        logo_location: "{{ mash_playbook_hubsite_service_languagetool_logo_location }}"
+        description: "{{ mash_playbook_hubsite_service_languagetool_description }}"
+        priority: "{{ mash_playbook_hubsite_service_languagetool_priority }}"
+        when: "{{ mash_playbook_hubsite_service_languagetool_enabled }}"

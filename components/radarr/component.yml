@@ -1,0 +1,18 @@
+# SPDX-FileCopyrightText: 2023 Slavi Pantaleev
+# SPDX-FileCopyrightText: 2025 spatterlight
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+---
+
+activation_prefix: radarr_
+
+# Entries added to other components' lists, while those components are in use
+inject:
+  systemd_service_manager:
+    services:
+      - name: "{{ radarr_identifier }}.service"
+        priority: 2000
+        restart_necessary: "{{ radarr_restart_necessary | bool }}"
+        groups: [mash, radarr]
+        when: "{{ radarr_enabled }}"

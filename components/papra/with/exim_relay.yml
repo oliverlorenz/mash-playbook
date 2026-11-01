@@ -1,0 +1,12 @@
+# SPDX-FileCopyrightText: 2023 Slavi Pantaleev
+# SPDX-FileCopyrightText: 2025, 2026 Suguru Hirahara
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+---
+
+papra_environment_variables_emails_driver: "{{ 'smtp' if exim_relay_enabled }}"
+papra_environment_variables_smtp_host: "{{ exim_relay_identifier if exim_relay_enabled else '' }}"
+papra_environment_variables_smtp_port: "{{ '8025' if exim_relay_enabled else '587' }}"
+papra_environment_variables_smtp_secure: "{{ false if exim_relay_enabled else true }}"
+papra_environment_variables_emails_from_address: "Papra <{{ exim_relay_sender_address if exim_relay_enabled else '' }}>"

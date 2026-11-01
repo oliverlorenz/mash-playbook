@@ -1,0 +1,24 @@
+# SPDX-FileCopyrightText: 2023 Slavi Pantaleev
+# SPDX-FileCopyrightText: 2026 Suguru Hirahara
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+---
+
+activation_prefix: bookstack_
+
+# Entries added to other components' lists, while those components are in use
+inject:
+  systemd_service_manager:
+    services:
+      - name: "{{ bookstack_identifier }}.service"
+        priority: 2000
+        restart_necessary: "{{ bookstack_restart_necessary | bool }}"
+        groups: [mash, bookstack]
+        when: "{{ bookstack_enabled }}"
+  mariadb:
+    managed_databases:
+      - name: "{{ bookstack_database_name }}"
+        username: "{{ bookstack_database_username }}"
+        password: "{{ bookstack_database_password }}"
+        when: "{{ bookstack_enabled and bookstack_database_hostname == mariadb_connection_hostname }}"

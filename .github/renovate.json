@@ -15,9 +15,8 @@
       "maxRequestsPerSecond": 2
     },
     {
-      "matchHost": "https://iris.radicle.network",
-      "concurrentRequestLimit": 2,
-      "maxRequestsPerSecond": 2
+      "matchHost": "progressiv.radicle.garden",
+      "enabled": false
     }
   ],
   "branchConcurrentLimit": 5,
@@ -32,43 +31,47 @@
       "matchStrings": [
         "# renovate: datasource=(?<datasource>\\S+) depName=(?<depName>\\S+) packageName=(?<packageName>\\S+)\\s+MASH_RENOVATE_VERSION: '(?<currentValue>[^']+)'"
       ]
+    },
+    {
+      "customType": "regex",
+      "description": "Update the ghcr.io/devture/ansible image referenced in the documentation",
+      "managerFilePatterns": [
+        "/^docs\\/ansible\\.md$/"
+      ],
+      "matchStrings": [
+        "ghcr\\.io\\/devture\\/ansible:(?<currentValue>[^\\s`]+)"
+      ],
+      "depNameTemplate": "ghcr.io/devture/ansible",
+      "datasourceTemplate": "docker"
     }
   ],
   "packageRules": [
     {
+      "description": "Roles use `vUPSTREAM-N` tags. `sourceUrl` is only known after lookup, so `matchSourceUrls` cannot select the versioning; match the datasource instead",
       "ignoreUnstable": false,
       "versioning": "loose",
-      "matchSourceUrls": [
-        "https://codeberg.org{/,}**",
-        "https://github.com{/,}**",
-        "https://gitlab.com{/,}**",
-        "https://iris.radicle.network{/,}**"
-      ]
-    },
-    {
-      "description": "Automerge version bumps of roles maintained in the MASH organization and of devture roles (via branch push - no PR)",
-      "matchManagers": ["ansible-galaxy"],
-      "matchSourceUrls": [
-        "https://github.com/devture/com.devture.ansible.role{/,}**",
-        "https://github.com/mother-of-all-self-hosting{/,}**"
-      ],
-      "automerge": true,
-      "automergeType": "branch"
-    },
-    {
-      "matchSourceUrls": [
-        "https://iris.radicle.network{/,}**"
-      ],
-      "reviewers": ["luixxiul"]
+      "matchDatasources": ["git-tags"]
     },
     {
       "description": "Automerge updates of the self-hosted Renovate runner (via branch push - no PR) monthly",
       "matchManagers": ["custom.regex"],
       "matchDepNames": ["mash-renovate-runner"],
+      "allowedVersions": "!/^44\\.64\\.0$/",
       "automerge": true,
       "automergeType": "branch",
       "schedule": ["* 0-3 1 * *"],
       "automergeSchedule": ["* 0-3 1 * *"]
+    },
+    {
+      "description": "Disable Git tag updates from progressiv.radicle.garden",
+      "matchDatasources": ["git-tags"],
+      "matchSourceUrls": ["https://progressiv.radicle.garden/**"],
+      "enabled": false
+    },
+    {
+      "description": "ghcr.io/devture/ansible is tagged `<Alpine ansible package version>-<release>` (e.g. `14.0.0-r0-3`). Docker versioning would consider `-r0-3` a compatibility suffix and never offer `-r0-4`",
+      "matchDepNames": ["ghcr.io/devture/ansible"],
+      "versioning": "regex:^(?<major>\\d+)\\.(?<minor>\\d+)\\.(?<patch>\\d+)-r(?<build>\\d+)-(?<revision>\\d+)$"
     }
   ],
   "github-actions": {

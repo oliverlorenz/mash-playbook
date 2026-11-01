@@ -1,0 +1,15 @@
+# SPDX-FileCopyrightText: 2023 Slavi Pantaleev
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+---
+
+# The role enables itself by default. It stays disabled, unless enabled in your inventory.
+minecraft_enabled: false
+
+minecraft_identifier: "{{ mash_playbook_service_identifier_prefix }}minecraft"
+
+minecraft_base_path: "{{ mash_playbook_base_path }}/{{ mash_playbook_service_base_directory_name_prefix }}minecraft"
+
+minecraft_uid: "{{ mash_playbook_uid }}"
+minecraft_gid: "{{ mash_playbook_gid }}"

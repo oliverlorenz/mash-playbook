@@ -1,0 +1,18 @@
+# SPDX-FileCopyrightText: 2023 Julian-Samuel Gebühr
+# SPDX-FileCopyrightText: 2023 Slavi Pantaleev
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+---
+
+activation_prefix: backup_borg_
+
+# Entries added to other components' lists, while those components are in use
+inject:
+  systemd_service_manager:
+    services:
+      - name: "{{ backup_borg_identifier }}.timer"
+        priority: 5000
+        restart_necessary: true
+        groups: [mash, backup, borg]
+        when: "{{ backup_borg_enabled }}"

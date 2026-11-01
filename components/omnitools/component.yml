@@ -1,0 +1,19 @@
+# SPDX-FileCopyrightText: 2023 Slavi Pantaleev
+# SPDX-FileCopyrightText: 2026 Daniel Warhammar
+# SPDX-FileCopyrightText: 2026 Suguru Hirahara
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+---
+
+activation_prefix: omnitools_
+
+# Entries added to other components' lists, while those components are in use
+inject:
+  systemd_service_manager:
+    services:
+      - name: "{{ omnitools_identifier }}.service"
+        priority: 2000
+        restart_necessary: "{{ omnitools_restart_necessary | bool }}"
+        groups: [mash, omnitools]
+        when: "{{ omnitools_enabled }}"

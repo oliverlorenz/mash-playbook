@@ -1,0 +1,21 @@
+# SPDX-FileCopyrightText: 2026 Oliver Lorenz
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+---
+
+# Custom role of this fork: roles/custom/ffc-hello
+activation_prefix: ffc_hello_
+
+setup:
+  entry:
+    - role: custom/ffc-hello
+
+inject:
+  systemd_service_manager:
+    services:
+      - name: "{{ ffc_hello_identifier }}.service"
+        priority: 2100
+        restart_necessary: true
+        groups: [mash, ffc-hello]
+        when: "{{ ffc_hello_enabled }}"

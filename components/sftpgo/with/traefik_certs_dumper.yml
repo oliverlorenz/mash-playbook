@@ -1,0 +1,9 @@
+# SPDX-FileCopyrightText: 2025 Suguru Hirahara
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+---
+
+sftpgo_environment_variables_webdavd_enable_https: "{{ traefik_certs_dumper_enabled }}"
+sftpgo_environment_variables_webdavd_certificate_file: /certificate.crt
+sftpgo_environment_variables_webdavd_certificate_key_file: /privatekey.crt

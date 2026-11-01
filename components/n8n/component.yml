@@ -1,0 +1,32 @@
+# SPDX-FileCopyrightText: 2023 Slavi Pantaleev
+# SPDX-FileCopyrightText: 2023 kinduff
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+---
+
+activation_prefix: n8n_
+
+# Entries added to other components' lists, while those components are in use
+inject:
+  systemd_service_manager:
+    services:
+      - name: "{{ n8n_identifier }}.service"
+        priority: 2000
+        restart_necessary: "{{ n8n_restart_necessary | bool }}"
+        groups: [mash, n8n]
+        when: "{{ n8n_enabled }}"
+  hubsite:
+    services:
+      - name: "{{ mash_playbook_hubsite_service_n8n_name }}"
+        url: "{{ mash_playbook_hubsite_service_n8n_url }}"
+        logo_location: "{{ mash_playbook_hubsite_service_n8n_logo_location }}"
+        description: "{{ mash_playbook_hubsite_service_n8n_description }}"
+        priority: "{{ mash_playbook_hubsite_service_n8n_priority }}"
+        when: "{{ mash_playbook_hubsite_service_n8n_enabled }}"
+  postgres:
+    managed_databases:
+      - name: "{{ n8n_database_name }}"
+        username: "{{ n8n_database_username }}"
+        password: "{{ n8n_database_password }}"
+        when: "{{ n8n_enabled and (n8n_database_hostname == postgres_connection_hostname or n8n_database_socket_enabled) and n8n_database_type == 'postgres' }}"

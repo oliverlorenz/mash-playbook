@@ -1,0 +1,23 @@
+# SPDX-FileCopyrightText: 2023 Slavi Pantaleev
+# SPDX-FileCopyrightText: 2025 Bergruebe
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+---
+
+activation_prefix: tsdproxy_
+
+# Entries added to other components' lists, while those components are in use
+inject:
+  systemd_service_manager:
+    services:
+      - name: "{{ tsdproxy_identifier }}.service"
+        priority: 2000
+        restart_necessary: true
+        groups: [mash, tsdproxy]
+        when: "{{ tsdproxy_enabled }}"
+  container_socket_proxy:
+    permissions:
+      # TSDProxy requires access to the Docker networks and images to work
+      - permissions: [network, images]
+        when: "{{ tsdproxy_docker_endpoint == container_socket_proxy_endpoint }}"

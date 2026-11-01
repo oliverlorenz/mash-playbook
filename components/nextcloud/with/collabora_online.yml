@@ -1,0 +1,14 @@
+# SPDX-FileCopyrightText: 2025, 2026 Suguru Hirahara
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+---
+
+#
+# Because a CODE instance requires a backend which works as File Sync
+# and Share (FSS) tool and the playbook currently integrates only one
+# FSS, which is Nextcloud, the Nextcloud and CODE instances are
+# connected by default, if both of them are enabled.
+#
+nextcloud_app_richdocuments_wopi_client_url: "{{ collabora_online_url if collabora_online_enabled }}"
+nextcloud_app_richdocuments_wopi_client_network: "{{ collabora_online_container_network }}"

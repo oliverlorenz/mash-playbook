@@ -1,0 +1,31 @@
+# SPDX-FileCopyrightText: 2023 Slavi Pantaleev
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+---
+
+activation_prefix: focalboard_
+
+# Entries added to other components' lists, while those components are in use
+inject:
+  systemd_service_manager:
+    services:
+      - name: "{{ focalboard_identifier }}.service"
+        priority: 2000
+        restart_necessary: "{{ focalboard_restart_necessary | bool }}"
+        groups: [mash, focalboard]
+        when: "{{ focalboard_enabled }}"
+  hubsite:
+    services:
+      - name: "{{ mash_playbook_hubsite_service_focalboard_name }}"
+        url: "{{ mash_playbook_hubsite_service_focalboard_url }}"
+        logo_location: "{{ mash_playbook_hubsite_service_focalboard_logo_location }}"
+        description: "{{ mash_playbook_hubsite_service_focalboard_description }}"
+        priority: "{{ mash_playbook_hubsite_service_focalboard_priority }}"
+        when: "{{ mash_playbook_hubsite_service_focalboard_enabled }}"
+  postgres:
+    managed_databases:
+      - name: "{{ focalboard_database_name }}"
+        username: "{{ focalboard_database_username }}"
+        password: "{{ focalboard_database_password }}"
+        when: "{{ focalboard_enabled and focalboard_database_hostname == postgres_connection_hostname and focalboard_database_type == 'postgres' }}"

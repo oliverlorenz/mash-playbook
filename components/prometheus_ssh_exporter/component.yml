@@ -1,0 +1,18 @@
+# SPDX-FileCopyrightText: 2023 Slavi Pantaleev
+# SPDX-FileCopyrightText: 2023 aine-etke
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+---
+
+activation_prefix: prometheus_ssh_exporter_
+
+# Entries added to other components' lists, while those components are in use
+inject:
+  systemd_service_manager:
+    services:
+      - name: "{{ prometheus_ssh_exporter_identifier }}.service"
+        priority: 500
+        restart_necessary: "{{ prometheus_ssh_exporter_restart_necessary | bool }}"
+        groups: [mash, metrics, prometheus-ssh-exporter]
+        when: "{{ prometheus_ssh_exporter_enabled }}"

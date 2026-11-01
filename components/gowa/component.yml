@@ -1,0 +1,21 @@
+# SPDX-FileCopyrightText: 2026 Oliver Lorenz
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+---
+
+# Custom role of this fork: roles/custom/gowa
+activation_prefix: gowa_
+
+setup:
+  entry:
+    - role: custom/gowa
+
+inject:
+  systemd_service_manager:
+    services:
+      - name: "{{ gowa_identifier }}.service"
+        priority: 2000
+        restart_necessary: true
+        groups: [mash, gowa]
+        when: "{{ gowa_enabled }}"

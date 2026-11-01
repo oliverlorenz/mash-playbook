@@ -1,0 +1,38 @@
+# SPDX-FileCopyrightText: 2023 Julian-Samuel Gebühr
+# SPDX-FileCopyrightText: 2023 Slavi Pantaleev
+# SPDX-FileCopyrightText: 2026 Suguru Hirahara
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+---
+
+activation_prefix: authentik_
+
+# Entries added to other components' lists, while those components are in use
+inject:
+  systemd_service_manager:
+    services:
+      - name: "{{ authentik_server_identifier }}.service"
+        priority: 2000
+        restart_necessary: "{{ authentik_restart_necessary | bool }}"
+        groups: [mash, authentik]
+        when: "{{ authentik_enabled }}"
+      - name: "{{ authentik_worker_identifier }}.service"
+        priority: 2000
+        restart_necessary: "{{ authentik_restart_necessary | bool }}"
+        groups: [mash, authentik]
+        when: "{{ authentik_enabled }}"
+  hubsite:
+    services:
+      - name: "{{ mash_playbook_hubsite_service_authentik_name }}"
+        url: "{{ mash_playbook_hubsite_service_authentik_url }}"
+        logo_location: "{{ mash_playbook_hubsite_service_authentik_logo_location }}"
+        description: "{{ mash_playbook_hubsite_service_authentik_description }}"
+        priority: "{{ mash_playbook_hubsite_service_authentik_priority }}"
+        when: "{{ mash_playbook_hubsite_service_authentik_enabled }}"
+  postgres:
+    managed_databases:
+      - name: "{{ authentik_database_name }}"
+        username: "{{ authentik_database_username }}"
+        password: "{{ authentik_database_password }}"
+        when: "{{ authentik_enabled and authentik_database_hostname == postgres_connection_hostname }}"

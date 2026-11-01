@@ -1,0 +1,8 @@
+# SPDX-FileCopyrightText: 2026 Suguru Hirahara
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+---
+
+etherpad_database_couchdb_hostname: "{{ couchdb_connection_hostname if couchdb_enabled else '' }}"
+etherpad_database_couchdb_port: "{{ couchdb_connection_port if couchdb_enabled else '5984' }}"

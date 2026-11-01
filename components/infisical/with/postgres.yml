@@ -1,0 +1,11 @@
+# SPDX-FileCopyrightText: 2023 Slavi Pantaleev
+# SPDX-FileCopyrightText: 2026 Suguru Hirahara
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+---
+
+infisical_database_hostname: "{{ postgres_connection_hostname if postgres_enabled else '' }}"
+infisical_database_port: "{{ postgres_connection_port if postgres_enabled else '5432' }}"
+infisical_database_password: "{{ (mash_playbook_generic_secret_key + ':infisical.db') | hash('sha512') | to_uuid }}"
+infisical_database_sslmode: "{{ 'disable' if postgres_enabled and infisical_database_hostname == postgres_connection_hostname else 'prefer' }}"

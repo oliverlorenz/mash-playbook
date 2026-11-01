@@ -1,0 +1,37 @@
+# SPDX-FileCopyrightText: 2023 Slavi Pantaleev
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+---
+
+activation_prefix: healthchecks_
+
+# Entries added to other components' lists, while those components are in use
+inject:
+  systemd_service_manager:
+    services:
+      - name: "{{ healthchecks_identifier }}.service"
+        priority: 2000
+        restart_necessary: "{{ healthchecks_restart_necessary | bool }}"
+        groups: [mash, healthchecks]
+        when: "{{ healthchecks_enabled }}"
+  hubsite:
+    services:
+      - name: "{{ mash_playbook_hubsite_service_healthchecks_name }}"
+        url: "{{ mash_playbook_hubsite_service_healthchecks_url }}"
+        logo_location: "{{ mash_playbook_hubsite_service_healthchecks_logo_location }}"
+        description: "{{ mash_playbook_hubsite_service_healthchecks_description }}"
+        priority: "{{ mash_playbook_hubsite_service_healthchecks_priority }}"
+        when: "{{ mash_playbook_hubsite_service_healthchecks_enabled }}"
+  mariadb:
+    managed_databases:
+      - name: "{{ healthchecks_database_name }}"
+        username: "{{ healthchecks_database_mysql_username }}"
+        password: "{{ healthchecks_database_mysql_password }}"
+        when: "{{ healthchecks_enabled and (healthchecks_database_mysql_hostname == mariadb_connection_hostname or healthchecks_database_mysql_socket_enabled) and healthchecks_database_type == 'mysql' }}"
+  postgres:
+    managed_databases:
+      - name: "{{ healthchecks_database_name }}"
+        username: "{{ healthchecks_database_postgres_username }}"
+        password: "{{ healthchecks_database_postgres_password }}"
+        when: "{{ healthchecks_enabled and (healthchecks_database_postgres_hostname == postgres_connection_hostname or healthchecks_database_postgres_socket_enabled) and healthchecks_database_type == 'postgres' }}"

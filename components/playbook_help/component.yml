@@ -1,0 +1,15 @@
+# SPDX-FileCopyrightText: 2023 Slavi Pantaleev
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+---
+
+activation_prefix: ''  # Always in use
+
+setup:
+  priority: 100
+  entry:
+    - role: galaxy/playbook_help
+      tags:
+        - setup-all
+        - install-all

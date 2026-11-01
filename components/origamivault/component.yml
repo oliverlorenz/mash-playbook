@@ -1,0 +1,18 @@
+# SPDX-FileCopyrightText: 2023 Slavi Pantaleev
+# SPDX-FileCopyrightText: 2025 Suguru Hirahara
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+---
+
+activation_prefix: origamivault_
+
+# Entries added to other components' lists, while those components are in use
+inject:
+  systemd_service_manager:
+    services:
+      - name: "{{ origamivault_identifier }}.service"
+        priority: 2000
+        restart_necessary: "{{ origamivault_restart_necessary | bool }}"
+        groups: [mash, origamivault]
+        when: "{{ origamivault_enabled }}"

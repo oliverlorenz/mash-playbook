@@ -1,0 +1,21 @@
+# SPDX-FileCopyrightText: 2026 Oliver Lorenz
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+---
+
+# Custom role of this fork: roles/custom/oliverlorenz-api
+activation_prefix: oliverlorenz_api_
+
+setup:
+  entry:
+    - role: custom/oliverlorenz-api
+
+inject:
+  systemd_service_manager:
+    services:
+      - name: "{{ oliverlorenz_api_identifier }}.service"
+        priority: 2000
+        restart_necessary: true
+        groups: [mash, oliverlorenz-api]
+        when: "{{ oliverlorenz_api_enabled }}"

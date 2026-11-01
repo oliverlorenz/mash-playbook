@@ -1,0 +1,18 @@
+# SPDX-FileCopyrightText: 2023 Slavi Pantaleev
+# SPDX-FileCopyrightText: 2026 Suguru Hirahara
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+---
+
+activation_prefix: sqlpage_
+
+# Entries added to other components' lists, while those components are in use
+inject:
+  systemd_service_manager:
+    services:
+      - name: "{{ sqlpage_identifier }}.service"
+        priority: 2000
+        restart_necessary: "{{ sqlpage_restart_necessary | bool }}"
+        groups: [mash, sqlpage]
+        when: "{{ sqlpage_enabled }}"
