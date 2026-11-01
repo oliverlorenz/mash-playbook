@@ -1,0 +1,9 @@
+# SPDX-FileCopyrightText: 2026 Suguru Hirahara
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+---
+
+heyform_database_hostname: "{{ mongodb_connection_hostname if mongodb_enabled else '' }}"
+heyform_database_port: "{{ mongodb_connection_port if mongodb_enabled else '27017' }}"
+heyform_database_password: "{{ (mash_playbook_generic_secret_key + ':heyform.db') | hash('sha512') | to_uuid }}"

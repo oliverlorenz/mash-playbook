@@ -1,0 +1,11 @@
+# SPDX-FileCopyrightText: 2026 Oliver Lorenz
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+---
+
+# The role enables itself by default. It stays disabled, unless enabled in your inventory.
+ffc_mesh_client_enabled: false
+
+ffc_mesh_client_uid: "{{ mash_playbook_uid }}"
+ffc_mesh_client_gid: "{{ mash_playbook_gid }}"

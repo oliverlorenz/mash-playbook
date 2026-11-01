@@ -59,7 +59,7 @@ _merge_from_upstream:
         REMAINING=$(git diff --name-only --diff-filter=U)
         if [ -n "$REMAINING" ]; then
             echo ""
-            echo "Merge stopped with unresolved conflicts (not auto-resolvable via merge=union/rerere):"
+            echo "Merge stopped with unresolved conflicts (not auto-resolvable via rerere):"
             echo "$REMAINING" | sed 's/^/  - /'
             echo ""
             echo "Resolve them, 'git add' the files, then 'git commit' to finish the merge."
@@ -67,9 +67,7 @@ _merge_from_upstream:
         fi
     fi
 
-    # merge=union (see .gitattributes) can silently leave conflict markers in
-    # place if it's ever applied to a binary-ish or unusually-shaped hunk.
-    # Cheap, reliable safety net regardless of merge strategy.
+    # Cheap, reliable safety net against leftover conflict markers.
     MARKERS=$(grep -rl '^<<<<<<< ' --exclude-dir=.git . 2>/dev/null)
     if [ -n "$MARKERS" ]; then
         echo ""

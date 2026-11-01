@@ -1,0 +1,10 @@
+# SPDX-FileCopyrightText: 2023 Slavi Pantaleev
+# SPDX-FileCopyrightText: 2025 Suguru Hirahara
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+---
+
+mediawiki_database_postgres_hostname: "{{ postgres_connection_hostname if postgres_enabled else '' }}"
+mediawiki_database_postgres_port: "{{ postgres_connection_port if postgres_enabled else '5432' }}"
+mediawiki_database_postgres_password: "{{ (mash_playbook_generic_secret_key + ':db.mediawiki') | hash('sha512') | to_uuid }}"

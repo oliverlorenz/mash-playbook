@@ -1,0 +1,8 @@
+# SPDX-FileCopyrightText: 2026 shukon
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+---
+
+librebooking_database_hostname: "{{ mariadb_connection_hostname if mariadb_enabled else '' }}"
+librebooking_database_password: "{{ (mash_playbook_generic_secret_key + ':librebooking') | hash('sha512') | to_uuid }}"

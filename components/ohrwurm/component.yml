@@ -1,0 +1,21 @@
+# SPDX-FileCopyrightText: 2026 Oliver Lorenz
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+---
+
+# Custom role of this fork: roles/custom/ohrwurm
+activation_prefix: ohrwurm_
+
+setup:
+  entry:
+    - role: custom/ohrwurm
+
+inject:
+  systemd_service_manager:
+    services:
+      - name: "{{ ohrwurm_identifier }}.service"
+        priority: 2000
+        restart_necessary: true
+        groups: [mash, ohrwurm]
+        when: "{{ ohrwurm_enabled }}"

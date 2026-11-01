@@ -1,0 +1,31 @@
+# SPDX-FileCopyrightText: 2023 Slavi Pantaleev
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+---
+
+activation_prefix: keycloak_
+
+# Entries added to other components' lists, while those components are in use
+inject:
+  systemd_service_manager:
+    services:
+      - name: "{{ keycloak_identifier }}.service"
+        priority: 1000
+        restart_necessary: "{{ keycloak_restart_necessary | bool }}"
+        groups: [mash, keycloak]
+        when: "{{ keycloak_enabled }}"
+  hubsite:
+    services:
+      - name: "{{ mash_playbook_hubsite_service_keycloak_name }}"
+        url: "{{ mash_playbook_hubsite_service_keycloak_url }}"
+        logo_location: "{{ mash_playbook_hubsite_service_keycloak_logo_location }}"
+        description: "{{ mash_playbook_hubsite_service_keycloak_description }}"
+        priority: "{{ mash_playbook_hubsite_service_keycloak_priority }}"
+        when: "{{ mash_playbook_hubsite_service_keycloak_enabled }}"
+  postgres:
+    managed_databases:
+      - name: "{{ keycloak_database_name }}"
+        username: "{{ keycloak_database_username }}"
+        password: "{{ keycloak_database_password }}"
+        when: "{{ keycloak_enabled and keycloak_database_hostname == postgres_connection_hostname and keycloak_database_type == 'postgres' }}"

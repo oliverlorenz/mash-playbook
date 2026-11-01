@@ -1,0 +1,21 @@
+# SPDX-FileCopyrightText: 2026 Oliver Lorenz
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+---
+
+# Custom role of this fork: roles/custom/app-dooropener
+activation_prefix: app_dooropener_
+
+setup:
+  entry:
+    - role: custom/app-dooropener
+
+inject:
+  systemd_service_manager:
+    services:
+      - name: "{{ app_dooropener_identifier }}.service"
+        priority: 2000
+        restart_necessary: true
+        groups: [mash, app-dooropener]
+        when: "{{ app_dooropener_enabled }}"

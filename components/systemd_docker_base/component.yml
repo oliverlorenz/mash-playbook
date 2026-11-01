@@ -1,0 +1,13 @@
+# SPDX-FileCopyrightText: 2023 Slavi Pantaleev
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+---
+
+activation_prefix: ''  # Always in use
+
+setup:
+  priority: 130
+  entry:
+    # This role has no tasks at all
+    - role: galaxy/systemd_docker_base

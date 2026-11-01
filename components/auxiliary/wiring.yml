@@ -1,0 +1,11 @@
+# SPDX-FileCopyrightText: 2023 Slavi Pantaleev
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+---
+
+aux_directory_default_owner: "{{ mash_playbook_user_name }}"
+aux_directory_default_group: "{{ mash_playbook_group_name }}"
+
+aux_file_default_owner: "{{ mash_playbook_user_name }}"
+aux_file_default_group: "{{ mash_playbook_group_name }}"

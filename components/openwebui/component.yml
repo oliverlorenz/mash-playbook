@@ -1,0 +1,21 @@
+# SPDX-FileCopyrightText: 2026 Oliver Lorenz
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+---
+
+# Custom role of this fork: roles/custom/openwebui
+activation_prefix: openwebui_
+
+setup:
+  entry:
+    - role: custom/openwebui
+
+inject:
+  systemd_service_manager:
+    services:
+      - name: "{{ openwebui_identifier }}.service"
+        priority: 2000
+        restart_necessary: true
+        groups: [mash, openwebui]
+        when: "{{ openwebui_enabled }}"

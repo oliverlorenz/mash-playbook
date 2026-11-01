@@ -1,0 +1,12 @@
+# SPDX-FileCopyrightText: 2026 Oliver Lorenz
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+---
+
+# Custom role of this fork: roles/custom/dns_records
+activation_prefix: dns_records_
+
+setup:
+  entry:
+    - role: custom/dns_records

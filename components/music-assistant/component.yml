@@ -1,0 +1,21 @@
+# SPDX-FileCopyrightText: 2026 Oliver Lorenz
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+---
+
+# Custom role of this fork: roles/custom/music-assistant
+activation_prefix: music_assistant_
+
+setup:
+  entry:
+    - role: custom/music-assistant
+
+inject:
+  systemd_service_manager:
+    services:
+      - name: "{{ music_assistant_identifier }}.service"
+        priority: 2000
+        restart_necessary: true
+        groups: [mash, music-assistant]
+        when: "{{ music_assistant_enabled }}"

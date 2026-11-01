@@ -1,0 +1,21 @@
+# SPDX-FileCopyrightText: 2026 Oliver Lorenz
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+---
+
+# Custom role of this fork: roles/custom/paperless_ai
+activation_prefix: paperless_ai_
+
+setup:
+  entry:
+    - role: custom/paperless_ai
+
+inject:
+  systemd_service_manager:
+    services:
+      - name: "{{ paperless_ai_identifier }}.service"
+        priority: 3000
+        restart_necessary: true
+        groups: [mash, paperless-ai]
+        when: "{{ paperless_ai_enabled }}"

@@ -1,0 +1,21 @@
+# SPDX-FileCopyrightText: 2026 Oliver Lorenz
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+---
+
+# Custom role of this fork: roles/custom/ffc-mesh-client
+activation_prefix: ffc_mesh_client_
+
+setup:
+  entry:
+    - role: custom/ffc-mesh-client
+
+inject:
+  systemd_service_manager:
+    services:
+      - name: "{{ ffc_mesh_client_identifier }}.service"
+        priority: 2000
+        restart_necessary: true
+        groups: [mash, ffc-mesh-client]
+        when: "{{ ffc_mesh_client_enabled }}"

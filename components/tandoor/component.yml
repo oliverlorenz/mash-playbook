@@ -1,0 +1,32 @@
+# SPDX-FileCopyrightText: 2023 Slavi Pantaleev
+# SPDX-FileCopyrightText: 2024 IUCCA
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+---
+
+activation_prefix: tandoor_
+
+# Entries added to other components' lists, while those components are in use
+inject:
+  systemd_service_manager:
+    services:
+      - name: "{{ tandoor_identifier }}.service"
+        priority: 2000
+        restart_necessary: "{{ tandoor_restart_necessary | bool }}"
+        groups: [mash, tandoor]
+        when: "{{ tandoor_enabled }}"
+  hubsite:
+    services:
+      - name: "{{ mash_playbook_hubsite_service_tandoor_name }}"
+        url: "{{ mash_playbook_hubsite_service_tandoor_url }}"
+        logo_location: "{{ mash_playbook_hubsite_service_tandoor_logo_location }}"
+        description: "{{ mash_playbook_hubsite_service_tandoor_description }}"
+        priority: "{{ mash_playbook_hubsite_service_tandoor_priority }}"
+        when: "{{ mash_playbook_hubsite_service_tandoor_enabled }}"
+  postgres:
+    managed_databases:
+      - name: "{{ tandoor_database_name }}"
+        username: "{{ tandoor_database_username }}"
+        password: "{{ tandoor_database_password }}"
+        when: "{{ tandoor_enabled and tandoor_database_hostname == postgres_connection_hostname and tandoor_database_type == 'postgres' }}"

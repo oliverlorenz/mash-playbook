@@ -6,9 +6,7 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
 import re
-import subprocess
 import sys
-import tempfile
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
@@ -57,65 +55,38 @@ def get_groups():
     return ["all"] + sorted(groups - {"all"})
 
 
-def get_role_specific_names_by_path():
-    name_by_path = {}
-    current_name = None
-    for line in (REPO_ROOT / "templates" / "setup.yml").read_text().splitlines():
-        match = re.match(r"\s*#\s*role-specific:(\S+)\s*$", line)
-        if match:
-            current_name = match.group(1)
-            continue
-        if re.match(r"\s*#\s*/role-specific:", line):
-            current_name = None
-            continue
-        match = re.search(r"\brole:\s*(\S+)", line)
-        if match and current_name:
-            name_by_path[match.group(1)] = current_name
-    return name_by_path
-
-
 def get_enabled_services():
-    vars_paths = sorted(
-        str(path) for path in (REPO_ROOT / "inventory" / "host_vars").glob("*/vars.yml")
-    )
-    if not vars_paths:
+    """Components in use by any host's vars.yml which run something in setup.yml.
+
+    Mirrors bin/optimize.py's `activation_prefix` matching. Component names
+    double as the service names for `just setup-service` (tags and groups).
+    """
+    import yaml
+
+    class VarsLoader(yaml.SafeLoader):
+        """Accepts Ansible-specific tags (like `!vault`) and ignores their values."""
+
+    VarsLoader.add_multi_constructor("!", lambda loader, tag_suffix, node: None)
+
+    used_variable_names = set()
+    for path in sorted((REPO_ROOT / "inventory" / "host_vars").glob("*/vars.yml")):
+        used_variable_names |= set(yaml.load(path.read_text(), Loader=VarsLoader) or {})
+    if not used_variable_names:
         return []
 
-    with tempfile.TemporaryDirectory() as tmp_dir:
-        tmp = Path(tmp_dir)
-        dst_setup_yml_path = tmp / "setup.yml"
-
-        subprocess.run(
-            [
-                sys.executable,
-                str(REPO_ROOT / "bin" / "optimize.py"),
-                "--vars-paths",
-                " ".join(vars_paths),
-                "--src-requirements-yml-path",
-                str(REPO_ROOT / "templates" / "requirements.yml"),
-                "--dst-requirements-yml-path",
-                str(tmp / "requirements.yml"),
-                "--src-setup-yml-path",
-                str(REPO_ROOT / "templates" / "setup.yml"),
-                "--dst-setup-yml-path",
-                str(dst_setup_yml_path),
-                "--src-group-vars-yml-path",
-                str(REPO_ROOT / "templates" / "group_vars_mash_servers"),
-                "--dst-group-vars-yml-path",
-                str(tmp / "group_vars_mash_servers"),
-            ],
-            check=True,
-            cwd=REPO_ROOT,
-        )
-
-        name_by_path = get_role_specific_names_by_path()
-        services = set()
-        for line in dst_setup_yml_path.read_text().splitlines():
-            match = re.search(r"\brole:\s*(\S+)", line)
-            if match and match.group(1) in name_by_path:
-                services.add(name_by_path[match.group(1)])
-
-        return sorted(services)
+    services = []
+    for manifest_path in sorted((REPO_ROOT / "components").glob("*/component.yml")):
+        manifest = yaml.load(manifest_path.read_text(), Loader=VarsLoader) or {}
+        prefix = manifest.get("activation_prefix")
+        if not isinstance(prefix, str):
+            continue
+        if prefix and not any(name.startswith(prefix) for name in used_variable_names):
+            continue
+        # `setup: []` means the component runs nothing in setup.yml
+        if manifest.get("setup") == []:
+            continue
+        services.append(manifest_path.parent.name)
+    return services
 
 
 def replace_generated_block(text, marker, items):

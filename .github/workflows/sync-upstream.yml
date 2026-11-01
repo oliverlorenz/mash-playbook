@@ -63,11 +63,10 @@ jobs:
 
       - name: Check for leftover conflict markers
         if: steps.check_sync.outputs.needed == 'true'
-        # .gitattributes sets merge=union for templates/setup.yml and
-        # templates/group_vars_mash_servers so nearby insertions from
-        # upstream and our custom roles don't conflict. This is a cheap,
-        # reliable safety net in case a conflict marker is ever left behind
-        # regardless of merge strategy.
+        # Our custom roles are wired in via their own components/<name>/
+        # directories, so they no longer touch upstream files. This is a
+        # cheap, reliable safety net in case a conflict marker is ever left
+        # behind regardless of merge strategy.
         run: |
           MARKERS=$(grep -rl '^<<<<<<< ' --exclude-dir=.git . || true)
           if [ -n "$MARKERS" ]; then

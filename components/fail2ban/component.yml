@@ -1,0 +1,14 @@
+# SPDX-FileCopyrightText: 2023 Slavi Pantaleev
+# SPDX-FileCopyrightText: 2023 aine-etke
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+---
+
+activation_prefix: system_security_fail2ban_
+
+setup:
+  priority: 170
+  entry:
+    - when: system_security_fail2ban_enabled | bool
+      role: galaxy/fail2ban

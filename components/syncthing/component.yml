@@ -1,0 +1,44 @@
+# SPDX-FileCopyrightText: 2023 Slavi Pantaleev
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+---
+
+activation_prefix: syncthing_
+
+# Entries added to other components' lists, while those components are in use
+inject:
+  systemd_service_manager:
+    services:
+      - name: "{{ syncthing_identifier }}.service"
+        priority: 2000
+        restart_necessary: "{{ syncthing_restart_necessary | bool }}"
+        groups: [mash, syncthing]
+        when: "{{ syncthing_enabled }}"
+  hubsite:
+    services:
+      - name: "{{ mash_playbook_hubsite_service_syncthing_name }}"
+        url: "{{ mash_playbook_hubsite_service_syncthing_url }}"
+        logo_location: "{{ mash_playbook_hubsite_service_syncthing_logo_location }}"
+        description: "{{ mash_playbook_hubsite_service_syncthing_description }}"
+        priority: "{{ mash_playbook_hubsite_service_syncthing_priority }}"
+        when: "{{ mash_playbook_hubsite_service_syncthing_enabled }}"
+  traefik:
+    entrypoints:
+      - name: "{{ syncthing_container_labels_traefik_tcp_entrypoints }}"
+        port: "{{ syncthing_container_sync_tcp_port }}"
+        host_bind_port: "{{ syncthing_container_sync_tcp_bind_port }}"
+        config:
+          transport:
+            respondingTimeouts:
+              readTimeout: "{{ traefik_config_entrypoint_web_transport_respondingTimeouts_readTimeout }}"
+              writeTimeout: "{{ traefik_config_entrypoint_web_transport_respondingTimeouts_writeTimeout }}"
+              idleTimeout: "{{ traefik_config_entrypoint_web_transport_respondingTimeouts_idleTimeout }}"
+        when: "{{ syncthing_enabled and syncthing_container_labels_traefik_tcp_enabled }}"
+      - name: "{{ syncthing_container_labels_traefik_udp_entrypoints }}"
+        port: "{{ syncthing_container_sync_udp_port | string + '/udp' }}"
+        host_bind_port: "{{ syncthing_container_sync_udp_bind_port }}"
+        config:
+          udp:
+            timeout: "{{ syncthing_container_labels_traefik_udp_entrypoint_timeout }}"
+        when: "{{ syncthing_enabled and syncthing_container_labels_traefik_udp_enabled }}"

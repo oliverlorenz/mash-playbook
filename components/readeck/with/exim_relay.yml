@@ -1,0 +1,12 @@
+# SPDX-FileCopyrightText: 2023 Slavi Pantaleev
+# SPDX-FileCopyrightText: 2024 lingawakad
+# SPDX-FileCopyrightText: 2026 Suguru Hirahara
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+---
+
+readeck_environment_variables_readeck_mail_host: "{{ exim_relay_identifier if exim_relay_enabled else '' }}"
+readeck_environment_variables_readeck_mail_port: "{{ '8025' if exim_relay_enabled else '587' }}"
+readeck_environment_variables_readeck_mail_insecure: "{{ exim_relay_enabled }}"
+readeck_environment_variables_readeck_mail_fromnoreply: "{{ exim_relay_sender_address if exim_relay_enabled else '' }}"

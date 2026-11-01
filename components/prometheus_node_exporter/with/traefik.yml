@@ -1,0 +1,9 @@
+# SPDX-FileCopyrightText: 2023 Slavi Pantaleev
+# SPDX-FileCopyrightText: 2023 aine-etke
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+---
+
+prometheus_node_exporter_container_labels_traefik_metrics_entrypoints: "{{ traefik_entrypoint_primary }}"
+prometheus_node_exporter_container_labels_traefik_metrics_tls_certResolver: "{{ traefik_certResolver_primary }}"

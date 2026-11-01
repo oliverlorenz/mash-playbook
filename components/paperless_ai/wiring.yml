@@ -1,0 +1,35 @@
+# SPDX-FileCopyrightText: 2026 Oliver Lorenz
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+---
+
+# The role enables itself by default. It stays disabled, unless enabled in your inventory.
+paperless_ai_enabled: false
+
+paperless_ai_identifier: "{{ mash_playbook_service_identifier_prefix }}paperless-ai"
+
+paperless_ai_base_path: "{{ mash_playbook_base_path }}/{{ mash_playbook_service_base_directory_name_prefix }}paperless_ai"
+
+paperless_ai_uid: "{{ mash_playbook_uid }}"
+paperless_ai_gid: "{{ mash_playbook_gid }}"
+
+paperless_ai_paperless_url: "{{ paperless_scheme }}://{{ paperless_hostname }}{{ paperless_path_prefix }}"
+
+paperless_ai_systemd_required_services_list_auto: |
+  {{
+    ([paperless_identifier ~ '.service'] if paperless_enabled | default(false) else [])
+  }}
+
+paperless_ai_systemd_wanted_services_list_auto: |
+  {{
+    ([])
+  }}
+
+paperless_ai_container_additional_networks_auto: |
+  {{
+    ([mash_playbook_reverse_proxyable_services_additional_network] if mash_playbook_reverse_proxyable_services_additional_network else [])
+  }}
+
+paperless_ai_container_labels_traefik_enabled: "{{ mash_playbook_traefik_labels_enabled }}"
+paperless_ai_container_labels_traefik_docker_network: "{{ mash_playbook_reverse_proxyable_services_additional_network }}"

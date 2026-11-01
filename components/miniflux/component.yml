@@ -1,0 +1,31 @@
+# SPDX-FileCopyrightText: 2023 Slavi Pantaleev
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+---
+
+activation_prefix: miniflux_
+
+# Entries added to other components' lists, while those components are in use
+inject:
+  systemd_service_manager:
+    services:
+      - name: "{{ miniflux_identifier }}.service"
+        priority: 2000
+        restart_necessary: "{{ miniflux_restart_necessary | bool }}"
+        groups: [mash, miniflux]
+        when: "{{ miniflux_enabled }}"
+  hubsite:
+    services:
+      - name: "{{ mash_playbook_hubsite_service_miniflux_name }}"
+        url: "{{ mash_playbook_hubsite_service_miniflux_url }}"
+        logo_location: "{{ mash_playbook_hubsite_service_miniflux_logo_location }}"
+        description: "{{ mash_playbook_hubsite_service_miniflux_description }}"
+        priority: "{{ mash_playbook_hubsite_service_miniflux_priority }}"
+        when: "{{ mash_playbook_hubsite_service_miniflux_enabled }}"
+  postgres:
+    managed_databases:
+      - name: "{{ miniflux_database_name }}"
+        username: "{{ miniflux_database_username }}"
+        password: "{{ miniflux_database_password }}"
+        when: "{{ miniflux_enabled and (miniflux_database_hostname == postgres_connection_hostname or miniflux_database_socket_enabled) }}"

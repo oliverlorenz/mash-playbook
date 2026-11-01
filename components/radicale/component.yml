@@ -1,0 +1,25 @@
+# SPDX-FileCopyrightText: 2023 Slavi Pantaleev
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+---
+
+activation_prefix: radicale_
+
+# Entries added to other components' lists, while those components are in use
+inject:
+  systemd_service_manager:
+    services:
+      - name: "{{ radicale_identifier }}.service"
+        priority: 2000
+        restart_necessary: "{{ radicale_restart_necessary | bool }}"
+        groups: [mash, radicale]
+        when: "{{ radicale_enabled }}"
+  hubsite:
+    services:
+      - name: "{{ mash_playbook_hubsite_service_radicale_name }}"
+        url: "{{ mash_playbook_hubsite_service_radicale_url }}"
+        logo_location: "{{ mash_playbook_hubsite_service_radicale_logo_location }}"
+        description: "{{ mash_playbook_hubsite_service_radicale_description }}"
+        priority: "{{ mash_playbook_hubsite_service_radicale_priority }}"
+        when: "{{ mash_playbook_hubsite_service_radicale_enabled }}"

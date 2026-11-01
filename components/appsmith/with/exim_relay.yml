@@ -1,0 +1,11 @@
+# SPDX-FileCopyrightText: 2023 Slavi Pantaleev
+# SPDX-FileCopyrightText: 2026 Suguru Hirahara
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+---
+
+appsmith_environment_variable_appsmith_mail_enabled: "{{ exim_relay_enabled }}"
+appsmith_environment_variable_appsmith_mail_host: "{{ exim_relay_identifier if exim_relay_enabled else '' }}"
+appsmith_environment_variable_appsmith_mail_port: "{{ '8025' if exim_relay_enabled else '587' }}"
+appsmith_environment_variable_appsmith_mail_from: "{{ exim_relay_sender_address if exim_relay_enabled else '' }}"

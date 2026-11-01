@@ -20,17 +20,16 @@ setup-all hostname='': (_ensure-secrets hostname)
 setup-service service hostname='': (_ensure-secrets hostname)
     just setup-service {{ service }} {{ if hostname == '' { '' } else { '-e target=' + hostname } }}
 
-# Internal - optimizes for the given host (or all hosts if empty) and ensures secrets.yml exists for every host that will be targeted
+# Internal - ensures secrets.yml exists for every host that will be targeted.
+# (The playbook is optimized automatically before every run, from components/ and the whole inventory.)
 _ensure-secrets hostname:
     #!/usr/bin/env sh
     set -e
 
     if [ -n "{{ hostname }}" ]; then
         HOSTS="{{ hostname }}"
-        just optimize-for-host {{ hostname }}
     else
         HOSTS=$(ansible-inventory -i inventory/hosts.yml --list | jq -r '.mash_servers.hosts[]')
-        just optimize
     fi
 
     MISSING=0

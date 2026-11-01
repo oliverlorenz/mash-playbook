@@ -1,0 +1,22 @@
+# SPDX-FileCopyrightText: 2023 Julian-Samuel Gebühr
+# SPDX-FileCopyrightText: 2023 Slavi Pantaleev
+# SPDX-FileCopyrightText: 2025 Suguru Hirahara
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+---
+
+# The role enables itself by default. It stays disabled, unless enabled in your inventory.
+telegraf_enabled: false
+
+telegraf_identifier: "{{ mash_playbook_service_identifier_prefix }}telegraf"
+
+telegraf_base_path: "{{ mash_playbook_base_path }}/{{ mash_playbook_service_base_directory_name_prefix }}telegraf"
+
+telegraf_uid: "{{ mash_playbook_uid }}"
+telegraf_gid: "{{ mash_playbook_gid }}"
+
+telegraf_systemd_required_services_list_auto: |
+  {{
+    ([(influxdb_identifier + '.service')] if influxdb_enabled else [])
+  }}
