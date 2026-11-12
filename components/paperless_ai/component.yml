@@ -6,6 +6,7 @@
 
 # Custom role of this fork: roles/custom/paperless_ai
 activation_prefix: paperless_ai_
+description: Paperless-AI, AI-powered document tagging for Paperless-ngx (custom)
 
 setup:
   entry:

@@ -6,6 +6,7 @@
 
 # Custom role of this fork: roles/custom/openwebui
 activation_prefix: openwebui_
+description: Open WebUI, a web interface for LLMs (custom)
 
 setup:
   entry:

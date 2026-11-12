@@ -6,6 +6,7 @@
 
 # Custom role of this fork: roles/custom/ffc-mesh-client
 activation_prefix: ffc_mesh_client_
+description: Freifunk Chemnitz mesh client (custom)
 
 setup:
   entry:

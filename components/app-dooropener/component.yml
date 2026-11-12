@@ -6,6 +6,7 @@
 
 # Custom role of this fork: roles/custom/app-dooropener
 activation_prefix: app_dooropener_
+description: Dooropener PWA for opening the front door (custom)
 
 setup:
   entry:
