@@ -6,6 +6,7 @@
 
 # Custom role of this fork: roles/custom/gowa
 activation_prefix: gowa_
+description: GOWA, a WhatsApp Web multi-device API (custom)
 
 setup:
   entry:

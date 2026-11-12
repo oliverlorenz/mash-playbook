@@ -6,6 +6,7 @@
 
 # Custom role of this fork: roles/custom/ohrwurm
 activation_prefix: ohrwurm_
+description: Ohrwurm app (custom)
 
 setup:
   entry:

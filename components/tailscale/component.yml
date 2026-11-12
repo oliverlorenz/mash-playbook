@@ -6,6 +6,7 @@
 
 # Custom role of this fork: roles/custom/tailscale
 activation_prefix: tailscale_
+description: Tailscale, a WireGuard-based mesh VPN (custom)
 
 setup:
   entry:

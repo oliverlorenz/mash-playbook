@@ -6,6 +6,7 @@
 
 # Custom role of this fork: roles/custom/dayplanner
 activation_prefix: dayplanner_
+description: Dayplanner app (custom)
 
 setup:
   entry:

@@ -6,6 +6,7 @@
 
 # Custom role of this fork: roles/custom/unattended-upgrades
 activation_prefix: unattended_upgrades_
+description: Automatic security updates for Debian/Ubuntu hosts via unattended-upgrades (custom)
 
 setup:
   entry:

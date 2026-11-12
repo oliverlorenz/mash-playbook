@@ -6,6 +6,7 @@
 
 # Custom role of this fork: roles/custom/ffc-hello
 activation_prefix: ffc_hello_
+description: A tiny nginx hello-world demo/smoke-test service (custom)
 
 setup:
   entry:

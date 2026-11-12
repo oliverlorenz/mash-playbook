@@ -6,6 +6,7 @@
 
 # Custom role of this fork: roles/custom/dns_records
 activation_prefix: dns_records_
+description: Manages DNS records for the hosted services at the DNS provider (custom)
 
 setup:
   entry:

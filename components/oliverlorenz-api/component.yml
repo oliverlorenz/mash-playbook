@@ -6,6 +6,7 @@
 
 # Custom role of this fork: roles/custom/oliverlorenz-api
 activation_prefix: oliverlorenz_api_
+description: The oliverlorenz.com API (custom)
 
 setup:
   entry:

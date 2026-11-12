@@ -6,6 +6,7 @@
 
 # Custom role of this fork: roles/custom/music-assistant
 activation_prefix: music_assistant_
+description: Music Assistant, a music library manager and player (custom)
 
 setup:
   entry:

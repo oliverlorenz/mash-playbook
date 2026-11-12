@@ -111,7 +111,7 @@ Each role the playbook can use is wired in by a *component*: a directory in [`co
 .
 ├── components/
 │   └── YOUR-SERVICE/
-│       ├── component.yml  ← When the component is in use, where it runs, what it adds to other components
+│       ├── component.yml  ← When the component is in use, where it runs, what it adds to other components, its row in docs/supported-services.md
 │       ├── README.md  ← Documentation about how to configure the service
 │       ├── requirements.yml  ← Your Ansible role and its version
 │       ├── wiring.yml  ← Default configuration of your role for this playbook
@@ -119,8 +119,6 @@ Each role the playbook can use is wired in by a *component*: a directory in [`co
 │       └── with/
 │           ├── postgres.yml  ← Configuration which applies only when Postgres is in use too
 │           └── traefik.yml  ← … or Traefik, etc.
-└── docs/
-    └── supported-services.md  ← Add your service
 ```
 
 >[!NOTE]
@@ -144,6 +142,15 @@ Components can also live in the inventory, to extend the playbook without changi
 <summary>Click here to display the details</summary>
 
 ```yaml
+# A brief description, as `just list-services-all` shows it
+description: What YOUR-SERVICE does, in a few words
+
+# The service's row in docs/supported-services.md (`section`: foss, system or non-free)
+docs:
+  name: YOUR-SERVICE
+  url: https://YOUR-SERVICE.example.com
+  section: foss
+
 # The component is in use when the inventory sets any variable starting with this prefix (`''`: always in use)
 activation_prefix: YOUR-SERVICE_
 
