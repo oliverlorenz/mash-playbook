@@ -208,6 +208,7 @@ Below is an exhaustive list of the free and open-source software for self-hostin
 | [PdfDing](https://www.pdfding.com/) | PDF manager, viewer and editor | [Link](../components/pdfding/README.md) |
 | [PeerTube](https://joinpeertube.org/) | ActivityPub federated video platform | [Link](../components/peertube/README.md) |
 | [pgAdmin](https://www.pgadmin.org/) | Web-based Postgres database server administration software | [Link](../components/pgadmin/README.md) |
+| [PgHero](https://github.com/ankane/pghero) | Performance dashboard for Postgres | [Link](../components/pghero/README.md) |
 | [phpMyAdmin](https://www.phpmyadmin.net/) | Web-based MySQL or MariaDB database server administration software | [Link](../components/phpmyadmin/README.md) |
 | [Pi-hole](https://pi-hole.net/) | A DNS sinkhole which blocks ads and trackers network-wide | [Link](../components/pihole/README.md) |
 | [PinePods](https://www.pinepods.online/) | Multi-user podcast management system | [Link](../components/pinepods/README.md) |
@@ -267,7 +268,7 @@ Below is an exhaustive list of the free and open-source software for self-hostin
 | [Stirling PDF v1](https://github.com/Stirling-Tools/Stirling-PDF) | PDF converter and editor | [Link](../components/stirling_pdf/README.md) |
 | [strongSwan](https://www.strongswan.org/) | IPsec-based VPN solution | [Link](../components/strongswan/README.md) |
 | [Svix](https://github.com/svix/svix-webhooks) | Webhook service | [Link](../components/svix/README.md) |
-| [syncstorage-rs](https://github.com/mozilla-services/syncstorage-rs) | Mozilla Sync Storage server for Firefox Sync | [Link](../components/syncstorage_rs_docker/README.md) |
+| [Syncstorage-rs](https://mozilla-services.github.io/syncstorage-rs/) | Mozilla Sync Storage server for Firefox Sync | [Link](../components/syncstorage_rs/README.md) |
 | [Syncthing](https://syncthing.net/) | Continuous file synchronization between computers | [Link](../components/syncthing/README.md) |
 | [Tandoor](https://docs.tandoor.dev/) | Recipe manager | [Link](../components/tandoor/README.md) |
 | [Tasks.md](https://hub.docker.com/r/baldissaramatheus/tasks.md) | Markdown file-based task management board | [Link](../components/tasksmd/README.md) |
