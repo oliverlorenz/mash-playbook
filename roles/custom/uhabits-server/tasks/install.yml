@@ -1,0 +1,94 @@
+# SPDX-FileCopyrightText: 2026 Oliver Lorenz
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+---
+- name: Ensure uhabits-server paths exist
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    mode: "0750"
+    owner: "{{ uhabits_server_uid }}"
+    group: "{{ uhabits_server_gid }}"
+  with_items:
+    - "{{ uhabits_server_base_path }}"
+    - "{{ uhabits_server_data_path }}"
+
+- name: Ensure uhabits-server support files installed
+  ansible.builtin.template:
+    src: "{{ role_path }}/templates/{{ item }}.j2"
+    dest: "{{ uhabits_server_base_path }}/{{ item }}"
+    mode: "0640"
+    owner: "{{ uhabits_server_uid }}"
+    group: "{{ uhabits_server_gid }}"
+  with_items:
+    - env
+    - labels
+
+- name: Ensure uhabits-server anonymous Docker client config path exists
+  when: uhabits_server_container_image_pull_anonymously | bool
+  ansible.builtin.file:
+    path: "{{ uhabits_server_container_image_pull_anonymous_config_path }}"
+    state: directory
+    mode: "0700"
+
+- name: Ensure uhabits-server container image is pulled anonymously
+  when: uhabits_server_container_image_pull_anonymously | bool
+  ansible.builtin.command:
+    cmd: >-
+      {{ devture_systemd_docker_base_host_command_docker }}
+      --config {{ uhabits_server_container_image_pull_anonymous_config_path }}
+      pull {{ uhabits_server_container_image }}
+  register: result
+  retries: "{{ devture_playbook_help_container_retries_count }}"
+  delay: "{{ devture_playbook_help_container_retries_delay }}"
+  until: result is not failed
+  changed_when: "'Downloaded newer image' in result.stdout"
+
+- name: Ensure uhabits-server container image is pulled via community.docker.docker_image
+  when: not uhabits_server_container_image_pull_anonymously | bool and devture_systemd_docker_base_container_image_pull_method == 'ansible-module'
+  community.docker.docker_image:
+    name: "{{ uhabits_server_container_image }}"
+    source: "{{ 'pull' if ansible_version.major > 2 or ansible_version.minor > 7 else omit }}"
+    force_source: "{{ uhabits_server_container_image_force_pull if ansible_version.major > 2 or ansible_version.minor >= 8 else omit }}"
+    force: "{{ omit if ansible_version.major > 2 or ansible_version.minor >= 8 else uhabits_server_container_image_force_pull }}"
+  register: result
+  retries: "{{ devture_playbook_help_container_retries_count }}"
+  delay: "{{ devture_playbook_help_container_retries_delay }}"
+  until: result is not failed
+
+- name: Ensure uhabits-server container image is pulled via ansible.builtin.command
+  when: not uhabits_server_container_image_pull_anonymously | bool and devture_systemd_docker_base_container_image_pull_method == 'command'
+  ansible.builtin.command:
+    cmd: "{{ devture_systemd_docker_base_host_command_docker }} pull {{ uhabits_server_container_image }}"
+  register: result
+  retries: "{{ devture_playbook_help_container_retries_count }}"
+  delay: "{{ devture_playbook_help_container_retries_delay }}"
+  until: result is not failed
+  changed_when: "'Downloaded newer image' in result.stdout"
+
+- name: Ensure uhabits-server container network is created via community.docker.docker_network
+  when: devture_systemd_docker_base_container_network_creation_method == 'ansible-module'
+  community.docker.docker_network:
+    enable_ipv6: "{{ devture_systemd_docker_base_ipv6_enabled }}"
+    name: "{{ uhabits_server_container_network }}"
+    driver: bridge
+    driver_options: "{{ devture_systemd_docker_base_container_networks_driver_options }}"
+
+- name: Ensure uhabits-server container network is created via ansible.builtin.command
+  when: devture_systemd_docker_base_container_network_creation_method == 'command'
+  ansible.builtin.command:
+    cmd: >-
+      {{ devture_systemd_docker_base_host_command_docker }} network create
+      {% if devture_systemd_docker_base_ipv6_enabled %}--ipv6{% endif %}
+      {{ devture_systemd_docker_base_container_networks_driver_options_string }}
+      {{ uhabits_server_container_network }}
+  register: network_creation_result
+  changed_when: network_creation_result.rc == 0
+  failed_when: network_creation_result.rc != 0 and 'already exists' not in network_creation_result.stderr
+
+- name: Ensure uhabits-server systemd service is present
+  ansible.builtin.template:
+    src: "{{ role_path }}/templates/systemd/uhabits-server.service.j2"
+    dest: "{{ devture_systemd_docker_base_systemd_path }}/{{ uhabits_server_identifier }}.service"
+    mode: "0644"

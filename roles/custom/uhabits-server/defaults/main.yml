@@ -1,0 +1,122 @@
+# SPDX-FileCopyrightText: 2026 Oliver Lorenz
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+---
+# Project source code URL: https://github.com/oliverlorenz/uhabits-server
+
+uhabits_server_enabled: true
+
+uhabits_server_identifier: uhabits-server
+uhabits_server_base_path: "{{ mash_playbook_base_path }}/{{ uhabits_server_identifier }}"
+# Holds the SQLite database. Back this up.
+uhabits_server_data_path: "{{ uhabits_server_base_path }}/data"
+
+uhabits_server_uid: ""
+uhabits_server_gid: ""
+
+uhabits_server_version: 1.0.0
+uhabits_server_container_image: "ghcr.io/oliverlorenz/uhabits-server:{{ uhabits_server_version }}"
+uhabits_server_container_image_force_pull: "{{ uhabits_server_container_image.endswith(':latest') }}"
+
+# Pull the (public) image without registry credentials. Docker otherwise sends the host's
+# stored ghcr.io login (e.g. a token scoped to other packages), which ghcr rejects with
+# "denied" even for public images. Uses an empty Docker client config for the pull only.
+uhabits_server_container_image_pull_anonymously: true
+uhabits_server_container_image_pull_anonymous_config_path: "{{ uhabits_server_base_path }}/.docker-anonymous"
+
+# The hostname at which the server is served.
+uhabits_server_hostname: ""
+
+# The path at which the server is exposed.
+# This value must either be `/` or not end with a slash (e.g. `/habits`).
+# The server itself is mounted at the same path (`BASE_PATH`), so no prefix stripping is needed.
+uhabits_server_path_prefix: /
+
+# The public URL of the server, used for invite links.
+uhabits_server_public_url: "{{ uhabits_server_container_labels_traefik_tls | ternary('https', 'http') }}://{{ uhabits_server_hostname }}{{ '' if uhabits_server_path_prefix == '/' else uhabits_server_path_prefix }}"
+
+# Retention periods in days (see https://github.com/oliverlorenz/uhabits-server#retention)
+uhabits_server_invite_ttl_days: 7
+uhabits_server_tombstone_retention_days: 30
+uhabits_server_share_inactive_after_days: 90
+uhabits_server_share_delete_after_days: 365
+uhabits_server_reader_retention_days: 180
+uhabits_server_device_retention_days: 365
+uhabits_server_cleanup_interval_hours: 24
+
+# Rate limits (requests per 15 minutes and client IP)
+uhabits_server_rate_limit_api: 600
+uhabits_server_rate_limit_secrets: 20
+
+# Express `trust proxy`: the container sits behind exactly one reverse proxy (Traefik).
+uhabits_server_trust_proxy: "1"
+
+# Link on the invite landing page where friends get the app.
+uhabits_server_app_download_url: https://github.com/oliverlorenz/uhabits/releases
+
+# Additional environment variables to pass to the container.
+uhabits_server_environment_variables_additional_variables: ""
+
+# Controls whether the container exposes its HTTP port (tcp/3000 in the container).
+#
+# Takes an "<ip>:<port>" or "<port>" value (e.g. "127.0.0.1:3000"), or empty string to not expose.
+uhabits_server_container_http_host_bind_port: ""
+
+# The base container network. It will be auto-created by this role if it doesn't exist already.
+uhabits_server_container_network: "{{ uhabits_server_identifier }}"
+
+# The port number in the container
+uhabits_server_container_http_port: 3000
+
+# A list of additional container networks that the container would be connected to.
+# The role does not create these networks, so make sure they already exist.
+uhabits_server_container_additional_networks: "{{ uhabits_server_container_additional_networks_auto + uhabits_server_container_additional_networks_custom }}"
+uhabits_server_container_additional_networks_auto: []
+uhabits_server_container_additional_networks_custom: []
+
+# A list of extra arguments to pass to the container (`docker run` command)
+uhabits_server_container_extra_arguments: []
+
+# uhabits_server_container_labels_traefik_enabled controls whether labels to assist a Traefik reverse-proxy will be attached to the container.
+# See `../templates/labels.j2` for details.
+uhabits_server_container_labels_traefik_enabled: true
+uhabits_server_container_labels_traefik_docker_network: "{{ uhabits_server_container_network }}"
+uhabits_server_container_labels_traefik_hostname: "{{ uhabits_server_hostname }}"
+# The path prefix must either be `/` or not end with a slash (e.g. `/habits`).
+uhabits_server_container_labels_traefik_path_prefix: "{{ uhabits_server_path_prefix }}"
+uhabits_server_container_labels_traefik_rule: "Host(`{{ uhabits_server_container_labels_traefik_hostname }}`){% if uhabits_server_container_labels_traefik_path_prefix != '/' %} && PathPrefix(`{{ uhabits_server_container_labels_traefik_path_prefix }}`){% endif %}"
+uhabits_server_container_labels_traefik_priority: 0
+uhabits_server_container_labels_traefik_entrypoints: web-secure
+uhabits_server_container_labels_traefik_tls: "{{ uhabits_server_container_labels_traefik_entrypoints != 'web' }}"
+uhabits_server_container_labels_traefik_tls_certResolver: default  # noqa var-naming
+
+# Controls which additional headers to attach to all HTTP responses.
+# The server sets its own security headers (helmet, incl. a nonce-based CSP on the invite page),
+# so only headers it does not set itself are added here. Do not add a Content-Security-Policy:
+# it would replace the server's own.
+uhabits_server_container_labels_traefik_additional_response_headers: "{{ uhabits_server_container_labels_traefik_additional_response_headers_auto | combine(uhabits_server_container_labels_traefik_additional_response_headers_custom) }}"
+uhabits_server_container_labels_traefik_additional_response_headers_auto: |
+  {{
+    {}
+    | combine ({'Permissions-Policy': uhabits_server_http_header_permissions_policy} if uhabits_server_http_header_permissions_policy else {})
+  }}
+uhabits_server_container_labels_traefik_additional_response_headers_custom: {}
+
+# Specifies the value of the `Permissions-Policy` header.
+uhabits_server_http_header_permissions_policy: "interest-cohort=()"
+
+# uhabits_server_container_labels_additional_labels contains a multiline string with additional labels to add to the container label file.
+uhabits_server_container_labels_additional_labels: ""
+
+# List of systemd services that the systemd service depends on
+uhabits_server_systemd_required_services_list: "{{ uhabits_server_systemd_required_services_list_default + uhabits_server_systemd_required_services_list_auto + uhabits_server_systemd_required_services_list_custom }}"
+uhabits_server_systemd_required_services_list_default: "{{ [devture_systemd_docker_base_docker_service_name] if devture_systemd_docker_base_docker_service_name else [] }}"
+uhabits_server_systemd_required_services_list_auto: []
+uhabits_server_systemd_required_services_list_custom: []
+
+# List of systemd services that the systemd service wants
+uhabits_server_systemd_wanted_services_list: "{{ uhabits_server_systemd_wanted_services_list_default + uhabits_server_systemd_wanted_services_list_auto + uhabits_server_systemd_wanted_services_list_custom }}"
+uhabits_server_systemd_wanted_services_list_default: []
+uhabits_server_systemd_wanted_services_list_auto: []
+uhabits_server_systemd_wanted_services_list_custom: []
