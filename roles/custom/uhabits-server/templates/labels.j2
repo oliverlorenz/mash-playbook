@@ -1,0 +1,40 @@
+{#
+SPDX-FileCopyrightText: 2026 Oliver Lorenz
+
+SPDX-License-Identifier: AGPL-3.0-or-later
+#}
+
+{% if uhabits_server_container_labels_traefik_enabled %}
+traefik.enable=true
+
+{% if uhabits_server_container_labels_traefik_docker_network %}
+traefik.docker.network={{ uhabits_server_container_labels_traefik_docker_network }}
+{% endif %}
+
+{% set middlewares = [] %}
+
+{% if uhabits_server_container_labels_traefik_additional_response_headers.keys() | length > 0 %}
+{% for name, value in uhabits_server_container_labels_traefik_additional_response_headers.items() %}
+traefik.http.middlewares.{{ uhabits_server_identifier }}-add-response-headers.headers.customresponseheaders.{{ name }}={{ value }}
+{% endfor %}
+{% set middlewares = middlewares + [uhabits_server_identifier + '-add-response-headers'] %}
+{% endif %}
+
+traefik.http.routers.{{ uhabits_server_identifier }}.rule={{ uhabits_server_container_labels_traefik_rule }}
+{% if uhabits_server_container_labels_traefik_priority | int > 0 %}
+traefik.http.routers.{{ uhabits_server_identifier }}.priority={{ uhabits_server_container_labels_traefik_priority }}
+{% endif %}
+traefik.http.routers.{{ uhabits_server_identifier }}.service={{ uhabits_server_identifier }}
+{% if middlewares | length > 0 %}
+traefik.http.routers.{{ uhabits_server_identifier }}.middlewares={{ middlewares | join(',') }}
+{% endif %}
+traefik.http.routers.{{ uhabits_server_identifier }}.entrypoints={{ uhabits_server_container_labels_traefik_entrypoints }}
+traefik.http.routers.{{ uhabits_server_identifier }}.tls={{ uhabits_server_container_labels_traefik_tls | to_json }}
+{% if uhabits_server_container_labels_traefik_tls %}
+traefik.http.routers.{{ uhabits_server_identifier }}.tls.certResolver={{ uhabits_server_container_labels_traefik_tls_certResolver }}
+{% endif %}
+
+traefik.http.services.{{ uhabits_server_identifier }}.loadbalancer.server.port={{ uhabits_server_container_http_port }}
+{% endif %}
+
+{{ uhabits_server_container_labels_additional_labels }}

@@ -1,0 +1,24 @@
+# SPDX-FileCopyrightText: 2026 Oliver Lorenz
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+---
+- name: Fail if required uhabits-server settings not defined
+  ansible.builtin.fail:
+    msg: >-
+      You need to define a required configuration setting (`{{ item }}`).
+  when: "lookup('vars', item, default='') | string | length == 0"
+  with_items:
+    - uhabits_server_uid
+    - uhabits_server_gid
+    - uhabits_server_hostname
+    - uhabits_server_container_network
+
+- name: Fail if uhabits_server_path_prefix is invalid
+  ansible.builtin.fail:
+    msg: >-
+      `uhabits_server_path_prefix` must be `/` or start with `/` and not end with one
+      (got `{{ uhabits_server_path_prefix }}`).
+  when: >-
+    uhabits_server_path_prefix != '/' and
+    (not uhabits_server_path_prefix.startswith('/') or uhabits_server_path_prefix.endswith('/'))

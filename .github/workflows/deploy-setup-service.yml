@@ -79,6 +79,7 @@ on:
           - tinyauth
           - traefik
           - tsdproxy
+          - uhabits-server
           - unattended-upgrades
           - uptime_kuma
           - valkey

@@ -1,0 +1,26 @@
+# SPDX-FileCopyrightText: 2026 Oliver Lorenz
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+---
+- name: Perform uhabits-server installation tasks
+  when: uhabits_server_enabled | bool
+  tags:
+    - setup-all
+    - setup-uhabits-server
+    - install-all
+    - install-uhabits-server
+  block:
+    - name: Validate uhabits-server configuration
+      ansible.builtin.include_tasks: "{{ role_path }}/tasks/validate_config.yml"
+    - name: Install uhabits-server
+      ansible.builtin.include_tasks: "{{ role_path }}/tasks/install.yml"
+
+- name: Perform uhabits-server uninstallation tasks
+  when: not uhabits_server_enabled | bool
+  tags:
+    - setup-all
+    - setup-uhabits-server
+  block:
+    - name: Uninstall uhabits-server
+      ansible.builtin.include_tasks: "{{ role_path }}/tasks/uninstall.yml"
